@@ -1,6 +1,13 @@
 import { and, desc, eq, like } from "drizzle-orm";
 import { db } from "@/server/db";
-import { questions, categories, users, quizzes, type QuestionType } from "@/server/db/schema";
+import {
+  questions,
+  categories,
+  users,
+  quizzes,
+  type QuestionType,
+  type QuestionStatus,
+} from "@/server/db/schema";
 
 export interface QuizListItem {
   id: string;
@@ -39,14 +46,16 @@ export interface ListQuestionsFilters {
   type?: QuestionType;
   authorId?: string;
   search?: string;
-  /** Defaults to only 'published' — pass 'draft' explicitly to see an author's own drafts. */
-  status?: "draft" | "published";
+  /** Omit for every status (the admin moderation view) — every other call site passes this
+   *  explicitly to scope its own list (published browsing, an author's own drafts). */
+  status?: QuestionStatus;
 }
 
 export async function listQuestions(
   filters: ListQuestionsFilters = {},
 ): Promise<QuestionListItem[]> {
-  const conditions = [eq(questions.status, filters.status ?? "published")];
+  const conditions = [];
+  if (filters.status) conditions.push(eq(questions.status, filters.status));
   if (filters.categoryId) conditions.push(eq(questions.categoryId, filters.categoryId));
   if (filters.type) conditions.push(eq(questions.type, filters.type));
   if (filters.authorId) conditions.push(eq(questions.authorId, filters.authorId));
@@ -70,9 +79,9 @@ export async function listQuestions(
     .from(questions)
     .innerJoin(categories, eq(questions.categoryId, categories.id))
     .innerJoin(users, eq(questions.authorId, users.id))
-    .where(and(...conditions))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(desc(questions.createdAt))
-    .limit(100);
+    .limit(200);
 
   return rows;
 }

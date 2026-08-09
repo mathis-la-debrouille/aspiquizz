@@ -16,7 +16,7 @@ export function Header({ user }: { user: SessionUser }) {
           <span className="font-display text-20 text-ink-high">ASPI Quiz</span>
         </Link>
 
-        {/* Becomes a proper nav with a mobile drawer once /admin (Phase 10) adds another link. */}
+        {/* TODO(Phase 11): collapse into a mobile drawer below sm. */}
         <nav
           aria-label="Navigation principale"
           className="hidden flex-1 items-center gap-1 sm:flex"
@@ -39,6 +39,14 @@ export function Header({ user }: { user: SessionUser }) {
           >
             Classement
           </Link>
+          {user.role === "admin" && (
+            <Link
+              href="/admin"
+              className="rounded-sm px-3 py-1.5 text-14 text-ink-mid transition-colors duration-150 hover:bg-bg-surface hover:text-ink-high"
+            >
+              Administration
+            </Link>
+          )}
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:gap-3">

@@ -100,13 +100,22 @@ scoreboard/podium screens, per-type answer surfaces), `src/components/lobby` (ro
 modal), `src/lib/socket/client.ts` (the `useSocket()` hook), and `src/hooks/useClockOffset.ts`
 exist as of Phase 8; `src/server/progression` (badges.ts pure rules, award.ts DB orchestrator,
 queries.ts for profile/leaderboard reads, actions.ts for profile edits), `src/components/profile`,
-and `src/components/leaderboard` exist as of Phase 9. `src/components/game` only has the
-authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+and `src/components/leaderboard` exist as of Phase 9; `src/server/admin` (guard.ts's
+`requireAdmin()`, queries.ts, actions.ts) and `src/components/admin` exist as of Phase 10.
+`src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path
+exists; check first.
 
 Progression (Phase 9): XP/level are computed from `game/scoring.ts`'s `xpFromPoints`/
 `levelFromXp`/`xpForLevel` (brief §12 formula) — `user_stats.xp`/`.level` are a cache of that
 computation over `totalPoints`, not an independent source of truth. `engine.ts`'s finishGame
 calls `progression/award.ts` once per finished game; it owns `user_stats` and `user_badges`.
+
+Admin (Phase 10): `/admin` is gated twice — `app/(app)/admin/layout.tsx` redirects non-admins
+away (UX), and every mutation in `server/admin/actions.ts` calls `requireAdmin()` itself (the
+actual trust boundary — a layout having run is never assumed). Question moderation is
+archive/publish only, never a hard delete — a played question has `answers` rows keyed on it.
+Category/media deletion are blocked (not silently ignored) while any `questions` row still
+references them.
 `user_category_stats` is instead updated live, per question, right next to the `answers` insert
 in `engine.ts`'s question loop — see the comment there.
 

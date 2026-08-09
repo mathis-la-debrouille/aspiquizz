@@ -434,4 +434,59 @@ failed` the first time a real two-client test tried to join a room — never cau
   — the query/mutation layer this phase actually adds new logic to was verified directly
   instead, which is where a bug would actually be.
 
+## 2026-08-09 — Phase 10 (Admin)
+
+- **Question moderation is archive/publish, never a hard delete.** No FK in this schema has
+  `onDelete: cascade` configured, and a question that's actually been played has `answers` rows
+  keyed on it (a game's historical record) plus possibly `quiz_questions` rows — deleting it
+  would either throw a raw FK constraint error or (if cascaded) silently erase play history.
+  Archiving (status → `archived`) already removes it from `question-selection.ts` and from the
+  public `listQuestions()` default, with none of that risk. `setQuestionStatusAction` covers
+  publish/unpublish/archive for *any* author's question, which is the actual moderation lever —
+  a full author-side "edit my own question" flow doesn't exist yet either (Phase 6 only ever
+  built `create*`, no `update`), and building that wasn't this phase's job.
+- **Category/media deletion are blocked with a friendly count, not left to throw a raw FK
+  error.** Both `deleteCategoryAction` and `deleteMediaAction` query `count(*) from questions
+  where …` first and return `{ ok: false, error: "N question(s) utilisent encore…" }` instead of
+  attempting the delete and surfacing whatever SQLite says. Media deletion also removes the file
+  from disk (`storage.ts`'s new `deleteUpload`) only after the DB row is gone, and treats a
+  missing file (`ENOENT`) as success rather than an error — the DB row is the source of truth
+  for "does this still exist to the app."
+- **No user deletion, ever — only deactivation.** `users.isActive` already gated login and
+  session validity since Phase 3 (`getSession()` returns null for a deactivated user mid-session,
+  forcing a re-login that then fails); Phase 10 just exposes the toggle. A real delete would
+  cascade through `sessions`, `questions.authorId`, `rooms.hostId`, `room_players`, `answers`,
+  `media.uploaderId`, `quizzes.authorId`, `user_stats`, `user_badges` — far more risk than an
+  admin panel warrants for a private, invite-only app where "remove access" is the actual need,
+  not "erase this person's history."
+- **An admin can't demote or deactivate their own account** (`setUserRoleAction`/
+  `setUserActiveAction` both check `userId === admin.id` first) — a cheap guard against locking
+  everyone out of `/admin` with no CLI handy. Doesn't defend against the *last* admin overall
+  demoting themself while a second admin exists to demote them right back, but that's an
+  acceptable gap for this app's scale.
+- **Admin user creation mirrors `scripts/create-user.ts` exactly** (same username regex, same
+  8-char password minimum, same `hashPassword`/`avatarSeed` construction) rather than inventing
+  parallel rules — it's the second and last path an account can come into existence through
+  (brief §9: no public sign-up), so the two must agree.
+- **`listQuestions()`'s `status` filter was widened from `"draft" | "published"` to the full
+  `QuestionStatus` (including `"archived"`), and omitting it now means "every status" instead of
+  defaulting to `"published"`.** Both existing call sites (`/creer`, `/creer/quiz`) already
+  passed an explicit status, so this only changes behaviour for the new no-argument admin call —
+  a narrower, additive change than adding a separate `listAllQuestions` that would've duplicated
+  the whole query.
+- **Admin UI is one page (`/admin`) with four client-side tabs**, not four separate routes —
+  `CLAUDE.md`'s route list only ever named "admin" (singular), the four datasets are all small
+  at this app's private/invite-only scale, and a single server component fetching all four up
+  front means one `revalidatePath("/admin")` after any mutation refreshes every tab's data
+  without a client-side refetch dance.
+- **Verification**: `pnpm typecheck`/`test` (103 tests unchanged — no new pure logic worth unit
+  tests here, unlike badges.ts) pass. Ran a throwaway script (not committed) directly against
+  the real migrated+seeded local DB to check the part that actually had new query logic:
+  `listAllCategories`'s join/groupBy question-count and the in-use guard query, before/after
+  inserting and then cleaning up a throwaway question — counts matched exactly at each step.
+  Didn't attempt a logged-in browser click-through of `/admin` itself, consistent with the
+  standing direction to not chase Playwright verification loops; `requireAdmin()` itself is the
+  same one-line `getSession()` + role-check pattern already proven at every other trust boundary
+  in this codebase (mirrors `requireUser()` in `questions/actions.ts`).
+
 <!-- New decisions appended below as phases progress. -->

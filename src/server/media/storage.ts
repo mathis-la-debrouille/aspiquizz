@@ -1,4 +1,4 @@
-import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 import { ulid } from "ulid";
 
@@ -41,4 +41,19 @@ export async function readUpload(filename: string): Promise<Buffer> {
     throw new Error("Invalid upload path");
   }
   return readFile(resolved);
+}
+
+/** Admin media deletion (Phase 10) — the DB row is the source of truth for "in use", so
+ *  callers must check that before calling this; a missing file is not an error (ENOENT). */
+export async function deleteUpload(filename: string): Promise<void> {
+  const dir = getUploadDir();
+  const resolved = path.resolve(dir, filename);
+  if (!resolved.startsWith(path.resolve(dir))) {
+    throw new Error("Invalid upload path");
+  }
+  try {
+    await unlink(resolved);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
+  }
 }
