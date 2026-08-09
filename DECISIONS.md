@@ -181,7 +181,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   reject it correctly — no tuning needed. Also checked a few other geography near-misses
   (Chili/Chine, Niger/Nigeria, Bolivie/Colombie) the same way, computationally, rather than
   eyeballing edit distances — one pair (Iran/Irak, distance 1 at the 4-7 char/threshold-1
-  bucket) *would* fuzzy-match, which is an inherent consequence of the brief's own specified
+  bucket) _would_ fuzzy-match, which is an inherent consequence of the brief's own specified
   thresholds, not something introduced here; not "fixed" since the thresholds are locked.
   `damerauLevenshtein` is the optimal-string-alignment variant (one adjacent transposition,
   not the full unrestricted Damerau-Levenshtein) — standard for typo-tolerance and what's
@@ -189,13 +189,50 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   `matchesAnyVariant`'s fuzzy threshold is computed from the **accepted variant's** normalised
   length, not the player's input length — a very-wrong short guess shouldn't get an easier
   threshold just because it happens to be short.
-- `computePoints`'s `streak` parameter is the resulting streak count *including* the answer
+- `computePoints`'s `streak` parameter is the resulting streak count _including_ the answer
   being scored (not the pre-answer streak) — confirmed against the brief's worked example
   (msTaken=16000/20000, streak=3 → ×1.3 → 780 pts on a 1000-point question), which only
   reproduces exactly under that reading.
-- `ScoringResult` returns `speedRatio`/`streakMultiplier` (the *factors*), not brief §12's
+- `ScoringResult` returns `speedRatio`/`streakMultiplier` (the _factors_), not brief §12's
   additive display breakdown ("rapidité +140 · série ×1,3") — reconstructing that exact
   presentation string is a Phase 8 reveal-screen concern once real question/points data exists,
   not something the pure scoring function needs to produce itself.
+
+## 2026-08-09 — Phase 6 (authoring)
+
+- **Reordering (MCQ options, quiz questions) uses up/down move buttons, not drag-and-drop.**
+  The brief says "drag to order" in both places, but no drag-and-drop library is in the locked
+  stack, and native HTML5 drag-and-drop is notoriously poor on touch and unreachable by
+  keyboard alone — a real conflict with §4.8's "all interactive elements keyboard-reachable".
+  Move buttons give the same reordering capability, fully keyboard/touch/screen-reader
+  accessible, no new dependency.
+- **`view_bbox` (camera framing) has no dedicated fine-tuning UI yet** — geo questions save
+  `viewBbox: null` and rely on `GeoMap`'s existing automatic `focusOn` framing (Phase 4), which
+  already produces a reasonably composed view. A manual override editor is a natural follow-up,
+  not blocking — nothing in the schema or grading path assumes `viewBbox` is non-null.
+  `dominant_color` (image blur-up placeholder) is left null for the same "not blocking, cleanly
+  deferrable" reason — computing it needs image decoding, and none of the locked dependencies
+  do that; the `image` route already serves correctly without it.
+- **`ActionResult` uses a literal `ok: true | false` discriminant**, not the more compact
+  `{id: string} | {error: string}` shape tried first — TypeScript's control-flow narrowing on a
+  bare optional-property union (`id?: undefined` vs `id: string`) didn't reliably narrow `id` to
+  `string` in the success branch across every call site; a real discriminant field fixes it
+  outright rather than fighting inference.
+- **Bug found and fixed via the e2e check, not by inspection**: `ImageForm` always sent both the
+  default (empty) MCQ `choices` array *and* the open-answer fields regardless of which
+  `answerMode` was selected, so submitting in "open" mode failed the MCQ branch's
+  choice-label validation even though MCQ fields were irrelevant. Fixed by only sending the
+  active mode's fields. Caught by actually creating an image question end-to-end with
+  Playwright, not by reading the code.
+- **Dev-server first-compile latency (~25-30s per not-yet-visited route) is not an app bug** —
+  hit repeatedly while writing e2e checks against `pnpm dev`, initially misread as a hang/auth
+  failure. Fixed the verification approach (pre-warm every route with a generous-timeout curl
+  before the timing-sensitive Playwright script, not the app) rather than "fixing" nonexistent
+  code issues. Doesn't affect production (`next build` pre-compiles everything).
+- Verified end-to-end with Playwright, not just typecheck: created one question of each of the
+  four types (open, mcq, image incl. a real upload through `/api/media`, geo with the
+  autosuggested Kenya/Portugal prompts) plus a quiz, all appearing in the pool with
+  `Proposée par @testuser` author credit — this is e2e test 2's scenario, run ad hoc now and to
+  be formalized into `tests/e2e` in Phase 12.
 
 <!-- New decisions appended below as phases progress. -->

@@ -16,8 +16,7 @@ export function Header({ user }: { user: SessionUser }) {
           <span className="font-display text-20 text-ink-high">ASPI Quiz</span>
         </Link>
 
-        {/* Single link is redundant with the logo for now — becomes a proper nav (with a
-            mobile drawer) once Phase 6/10 add /creer and /admin. */}
+        {/* Becomes a proper nav with a mobile drawer once /admin (Phase 10) adds another link. */}
         <nav
           aria-label="Navigation principale"
           className="hidden flex-1 items-center gap-1 sm:flex"
@@ -27,6 +26,12 @@ export function Header({ user }: { user: SessionUser }) {
             className="rounded-sm px-3 py-1.5 text-14 text-ink-mid transition-colors duration-150 hover:bg-bg-surface hover:text-ink-high"
           >
             Accueil
+          </Link>
+          <Link
+            href="/creer"
+            className="rounded-sm px-3 py-1.5 text-14 text-ink-mid transition-colors duration-150 hover:bg-bg-surface hover:text-ink-high"
+          >
+            Créer
           </Link>
         </nav>
 
