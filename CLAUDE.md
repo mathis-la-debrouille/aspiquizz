@@ -25,7 +25,7 @@ identifiers, comments, and commit messages stay in **English**.
 | Auth            | Hand-rolled: `sessions` table + httpOnly cookie, `@node-rs/argon2` (argon2id)                                                              |
 | Maps            | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images               |
 | Animation       | `motion`, used sparingly, `prefers-reduced-motion` always respected                                                                        |
-| Sound           | Plain `HTMLAudioElement`, no audio library                                                                                                 |
+| Sound           | Procedural WebAudio synth (`src/lib/sound/engine.ts`), no audio files/library — see DECISIONS.md (Phase 11)                                |
 | Unit tests      | Vitest (`tests/unit/`)                                                                                                                     |
 | E2E             | Playwright (`tests/e2e/`)                                                                                                                  |
 | Package manager | pnpm                                                                                                                                       |
@@ -58,7 +58,7 @@ pnpm test            # vitest run (unit tests, tests/unit/)
 pnpm test:watch
 pnpm test:e2e        # playwright test (tests/e2e/) — boots its own server on :3100 against a temp DB
 pnpm db:generate     # drizzle-kit generate — writes a new migration from schema.ts (from Phase 2)
-pnpm db:migrate      # applies pending migrations — will also run at server boot from Phase 12 on
+pnpm db:migrate      # applies pending migrations by hand — server.ts also runs this at boot (Phase 12)
 pnpm db:seed         # seeds countries (scripts/data/countries.fr.json) + categories + badges
 pnpm db:studio       # drizzle-kit studio
 ```

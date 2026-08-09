@@ -539,4 +539,61 @@ failed` the first time a real two-client test tried to join a room — never cau
   fixed directly; a full pixel-level pass across every screen wasn't.
 - **Verification**: `pnpm typecheck`/`test` (103 tests, unchanged) and `pnpm build` pass.
 
+## 2026-08-09 — Phase 12 (Hardening)
+
+- **`/healthz` and a graceful-shutdown skeleton already existed from Phase 0** — the Phase 0
+  scaffold shipped `server.ts` with a `/healthz` route and `SIGTERM`/`SIGINT` handlers up front,
+  since the custom-server decision made those easy to get right on day one rather than bolted on
+  later. Phase 12's job was making both actually do what they'd always claimed to:
+  - `/healthz`'s `dbOk` was hardcoded `true`. Now does a real `select 1` round-trip and reports
+    the true result. Still answers HTTP 200 even when `dbOk: false` — a DB outage shouldn't make
+    a basic orchestrator liveness probe flap-restart an otherwise-fine process; whoever's
+    actually watching the JSON body decides what `dbOk: false` means for them. Also added
+    `uptimeS`, cheap and useful for "did this just restart" at a glance.
+  - Shutdown closed the HTTP server and Socket.IO but never told connected clients why they
+    were being dropped, never stopped in-flight game loops before they got cut off mid-`sleep()`,
+    and never marked their rooms `abandoned` in the DB — that only happened on the *next* boot's
+    stale-room cleanup, leaving a "says running, nothing's driving it" window for however long
+    the restart took. `engine.ts`'s new `prepareForShutdown(io)` cancels every loop, broadcasts
+    a `server_shutdown` `error` event to every connected socket (reusing the same `error` event
+    `RoomClient` already renders as a banner — zero client-side changes needed), and bulk-marks
+    every non-terminal room `abandoned`, all before the socket/HTTP servers actually close.
+    Guarded against a second `SIGTERM` re-entering the sequence, and the DB-touching part is
+    wrapped so an unreachable DB at shutdown can't hang the process past its own SIGTERM
+    deadline (a hung handler is how you get killed with `-9` instead of exiting cleanly).
+  - `abandonStaleRunningRooms` (boot-time cleanup) only ever covered `status = 'running'`.
+    Broadened to also cover `'lobby'` — a room the previous process crashed before anyone
+    started is exactly as orphaned, it just never had a loop to interrupt — and renamed to
+    `abandonStaleRooms` to match. Harmless to leave un-widened (a stale `'lobby'` row is
+    invisible to the app either way, since the lobby list and `getRoom()` both read the
+    in-memory `Map`, not the DB), but free to fix while touching this code, and it keeps the
+    room-history the admin panel would eventually show accurate.
+- **Migrations now actually run at server boot** — `scripts/migrate.ts`'s own doc comment said
+  "also called at server boot (brief §15)" since Phase 2, and `runMigrations()` was already
+  exported specifically for this, but nothing ever imported it into `server.ts`. Brief §15 rules
+  out any deployment config beyond this file, so a Railway deploy that only runs `pnpm start`
+  has no other point where a pending migration could apply — this was the actual gap, not
+  optional polish. Runs before `app.prepare()`/`attachSocketServer()`, since the latter's own
+  `abandonStaleRooms()` query would otherwise be the first thing to hit a not-yet-migrated table.
+- **`README.md` didn't exist at all** — written from scratch: quick start, the env var table
+  (cross-checked against every `process.env[...]` read in the codebase, not just `.env.example`),
+  the full command list, how accounts actually get created (no sign-up route, by design), and a
+  deployment section spelling out what "no deployment config beyond this" (brief's own rule)
+  concretely means in practice — one process/one port, migrate-at-boot, `/healthz`'s contract,
+  graceful shutdown's behaviour, and the two things that need a persistent volume.
+- **Corrected two stale claims in `CLAUDE.md`** found while cross-checking the README against
+  the actual codebase: the stack table still said "Sound: plain `HTMLAudioElement`, no audio
+  library" (Phase 11 built a procedural WebAudio synth instead, see that phase's entry) and the
+  commands table's `db:migrate` note still said migration-at-boot "will" happen "from Phase 12
+  on" as a future promise rather than a present fact. Both now describe what's actually there.
+- **Verification**: `pnpm typecheck`/`test` (103 tests, unchanged) and `pnpm build` pass. Ran the
+  dev server for real (not just typechecked) to confirm: `/healthz` returns a genuine `dbOk:
+  true` after a real query; a `SIGTERM` produces the exact `shutdown_start` → `shutdown_complete`
+  log sequence with no hang; boot with `runMigrations()` wired in applies cleanly (a no-op
+  against an already-migrated DB, as expected) with no `migrate_failed` event. Didn't spin up a
+  live two-client game specifically to watch a room flip to `abandoned` mid-shutdown — the query
+  itself (`inArray(status, ['lobby','running']) → 'abandoned'`) is the same shape already
+  proven correct in `abandonStaleRooms` and the admin delete-guard queries, so this is
+  low-risk without re-deriving a full game session to prove it live.
+
 <!-- New decisions appended below as phases progress. -->

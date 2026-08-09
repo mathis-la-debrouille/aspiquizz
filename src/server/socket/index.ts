@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 import type { Server as HttpServer } from "node:http";
 import { authenticateHandshake } from "@/server/socket/auth";
 import { registerSocketHandlers } from "@/server/socket/handlers";
-import { abandonStaleRunningRooms } from "@/server/game/engine";
+import { abandonStaleRooms } from "@/server/game/engine";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -10,8 +10,8 @@ import type {
 } from "@/server/socket/events";
 
 export async function attachSocketServer(httpServer: HttpServer): Promise<Server> {
-  // Rooms left 'running' from a previous process (crash/redeploy) are stale — brief §11.3.
-  await abandonStaleRunningRooms();
+  // Rooms left 'lobby'/'running' from a previous process (crash/redeploy) are stale — brief §11.3.
+  await abandonStaleRooms();
 
   const io = new Server<
     ClientToServerEvents,

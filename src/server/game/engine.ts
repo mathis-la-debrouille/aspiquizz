@@ -1,4 +1,4 @@
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import type { Server } from "socket.io";
 import { db } from "@/server/db";
 import {
@@ -213,12 +213,32 @@ export function scheduleEmptyRoomCheck(room: RoomState, onAbandon: (code: string
   }, EMPTY_ROOM_TIMEOUT_MS);
 }
 
-/** Rooms left 'running' at process boot are stale — brief §11.3. */
-export async function abandonStaleRunningRooms(): Promise<void> {
+/** Rooms left 'lobby' or 'running' at process boot are stale — the in-memory `rooms` Map that
+ *  made them real is gone with the previous process, so their DB row is now just orphaned
+ *  bookkeeping (brief §11.3). Covers both statuses, not just 'running': a 'lobby' room the
+ *  previous process crashed before anyone started is exactly as stale, even though it never
+ *  had a running game loop to interrupt. */
+export async function abandonStaleRooms(): Promise<void> {
   await db
     .update(roomsTable)
     .set({ status: "abandoned", endedAt: new Date() })
-    .where(eq(roomsTable.status, "running"));
+    .where(inArray(roomsTable.status, ["lobby", "running"]));
+}
+
+/** Graceful-shutdown counterpart to abandonStaleRooms — called once, deliberately, instead of
+ *  waiting for the next boot to notice. Cancels every in-flight game loop (so no `finishGame`/
+ *  progression-award runs on a half-delivered game), tells every currently-connected client why
+ *  they're about to be dropped, and marks every non-terminal room abandoned immediately rather
+ *  than leaving the DB saying "running" for however long the process takes to actually restart. */
+export async function prepareForShutdown(io: GameIo): Promise<void> {
+  for (const room of allRooms()) {
+    cancelLoop(room);
+  }
+  io.emit("error", {
+    code: "server_shutdown",
+    messageFr: "Le serveur redémarre — reconnectez-vous dans un instant.",
+  });
+  await abandonStaleRooms();
 }
 
 // ---------------------------------------------------------------------------
