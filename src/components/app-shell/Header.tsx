@@ -4,6 +4,7 @@ import { LaurelSprig } from "@/components/ui/HandDrawn";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { SoundToggle } from "@/components/app-shell/SoundToggle";
+import { MobileNav } from "@/components/app-shell/MobileNav";
 import { logoutAction } from "@/server/auth/actions";
 import type { SessionUser } from "@/server/auth/session";
 
@@ -11,12 +12,12 @@ export function Header({ user }: { user: SessionUser }) {
   return (
     <header className="border-b border-border-soft bg-bg-raised">
       <div className="mx-auto flex max-w-5xl items-center gap-2 px-3 py-3 sm:gap-4 sm:px-6">
+        <MobileNav role={user.role} />
         <Link href="/accueil" className="flex shrink-0 items-center gap-2">
           <LaurelSprig className="h-6 w-14 text-gold-deep" />
           <span className="font-display text-20 text-ink-high">ASPI Quiz</span>
         </Link>
 
-        {/* TODO(Phase 11): collapse into a mobile drawer below sm. */}
         <nav
           aria-label="Navigation principale"
           className="hidden flex-1 items-center gap-1 sm:flex"

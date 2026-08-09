@@ -489,4 +489,54 @@ failed` the first time a real two-client test tried to join a room — never cau
   same one-line `getSession()` + role-check pattern already proven at every other trust boundary
   in this codebase (mirrors `requireUser()` in `questions/actions.ts`).
 
+## 2026-08-09 — Phase 11 (Polish)
+
+- **Sound is procedural WebAudio, not `public/sfx/` audio files.** `CLAUDE.md`'s own
+  folder-layout sketch reserved `public/sfx/` from Phase 0 onward, but there's no asset
+  pipeline in this build to actually produce, license, or normalize recordings — and short
+  game cues (a countdown beep, a correct/incorrect chime, a podium fanfare) are well within
+  what a few oscillator + gain-envelope calls can do convincingly. `src/lib/sound/engine.ts`
+  synthesizes four cues (`countdown`, `correct`, `incorrect`, `podium`) from plain sine/square
+  tones; `useSfx()` gates every call behind the existing `useSoundEnabled()` (muted by default,
+  brief §4.6 — unchanged). Removed `public/sfx/` from the folder sketch accordingly. Wired into
+  the three moments that actually carry emotional weight — `CountdownOverlay` mount, per-player
+  correct/incorrect on `RevealScreen` mount (skipped for spectators, who have no `me` entry),
+  and `Podium` mount — rather than trying to cover every UI click, which would get noisy fast.
+  One real bug caught while writing it: a "silent gap" step modeled as `{ gain: 0 }` going
+  through the normal tone path made `exponentialRampToValueAtTime` ramp *from* 0, which the Web
+  Audio spec disallows (throws `RangeError`) — fixed by skipping oscillator creation entirely
+  for `gain: 0` steps instead of trying to render an inaudible tone.
+- **Mobile nav was a real gap, not just missing polish** — `Header`'s nav (`Accueil`/`Créer`/
+  `Classement`/`Admin`) was `hidden … sm:flex` with literally nothing standing in for it below
+  that breakpoint (the TODO comment left there in Phase 9). A phone-width user had no way to
+  reach any of those routes except by typing a URL. `MobileNav.tsx` is a hamburger button
+  (`sm:hidden`) opening the existing `Modal` with the same links in the same order — reuses
+  infrastructure rather than building a bespoke drawer/animation for one breakpoint.
+- **Phase-transition fades in `RoomClient`**: wrapped the phase-conditional render in
+  `AnimatePresence`/`motion.div`, keyed by a `viewKey` derived from `phase` — deliberately *not*
+  `phase` itself, because `"question"` and `"locked"` are the same `QuestionScreen` instance
+  with a prop flipped (the lock is already visually communicated by the answer surface going
+  `disabled`), and fading the whole screen out/in for that transition would read as a glitch
+  rather than a lock. Respects `useReducedMotion()` the same way `ScoreboardScreen`/`Podium`
+  already do (`initial`/`exit` become `undefined`, only `animate` fires).
+- **Reduced-motion coverage turned out to be mostly already done.** `globals.css` already had a
+  blanket `@media (prefers-reduced-motion: reduce)` rule collapsing every CSS
+  animation/transition duration to ~0 (Phase 1) — so CSS-driven effects like `CountdownOverlay`'s
+  `ember-flicker` needed no per-component change. Only the JS-driven `motion` library animations
+  (which don't read that media query on their own) need the explicit `useReducedMotion()` check;
+  `ScoreboardScreen`/`Podium` already had it, `RoomClient`'s new phase-fade is the only addition.
+- **Skip-to-content link added to the `(app)` layout** (`#main-content`, `sr-only` until
+  focused) — the one concrete a11y gap found on inspection; everything else audited (icon-only
+  buttons all already carry `aria-label`, `Modal` uses native `<dialog>` for focus-trap/Escape
+  for free, `lang="fr"` was already set on `<html>` since Phase 0) was already in good shape
+  from earlier phases' own conventions rather than needing a dedicated pass here.
+- **390px mobile audit was reasoning-based, not visually verified in a real viewport** — traced
+  through the Header's element widths by hand (hamburger + logo + sound toggle + avatar +
+  logout, with nav and the display-name label already hidden below `sm`) and the existing
+  `flex-wrap`/`grid-cols-2` patterns already used throughout the room/admin panels, rather than
+  screenshotting at 390px. Consistent with the standing direction to not chase exhaustive
+  browser-level verification loops — the concrete, high-value gap (no mobile nav at all) was
+  fixed directly; a full pixel-level pass across every screen wasn't.
+- **Verification**: `pnpm typecheck`/`test` (103 tests, unchanged) and `pnpm build` pass.
+
 <!-- New decisions appended below as phases progress. -->

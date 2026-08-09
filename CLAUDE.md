@@ -90,7 +90,6 @@ src/
 scripts/ (seed-countries.ts, seed-categories.ts, seed-badges.ts, create-user.ts, migrate.ts,
           data/countries.fr.json, build-iso-lookup.ts [Phase 4], seed-demo.ts [dev fixtures, later phase])
 public/geo/ (countries-110m.json, countries-50m.json)
-public/sfx/
 tests/ (unit/, e2e/)
 ```
 
@@ -101,9 +100,10 @@ modal), `src/lib/socket/client.ts` (the `useSocket()` hook), and `src/hooks/useC
 exist as of Phase 8; `src/server/progression` (badges.ts pure rules, award.ts DB orchestrator,
 queries.ts for profile/leaderboard reads, actions.ts for profile edits), `src/components/profile`,
 and `src/components/leaderboard` exist as of Phase 9; `src/server/admin` (guard.ts's
-`requireAdmin()`, queries.ts, actions.ts) and `src/components/admin` exist as of Phase 10.
-`src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path
-exists; check first.
+`requireAdmin()`, queries.ts, actions.ts) and `src/components/admin` exist as of Phase 10;
+`src/lib/sound/engine.ts` (procedural WebAudio cues — no `public/sfx/` files, see DECISIONS.md)
+and `src/components/app-shell/MobileNav.tsx` exist as of Phase 11. `src/components/game` only
+has the authoring-time `QuestionPreview`. Don't assume a path exists; check first.
 
 Progression (Phase 9): XP/level are computed from `game/scoring.ts`'s `xpFromPoints`/
 `levelFromXp`/`xpForLevel` (brief §12 formula) — `user_stats.xp`/`.level` are a cache of that

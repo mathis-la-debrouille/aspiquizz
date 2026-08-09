@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { ScoreTicker } from "@/components/ui/ScoreTicker";
 import { StreakMeter } from "@/components/ui/StreakMeter";
 import { cn } from "@/lib/utils/cn";
+import { useSfx } from "@/lib/sound/useSfx";
 import type { QuestionRevealPayload, RoomStateView } from "@/server/socket/events";
 
 export function RevealScreen({
@@ -19,6 +21,14 @@ export function RevealScreen({
 }) {
   const me = reveal.perPlayer.find((p) => p.userId === currentUserId);
   const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
+  const playSfx = useSfx();
+
+  // A spectator (no `me` entry — didn't play this question) gets no cue, correctly, since
+  // there's nothing to react to for them.
+  useEffect(() => {
+    if (me) playSfx(me.isCorrect ? "correct" : "incorrect");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per reveal mount (a fresh RevealScreen instance per question, see RoomClient), not on every re-render
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import { useSocket } from "@/lib/socket/client";
 import { useClockOffset } from "@/hooks/useClockOffset";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { WaitingRoom } from "@/components/room/WaitingRoom";
 import { CountdownOverlay } from "@/components/room/CountdownOverlay";
 import { QuestionScreen } from "@/components/room/QuestionScreen";
@@ -27,6 +29,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
   const router = useRouter();
   const { socket, connected } = useSocket();
   const clockOffset = useClockOffset(socket);
+  const reducedMotion = useReducedMotion();
 
   const [state, setState] = useState<RoomStateView | null>(null);
   // room:state is a one-shot snapshot sent only to the (re)joining socket — every phase
@@ -192,6 +195,23 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     );
   }
 
+  // "question" and "locked" share a view key — they're the same QuestionScreen instance with a
+  // `locked` prop flipped, not a new screen, so they shouldn't fade-transition against each other.
+  const viewKey =
+    phase === "finished" && finished
+      ? "finished"
+      : phase === "lobby"
+        ? "lobby"
+        : phase === "countdown"
+          ? "countdown"
+          : (phase === "question" || phase === "locked") && activeQuestion
+            ? "question"
+            : phase === "reveal" && reveal
+              ? "reveal"
+              : phase === "scoreboard"
+                ? "scoreboard"
+                : "loading";
+
   return (
     <div className="flex flex-col gap-6">
       {banner && (
@@ -200,35 +220,45 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
         </p>
       )}
 
-      {phase === "finished" && finished ? (
-        <Podium payload={finished} state={state} />
-      ) : phase === "lobby" ? (
-        <WaitingRoom
-          state={state}
-          socket={socket}
-          code={code}
-          currentUserId={currentUserId}
-          chatMessages={chatMessages}
-        />
-      ) : phase === "countdown" ? (
-        <CountdownOverlay />
-      ) : (phase === "question" || phase === "locked") && activeQuestion ? (
-        <QuestionScreen
-          socket={socket}
-          code={code}
-          active={activeQuestion}
-          answeredCount={answeredUserIds.size}
-          totalPlayers={state.players.filter((p) => p.connected).length}
-          locked={phase === "locked"}
-          clockOffset={clockOffset}
-        />
-      ) : phase === "reveal" && reveal ? (
-        <RevealScreen reveal={reveal} state={state} currentUserId={currentUserId} />
-      ) : phase === "scoreboard" ? (
-        <ScoreboardScreen entries={scoreboard} state={state} />
-      ) : (
-        <Skeleton className="h-40 w-full" />
-      )}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={viewKey}
+          initial={reducedMotion ? undefined : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reducedMotion ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
+        >
+          {viewKey === "finished" && finished ? (
+            <Podium payload={finished} state={state} />
+          ) : viewKey === "lobby" ? (
+            <WaitingRoom
+              state={state}
+              socket={socket}
+              code={code}
+              currentUserId={currentUserId}
+              chatMessages={chatMessages}
+            />
+          ) : viewKey === "countdown" ? (
+            <CountdownOverlay />
+          ) : viewKey === "question" && activeQuestion ? (
+            <QuestionScreen
+              socket={socket}
+              code={code}
+              active={activeQuestion}
+              answeredCount={answeredUserIds.size}
+              totalPlayers={state.players.filter((p) => p.connected).length}
+              locked={phase === "locked"}
+              clockOffset={clockOffset}
+            />
+          ) : viewKey === "reveal" && reveal ? (
+            <RevealScreen reveal={reveal} state={state} currentUserId={currentUserId} />
+          ) : viewKey === "scoreboard" ? (
+            <ScoreboardScreen entries={scoreboard} state={state} />
+          ) : (
+            <Skeleton className="h-40 w-full" />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

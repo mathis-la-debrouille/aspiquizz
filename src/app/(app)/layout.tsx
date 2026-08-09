@@ -13,9 +13,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-bg-base">
+      <a
+        href="#main-content"
+        className="sr-only rounded-md bg-gold px-4 py-2 text-14 text-bg-void focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50"
+      >
+        Aller au contenu principal
+      </a>
       <SessionTouch needsRenewal={session.needsRenewal} />
       <Header user={session.user} />
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">{children}</div>
+      <div id="main-content" className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        {children}
+      </div>
     </div>
   );
 }

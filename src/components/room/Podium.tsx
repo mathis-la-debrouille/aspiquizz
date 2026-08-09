@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Sparkles } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useSfx } from "@/lib/sound/useSfx";
 import type { RoomFinishedPayload, RoomStateView } from "@/server/socket/events";
 
 const PLATFORM_HEIGHTS: Record<number, string> = { 1: "h-32", 2: "h-24", 3: "h-16" };
@@ -21,8 +23,14 @@ export function Podium({
 }) {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
+  const playSfx = useSfx();
   const podiumByRank = new Map(payload.podium.map((p) => [p.rank, p]));
   const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
+
+  useEffect(() => {
+    playSfx("podium");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per Podium mount, i.e. once per finished game
+  }, []);
 
   return (
     <div className="flex flex-col gap-8">
