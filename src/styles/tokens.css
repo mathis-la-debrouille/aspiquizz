@@ -1,0 +1,57 @@
+/**
+ * Forest Night design tokens — see CLAUDE.md §Design system.
+ * Exposed to Tailwind v4 via the `@theme` block in globals.css.
+ */
+:root {
+  /* Surfaces — deep desaturated green-black */
+  --bg-void: #080b09;
+  --bg-base: #0f1512;
+  --bg-raised: #151e19;
+  --bg-surface: #1b2620;
+  --bg-inset: #0c1210;
+  --border-soft: #253128;
+  --border-hard: #334437;
+
+  /* Ink — warm off-whites, never pure white */
+  --ink-high: #efeadb;
+  --ink-mid: #b5c0b4;
+  --ink-low: #7e8c81;
+  --ink-faint: #55625a;
+
+  /* Accents */
+  --moss: #6fae72;
+  --moss-deep: #3f6b48;
+  --moss-glow: #9ad39c;
+  --gold: #d6a94a;
+  --gold-soft: #ebc77a;
+  --gold-deep: #8a6a26;
+  --clay: #c4593f;
+  --clay-soft: #e08268;
+  --plum: #7a5a78;
+
+  /* Semantic */
+  --correct: var(--moss);
+  --wrong: var(--clay);
+  --warn: var(--gold);
+
+  /* Radii — deliberately uneven, not all the same */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  /* Elevation — warm-tinted, never pure black */
+  --sh-1: 0 1px 0 rgba(239, 234, 219, 0.04) inset, 0 2px 6px rgba(4, 8, 5, 0.45);
+  --sh-2: 0 1px 0 rgba(239, 234, 219, 0.05) inset, 0 8px 24px rgba(4, 8, 5, 0.55);
+  --sh-lift: 0 1px 0 rgba(239, 234, 219, 0.06) inset, 0 14px 36px rgba(4, 8, 5, 0.6);
+
+  /* Type scale */
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-26: 1.625rem;
+  --fs-34: 2.125rem;
+  --fs-48: 3rem;
+  --fs-64: 4rem;
+}

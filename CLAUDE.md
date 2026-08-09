@@ -1,0 +1,135 @@
+# CLAUDE.md
+
+Guidance for working in this repo. Read this before making changes. The full product spec
+lives in the build brief that seeded this project; this file is the quick-reference summary
+plus the things that only make sense once code exists. See also `DECISIONS.md` for judgement
+calls made along the way.
+
+## What this is
+
+**ASPI Quiz** — a private, invite-only, real-time multiplayer quiz web app for a small group.
+No public sign-up; admins create accounts. Interface language is **French only**; code,
+identifiers, comments, and commit messages stay in **English**.
+
+## Stack
+
+| Concern | Choice |
+|---|---|
+| Framework | Next.js 15, App Router, TypeScript strict, React 19 |
+| Runtime | Node ≥22, custom server (`server.ts`) run via `tsx` |
+| Styling | Tailwind CSS v4 (CSS-first `@theme`), CSS custom properties in `src/styles/tokens.css` |
+| Realtime | Socket.IO 4.x, attached to the same HTTP server as Next, path `/ws` |
+| DB | Turso (libSQL) via `@libsql/client`; falls back to `file:./local.db` locally |
+| ORM | Drizzle ORM + drizzle-kit |
+| Validation | Zod — every value crossing a trust boundary (server action, route handler, socket payload) is parsed with a schema from `src/lib/schemas/` |
+| Auth | Hand-rolled: `sessions` table + httpOnly cookie, `@node-rs/argon2` (argon2id) |
+| Maps | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images |
+| Animation | `motion`, used sparingly, `prefers-reduced-motion` always respected |
+| Sound | Plain `HTMLAudioElement`, no audio library |
+| Unit tests | Vitest (`tests/unit/`) |
+| E2E | Playwright (`tests/e2e/`) |
+| Package manager | pnpm |
+| Lint/format | ESLint flat config (`eslint.config.mjs`) + Prettier |
+
+**Why a custom server:** the app runs as a single deployable process — Next.js and Socket.IO
+share one Node process on one port (`server.ts`). This is incompatible with Turbopack, so dev
+runs on the webpack dev server (`next dev` semantics, no `--turbopack` anywhere). `pnpm dev`
+runs `tsx watch server.ts`; production runs `next build` then `tsx server.ts`.
+
+**Local DB, zero network:** if `DATABASE_URL` is unset, the app falls back to a local libSQL
+file (`file:./local.db`) so `pnpm dev` works with no external services. Set `DATABASE_URL` /
+`DATABASE_AUTH_TOKEN` to point at a real Turso database.
+
+**Node version note:** developed against Node v25 locally; the brief pins Node ≥22 and nothing
+in the codebase depends on a v22-specific feature — either works. See `DECISIONS.md`.
+
+## Commands
+
+```bash
+pnpm dev            # custom server + Next dev, http://localhost:3000
+pnpm build           # next build (production bundle)
+pnpm start           # NODE_ENV=production tsx server.ts — runs the production build
+pnpm lint            # eslint .
+pnpm lint:fix
+pnpm format          # prettier --write .
+pnpm format:check
+pnpm typecheck       # tsc --noEmit
+pnpm test            # vitest run (unit tests, tests/unit/)
+pnpm test:watch
+pnpm test:e2e        # playwright test (tests/e2e/) — boots its own server on :3100 against a temp DB
+pnpm db:generate     # drizzle-kit generate — writes a new migration from schema.ts (from Phase 2)
+pnpm db:migrate      # applies pending migrations (also runs automatically at server boot)
+pnpm db:seed         # seeds countries + categories + badges (from Phase 2)
+pnpm db:studio       # drizzle-kit studio
+```
+
+After every phase: `pnpm lint && pnpm typecheck && pnpm test`, then a conventional commit
+(`feat(auth): ...`, `chore(db): ...`).
+
+## Folder layout
+
+```
+server.ts                      # HTTP server: Next handler + Socket.IO (from Phase 7)
+src/
+  app/
+    (auth)/connexion/
+    (app)/                     # authenticated shell — accueil, salon/[code], profil, classement, creer, admin
+    api/                       # only where a route handler is genuinely needed
+  components/
+    ui/                        # design-system primitives — showcased at /dev/ui (dev-only)
+    game/
+    map/                       # GeoMap and friends — see /dev/map (dev-only)
+    admin/
+  server/
+    db/ (schema.ts, index.ts, migrations/)
+    auth/
+    game/ (engine.ts, rooms.ts, scoring.ts, grading.ts)
+    socket/ (index.ts, handlers/, events.ts)
+  lib/ (schemas/, utils/, sound/, i18n copy constants)
+  styles/ (tokens.css, globals.css)
+scripts/ (seed-countries.ts, seed-demo.ts, create-user.ts, build-iso-lookup.ts, migrate.ts)
+public/geo/ (countries-110m.json, countries-50m.json)
+public/sfx/
+tests/ (unit/, e2e/)
+```
+
+Most of `src/server`, `src/components/game`, `src/components/map`, and `scripts/` don't exist
+yet — they land in the phases that need them (see the phase list below). Don't assume a path
+exists; check first.
+
+## Conventions
+
+- **TypeScript strict, no `any`.** `@ts-ignore` requires a one-line justification comment.
+- **Zod at every trust boundary.** Define a schema once in `src/lib/schemas/`, import it from
+  both the client and server side of that boundary — never re-derive the same shape twice.
+- **No placeholder/mock data in production code paths.** Seed scripts (`scripts/`) are the only
+  place fixtures live.
+- **Correct answers never reach the client before reveal.** Sanitisation is an explicit
+  whitelist mapper (`SanitisedQuestion`), not "just don't render the field" — see Phase 5/8.
+  Any change touching question payloads needs a test asserting no answer leakage.
+- **Server-authoritative timing.** Clients render countdowns from a server-provided deadline
+  plus a measured clock offset; never trust a client-reported elapsed time.
+- **Design system:** see `src/styles/tokens.css` for the "Forest Night" palette and the
+  brief's §4 for the full list of forbidden "AI slop" patterns (indigo/violet gradients,
+  glassmorphism, gradient text, emoji-as-icons, etc.). If you're about to reach for a purple
+  gradient or a `backdrop-blur` card, stop — that's explicitly out.
+- **`/dev/ui` and `/dev/map`** are dev-only playgrounds; they must 404 in production
+  (`NODE_ENV === 'production'`).
+- French strings live inline in components/copy constants (`src/lib/i18n`), not in a generic
+  i18n framework — this app is French-only by design, no locale switching.
+
+## Build plan status
+
+The brief's §16 defines 12 phases in order (scaffold → design system → database → auth → map
+engine → grading/scoring → authoring → realtime → game UI → progression → admin → polish →
+hardening). Phase N+1 doesn't start until phase N's acceptance criteria pass. Check
+`DECISIONS.md` and recent commit history for where the build currently stands.
+
+## Do not
+
+- Add a sign-up route, OAuth, or "forgot password" flow — accounts are admin-created only, by
+  design, not by oversight.
+- Write deployment config beyond `.env.example` and what `server.ts`/`/healthz` already do.
+  No CI, no `railway.json`. The user provisions Railway/Turso themselves.
+- Serve uploaded media from `public/` — it goes through the authenticated `/media/[id]` route
+  reading from `UPLOAD_DIR` (`./.uploads` locally).

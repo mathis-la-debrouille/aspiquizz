@@ -1,0 +1,79 @@
+{
+  "name": "aspiquiz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.21.0",
+      "onFail": "download"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "next build",
+    "start": "NODE_ENV=production tsx server.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed-countries.ts && tsx scripts/seed-demo.ts",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "@node-rs/argon2": "^2.0.2",
+    "clsx": "^2.1.1",
+    "d3-geo": "^3.1.1",
+    "d3-interpolate": "^3.0.1",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
+    "drizzle-orm": "^0.45.2",
+    "lucide-react": "^1.30.0",
+    "motion": "^13.0.0",
+    "next": "^15.5.23",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "topojson-client": "^3.1.0",
+    "ulid": "^3.0.2",
+    "world-atlas": "^2.0.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.6",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/d3-geo": "^3.1.1",
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/d3-selection": "^3.0.11",
+    "@types/d3-zoom": "^3.0.8",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@types/topojson-client": "^3.1.5",
+    "@vitejs/plugin-react": "^6.0.5",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.23",
+    "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^30.0.1",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.11",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.66.0",
+    "vitest": "^4.1.10"
+  }
+}

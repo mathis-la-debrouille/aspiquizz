@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme {
+  /* Surfaces */
+  --color-bg-void: var(--bg-void);
+  --color-bg-base: var(--bg-base);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-inset: var(--bg-inset);
+  --color-border-soft: var(--border-soft);
+  --color-border-hard: var(--border-hard);
+
+  /* Ink */
+  --color-ink-high: var(--ink-high);
+  --color-ink-mid: var(--ink-mid);
+  --color-ink-low: var(--ink-low);
+  --color-ink-faint: var(--ink-faint);
+
+  /* Accents */
+  --color-moss: var(--moss);
+  --color-moss-deep: var(--moss-deep);
+  --color-moss-glow: var(--moss-glow);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-deep: var(--gold-deep);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
+  --color-plum: var(--plum);
+
+  --color-correct: var(--correct);
+  --color-wrong: var(--wrong);
+  --color-warn: var(--warn);
+
+  /* Radii */
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  /* Shadows */
+  --shadow-1: var(--sh-1);
+  --shadow-2: var(--sh-2);
+  --shadow-lift: var(--sh-lift);
+
+  /* Type scale */
+  --text-12: var(--fs-12);
+  --text-14: var(--fs-14);
+  --text-16: var(--fs-16);
+  --text-20: var(--fs-20);
+  --text-26: var(--fs-26);
+  --text-34: var(--fs-34);
+  --text-48: var(--fs-48);
+  --text-64: var(--fs-64);
+
+  /* Fonts — CSS variables populated by next/font on <html>, see layout.tsx */
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-body: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-numeral: var(--font-space-grotesk), ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-soft);
+  }
+
+  html {
+    background: var(--color-bg-base);
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-bg-base);
+    color: var(--color-ink-high);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-variation-settings:
+      "SOFT" 40,
+      "WONK" 1;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-moss-deep);
+    color: var(--color-ink-high);
+  }
+}
+
+/* Grain overlay — fixed, full-viewport, applied once in the root layout. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
+/* Vignette — subtle radial darkening at the viewport edges. */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(8, 11, 9, 0.55) 100%);
+}
+
+/* Physical button press — see Button component. */
+.btn-physical {
+  transition:
+    transform 90ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-bottom-width 90ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 90ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.btn-physical:active {
+  transform: translateY(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
