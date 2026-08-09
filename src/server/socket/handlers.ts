@@ -106,6 +106,7 @@ function addOrReconnectPlayer(room: RoomState, socket: GameSocket): void {
     streak: 0,
     bestStreak: 0,
     correctCount: 0,
+    questionsSeen: 0,
     joinedAt: Date.now(),
     isSpectator,
   });

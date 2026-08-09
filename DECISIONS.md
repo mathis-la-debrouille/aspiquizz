@@ -364,4 +364,74 @@ failed` the first time a real two-client test tried to join a room — never cau
   Phase 12's job per the brief's own phase plan (§16) — this wasn't skipped, just not pulled
   forward early.
 
+## 2026-08-09 — Phase 9 (Progression)
+
+- **XP/level formula was already implemented, in Phase 5.** `game/scoring.ts` has had
+  `xpFromPoints`/`levelFromXp`/`levelProgress` (brief §12: "XP = total points / 10, level =
+  floor(sqrt(xp/50)) + 1") since the scoring engine was built, unit-tested since then too. Phase
+  9 doesn't invent a new formula — `user_stats.xp`/`.level` are just a persisted cache of that
+  same computation over the running `totalPoints` total, recomputed on every game. Added
+  `xpForLevel` (the inverse) alongside the existing three so the profile page can show "N XP
+  before level M" without duplicating the `50 * (level-1)^2` constant a third place.
+- **`user_category_stats` is updated live, per question, not batched at game end.** It sits
+  right next to the existing `answers` insert in `engine.ts`'s per-question loop (same
+  `onConflictDoUpdate` idiom already used elsewhere), needing `FullQuestionDetail.categoryId`
+  which didn't exist yet — added it as a one-line addition to the existing `row` select in
+  `question-detail.ts` (the query already joins `categories`, this just also selects the id).
+  `user_stats` and `user_badges`, by contrast, are only ever touched once, in `finishGame` — see
+  `progression/award.ts`.
+- **Badge aggregates are computed by querying existing tables, not new counter columns.**
+  `éclair` (5 correct answers under 3s) and `érudit` (500 questions answered) don't need
+  anything the schema doesn't already have: `count(*) from answers where isCorrect and
+  msTaken<3000`, `count(*) from questions where authorId=…`, and `user_category_stats` for the
+  Géographie category (`globe-trotteur`/`cartographe`) all fall out of tables that already
+  existed for other reasons. Cheaper than a migration, and the DB is the single source of truth
+  rather than a maintained-in-parallel counter that could drift.
+- **`sans-faute` (perfect game) needed a "how many questions did this player actually see"
+  denominator that didn't exist.** A late joiner is a spectator for the questions they missed
+  (brief §11.3) — their real total isn't the room's question count. Added
+  `ConnectedPlayer.questionsSeen`, incremented alongside the existing `correctCount` in the same
+  per-question loop, so both numbers come from the same place and can't drift apart from each
+  other.
+- **Badge rules are a pure `(GameOutcome, CumulativeStats) -> boolean` map** in
+  `progression/badges.ts`, with all DB reads/writes kept in `progression/award.ts`. Same split
+  as `grading.ts`/`scoring.ts` vs their DB-touching callers — keeps the actual "when does X
+  count as earned" logic unit-testable without a database (`tests/unit/badges.test.ts`),
+  verified against the real seeded categories/DB via a throwaway script (see below) rather than
+  only in isolation.
+- **`highlights: string[]` (an existing but previously-unpopulated field on `room:finished`,
+  left as `[]` since Phase 7/8) is now "`{displayName} — {label}`" strings** — level-ups and new
+  badges across all players in the game, not scoped per-user in the type. Changing it to a
+  richer per-user structure would touch `events.ts`, both engine and client, and `Podium.tsx`
+  for a payoff that's purely cosmetic (a name prefix vs. a proper column) — not worth it for
+  what's meant to be a celebratory one-line feed under the podium.
+- **Fixed a pre-existing Phase 8 gap while touching `Podium.tsx` for highlights**: the full
+  scoreboard list under the podium rendered rank + score only, no player name or avatar —
+  `state: RoomStateView` was already a prop but was never destructured/used. Now joins
+  `fullScoreboard` against `state.players` the same way `ScoreboardScreen`/`RevealScreen`
+  already do.
+- **Profile route is `/profil/[username]`, with `/profil` redirecting to the caller's own** —
+  not a single fixed page. Lets the leaderboard and (eventually) room rosters link to *other*
+  players' profiles for free instead of only supporting "my profile". `CLAUDE.md`'s route list
+  said just "profil"; this is a superset of that, not a deviation.
+- **Profile editing (display name, bio, "reroll avatar") was added even though the brief's
+  phase list says "profiles" without spelling out editing.** `users.bio` and a documented
+  "regenerate the deterministic-seed avatar" affordance (`Avatar.tsx`'s own doc comment already
+  called out `levelRingProgress` as being "for the profile level indicator", implying a real
+  profile page was always expected here) both already existed with nowhere to be exposed.
+  Minimal Zod-validated server actions (`progression/actions.ts`), no new schema.
+- **Verification**: `tests/unit/badges.test.ts` covers every rule at and just below its
+  threshold, plus the "already owned → never re-awarded" and "seed ids match rule keys" cross-
+  checks. Beyond that, ran a throwaway script (not committed) directly against the real
+  migrated + seeded local DB — `awardProgression` across two simulated games confirmed correct
+  level-ups (0→420xp→level 3, then →1400xp→level 6, matching `levelFromXp` by hand), correct
+  new-badge sets (`premier-sang`/`sans-faute`/`série noire` on a perfect winning game, none on a
+  merely-good one), and a separate run seeding `user_category_stats` directly confirmed
+  `globe-trotteur` fires at exactly 50 Géographie-correct via the real category slug lookup.
+  `pnpm typecheck`/`test` (103 tests, 7 files) and `pnpm build` all pass. Full page-level e2e
+  (actually logging in and clicking through `/profil`/`/classement` in a browser) wasn't
+  pursued, consistent with the standing instruction to not chase Playwright verification loops
+  — the query/mutation layer this phase actually adds new logic to was verified directly
+  instead, which is where a bug would actually be.
+
 <!-- New decisions appended below as phases progress. -->

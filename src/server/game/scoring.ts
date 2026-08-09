@@ -58,11 +58,16 @@ export function levelFromXp(xp: number): number {
   return Math.floor(Math.sqrt(xp / 50)) + 1;
 }
 
+/** XP required to *reach* a given level (the inverse of levelFromXp). */
+export function xpForLevel(level: number): number {
+  return 50 * (level - 1) ** 2;
+}
+
 /** 0–1 progress toward the next level, for the avatar's level ring. */
 export function levelProgress(xp: number): number {
   const level = levelFromXp(xp);
-  const currentLevelXp = 50 * (level - 1) ** 2;
-  const nextLevelXp = 50 * level ** 2;
+  const currentLevelXp = xpForLevel(level);
+  const nextLevelXp = xpForLevel(level + 1);
   const span = nextLevelXp - currentLevelXp;
   if (span <= 0) return 0;
   return clamp01((xp - currentLevelXp) / span);

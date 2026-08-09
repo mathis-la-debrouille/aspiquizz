@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
+import { Sparkles } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -11,10 +12,17 @@ const PLATFORM_HEIGHTS: Record<number, string> = { 1: "h-32", 2: "h-24", 3: "h-1
 const PLATFORM_ORDER = [2, 1, 3]; // visual left-to-right: 2nd, 1st, 3rd
 const STAGGER_ORDER: Record<number, number> = { 3: 0, 2: 1, 1: 2 }; // rise 3rd -> 2nd -> 1st
 
-export function Podium({ payload }: { payload: RoomFinishedPayload; state: RoomStateView }) {
+export function Podium({
+  payload,
+  state,
+}: {
+  payload: RoomFinishedPayload;
+  state: RoomStateView;
+}) {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
   const podiumByRank = new Map(payload.podium.map((p) => [p.rank, p]));
+  const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
 
   return (
     <div className="flex flex-col gap-8">
@@ -51,16 +59,37 @@ export function Podium({ payload }: { payload: RoomFinishedPayload; state: RoomS
         })}
       </div>
 
+      {payload.highlights.length > 0 && (
+        <div className="flex flex-col gap-2 rounded-md border border-gold-deep/60 bg-gold-deep/10 p-4">
+          <p className="flex items-center gap-2 text-12 tracking-[0.08em] text-gold-soft uppercase">
+            <Sparkles className="h-4 w-4" strokeWidth={1.5} />
+            Faits marquants
+          </p>
+          {payload.highlights.map((h, i) => (
+            <p key={i} className="text-14 text-ink-high">
+              {h}
+            </p>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
-        {payload.fullScoreboard.map((entry) => (
-          <div
-            key={entry.userId}
-            className="flex items-center gap-3 rounded-md border border-border-soft bg-bg-surface px-4 py-2"
-          >
-            <span className="font-numeral w-6 text-14 text-ink-faint">{entry.rank}</span>
-            <span className="font-numeral text-14 tabular-nums text-gold">{entry.score} pts</span>
-          </div>
-        ))}
+        {payload.fullScoreboard.map((entry) => {
+          const player = playersByUserId.get(entry.userId);
+          return (
+            <div
+              key={entry.userId}
+              className="flex items-center gap-3 rounded-md border border-border-soft bg-bg-surface px-4 py-2"
+            >
+              <span className="font-numeral w-6 text-14 text-ink-faint">{entry.rank}</span>
+              {player && <Avatar seed={player.avatarSeed} size="xs" />}
+              <span className="flex-1 truncate text-14 text-ink-high">
+                {player?.displayName ?? "?"}
+              </span>
+              <span className="font-numeral text-14 tabular-nums text-gold">{entry.score} pts</span>
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex justify-center">

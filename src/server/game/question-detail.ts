@@ -20,6 +20,7 @@ export interface FullQuestionDetail {
   prompt: string;
   hint: string | null;
   explanation: string | null;
+  categoryId: string;
   categoryName: string;
   categoryColorToken: ColorToken;
   difficulty: number;
@@ -51,6 +52,7 @@ export async function getFullQuestionDetail(
       prompt: questions.prompt,
       hint: questions.hint,
       explanation: questions.explanation,
+      categoryId: questions.categoryId,
       categoryName: categories.name,
       categoryColorToken: categories.colorToken,
       difficulty: questions.difficulty,

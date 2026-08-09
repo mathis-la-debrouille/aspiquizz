@@ -1,7 +1,13 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import type { Server } from "socket.io";
 import { db } from "@/server/db";
-import { rooms as roomsTable, roomPlayers, roomQuestions, answers } from "@/server/db/schema";
+import {
+  rooms as roomsTable,
+  roomPlayers,
+  roomQuestions,
+  answers,
+  userCategoryStats,
+} from "@/server/db/schema";
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
@@ -13,6 +19,7 @@ import {
   type FullQuestionDetail,
 } from "@/server/game/question-detail";
 import { selectQuestionsForRoom } from "@/server/game/question-selection";
+import { awardProgression } from "@/server/progression/award";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -40,6 +47,10 @@ export interface ConnectedPlayer {
   streak: number;
   bestStreak: number;
   correctCount: number;
+  /** Questions this player was actually present (non-spectator) for — the denominator for
+   *  "sans-faute" and the per-game questionsAnswered stat. Late joiners are spectators for the
+   *  questions they missed, so this can be less than the room's total question count. */
+  questionsSeen: number;
   joinedAt: number;
   isSpectator: boolean;
 }
@@ -310,6 +321,7 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
 
       player.streak = graded.isCorrect ? player.streak + 1 : 0;
       player.bestStreak = Math.max(player.bestStreak, player.streak);
+      player.questionsSeen += 1;
       if (graded.isCorrect) player.correctCount += 1;
 
       const { points } = computePoints({
@@ -345,6 +357,24 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
         .update(roomPlayers)
         .set({ score: player.score, streak: player.streak, correctCount: player.correctCount })
         .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, player.userId)));
+
+      // Live per-category running total — feeds the profile's category breakdown and the
+      // geography-themed badges (globe-trotteur/cartographe) without a separate aggregation pass.
+      await db
+        .insert(userCategoryStats)
+        .values({
+          userId: player.userId,
+          categoryId: detail.categoryId,
+          answered: 1,
+          correct: graded.isCorrect ? 1 : 0,
+        })
+        .onConflictDoUpdate({
+          target: [userCategoryStats.userId, userCategoryStats.categoryId],
+          set: {
+            answered: sql`${userCategoryStats.answered} + 1`,
+            correct: sql`${userCategoryStats.correct} + ${graded.isCorrect ? 1 : 0}`,
+          },
+        });
     }
 
     room.phase = "reveal";
@@ -454,11 +484,26 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
     rank: i + 1,
   }));
 
+  // Cross-game stats/XP/badges — a real, if 0-question, game (i.e. someone stuck around long
+  // enough to be non-spectator) still counts toward gamesPlayed, so this runs even for `sorted`
+  // entries with questionsSeen === 0 rather than being skipped.
+  const highlights = await awardProgression(
+    sorted.map((p, i) => ({
+      userId: p.userId,
+      displayName: p.displayName,
+      score: p.score,
+      correctCount: p.correctCount,
+      totalQuestions: p.questionsSeen,
+      bestStreakThisGame: p.bestStreak,
+      isWinner: i === 0 && p.score > 0,
+    })),
+  );
+
+  const displayNameByUserId = new Map(sorted.map((p) => [p.userId, p.displayName]));
   io.to(roomChannel(room.code)).emit("room:finished", {
     podium,
     fullScoreboard: buildScoreboard(room),
-    // User-stats/XP/badge highlights are Phase 9's job — see DECISIONS.md.
-    highlights: [],
+    highlights: highlights.map((h) => `${displayNameByUserId.get(h.userId) ?? "?"} — ${h.label}`),
   });
 }
 

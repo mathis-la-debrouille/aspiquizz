@@ -98,8 +98,17 @@ tests/ (unit/, e2e/)
 `src/server/socket` exist (Phases 2–7); `src/components/room` (waiting room, question/reveal/
 scoreboard/podium screens, per-type answer surfaces), `src/components/lobby` (room list, create
 modal), `src/lib/socket/client.ts` (the `useSocket()` hook), and `src/hooks/useClockOffset.ts`
-exist as of Phase 8. `src/components/game` only has the authoring-time `QuestionPreview`. Don't
-assume a path exists; check first.
+exist as of Phase 8; `src/server/progression` (badges.ts pure rules, award.ts DB orchestrator,
+queries.ts for profile/leaderboard reads, actions.ts for profile edits), `src/components/profile`,
+and `src/components/leaderboard` exist as of Phase 9. `src/components/game` only has the
+authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+
+Progression (Phase 9): XP/level are computed from `game/scoring.ts`'s `xpFromPoints`/
+`levelFromXp`/`xpForLevel` (brief §12 formula) — `user_stats.xp`/`.level` are a cache of that
+computation over `totalPoints`, not an independent source of truth. `engine.ts`'s finishGame
+calls `progression/award.ts` once per finished game; it owns `user_stats` and `user_badges`.
+`user_category_stats` is instead updated live, per question, right next to the `answers` insert
+in `engine.ts`'s question loop — see the comment there.
 
 Realtime (Phase 7): `server.ts` attaches Socket.IO via `src/server/socket/index.ts` (path
 `/ws`, cookie-handshake auth). The authoritative per-room game state is in-memory
