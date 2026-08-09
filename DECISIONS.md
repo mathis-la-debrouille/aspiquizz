@@ -242,7 +242,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   join code) — but the engine/handlers were written passing `code` everywhere, since `code` is
   what's used for Socket.IO channel names and client-facing lookups and felt like "the room
   identifier" while writing that code. This surfaced immediately as a `FOREIGN KEY constraint
-  failed` the first time a real two-client test tried to join a room — never caught by
+failed` the first time a real two-client test tried to join a room — never caught by
   typecheck (both are plain `string`). Fixed by giving `RoomState` both `id` (DB writes) and
   `code` (channels, client-facing), and auditing every `roomId:`/`eq(roomPlayers.roomId, …)`
   call site. Reinforces why the "verify with a scripted client" step matters even for
@@ -255,7 +255,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
 - **Private rooms are joinable by code but excluded from `lobby:rooms` broadcasts** — the only
   join mechanism in the whole protocol is `room:join({code})`; there's no separate invite
   event. Read literally, "private-without-invite" rejection would make private rooms
-  unjoinable by anyone including the host, which can't be right. Sharing the code *is* the
+  unjoinable by anyone including the host, which can't be right. Sharing the code _is_ the
   invite (the same pattern Kahoot/Jackbox-style games use) — `visibility` controls
   discoverability in the public lobby list, not code-based joinability.
 - **`host:skip` is implemented via the game loop's own poll**, not a hard interrupt — it sets
@@ -272,7 +272,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
 - **Reconnection restores state without an explicit "late join = spectator until next
   question" UI decision made here** — a socket that (re)joins a `running` room with no existing
   `players` entry is marked `isSpectator: true` (scores from the next question onward, per
-  brief §11.3), while a *reconnecting* player (already has a `players` entry from before they
+  brief §11.3), while a _reconnecting_ player (already has a `players` entry from before they
   disconnected) keeps their existing score/streak/spectator status untouched — verified
   end-to-end: disconnecting mid-question after answering correctly, then reconnecting, shows
   the preserved (non-zero) score in the fresh `room:state`, not a reset.
@@ -280,23 +280,88 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   has none yet — the brief explicitly allows driving this from a scratch client): full game
   loop start-to-finish with matching scoreboards on both clients; lobby visibility; host
   disconnect → migration to the longest-present player → the original host reconnecting does
-  *not* reclaim host status; mid-game disconnect/reconnect with score preservation; sanitised
+  _not_ reclaim host status; mid-game disconnect/reconnect with score preservation; sanitised
   `question:show` payloads confirmed free of `isCorrect`/accepted-answer text over the wire
   (not just in the pure `sanitize.ts` unit tests — the actual socket payload).
 
 ## 2026-08-09 — Phase 8 prep (sanitize.ts refinement)
 
 - **Found while planning the geo answer surfaces, before writing any UI**: `toSanitisedQuestion`
-  stripped `targetIso3` for *every* geo mode, but three of the five modes structurally need the
+  stripped `targetIso3` for _every_ geo mode, but three of the five modes structurally need the
   client to know which country to render — `name_country` (highlight it), `find_capital`
-  (highlight it, ask for its capital), and `name_from_shape` (silhouette *of* it). Showing a
+  (highlight it, ask for its capital), and `name_from_shape` (silhouette _of_ it). Showing a
   highlighted shape or silhouette on the map isn't leaking the answer any more than the prompt
   text itself is — it's the puzzle. Only the two click-to-answer modes (`locate_country`,
   `capital_of`) must hide it, since sending the iso3 there would let a client auto-click the
   correct country instead of a human finding it. Added `revealIso3` (present only for the three
   visual modes) and `multiSelect` (the aggregate "is more than one choice correct" fact MCQ
-  needs to render "Plusieurs réponses" *before* answering, without naming which choices) to
+  needs to render "Plusieurs réponses" _before_ answering, without naming which choices) to
   `SanitisedQuestion` — both still go through the same whitelist mapper, still unit-tested per
   mode (brief §14).
+
+## 2026-08-09 — Phase 8 (Game UI)
+
+- **`server.ts` was silently eating Socket.IO's own handshake requests.** The custom request
+  handler called `handle(req, res)` (Next's router) unconditionally for every incoming request,
+  racing Socket.IO's own listener attached to the same `httpServer`. Browsers connect
+  polling-first (an HTTP request to `/ws?...`), so Next's router intercepted and 404'd it before
+  Socket.IO ever saw it — the client sat on "Connexion en cours…" forever. Phase 7's own
+  verification scripts didn't catch this because they forced `transports: ["websocket"]`,
+  skipping the polling handshake entirely. Fixed with an explicit `if
+  (req.url?.startsWith("/ws")) return;` guard before `handle(req, res)`. Lesson: a
+  transport-restricted test client can pass while the default browser transport is completely
+  broken — worth a note for Phase 12's hardening pass.
+- **`useSocket()` had a missed-event race on mount.** `useState(socket.connected)` captured
+  `false` at render time, but the shared singleton socket could finish connecting (fired by an
+  earlier mount, e.g. a parent layout) before this component's effect attached its `'connect'`
+  listener, permanently losing that transition and leaving `connected` stuck `false`. Fixed by
+  re-checking `socket.connected` synchronously inside the effect body, not only reacting to the
+  future event.
+- **`RoomClient` never left the waiting room / never saw new joiners** — two related bugs from
+  the same wrong assumption (that `room:state` is re-broadcast on every phase change). It isn't:
+  Phase 7 sends `question:show`/`_lock`/`_reveal`, `scoreboard:update`, and `room:finished` as
+  the phase-transition signals, and `room:join`'s `room:state` reply is unicast to the joining
+  socket only. Fixed by tracking `phase` as local state driven explicitly by each event handler
+  (not read off `state.phase`), and adding incremental `room:player_joined/_left/_kicked/
+  host_changed` handlers that patch `state.players`/`hostId` directly. See the comments at the
+  top of `RoomClient.tsx`'s effect for the long-form version of this — worth reading before
+  touching that file.
+- **`tsx watch` was restarting the server on its own DB writes.** `local.db`'s WAL file churn
+  during a game (every answer, every phase transition) was misread as a source-file change,
+  killing in-flight games mid-test. Fixed with `--ignore 'local.db*' --ignore '.uploads/**'
+  --ignore '.next/**' --ignore 'tests/e2e/.output/**'` on the `dev` script.
+- **`room:join` handler crash on a fast reconnect race**: `room.players.get(user.id)!` assumed
+  the map entry created earlier in the same handler couldn't disappear before the next line ran,
+  but a concurrent `room:leave` from the same fast-reconnecting client can remove it during the
+  `await` in between. Non-null assertion → crash. Changed to a guarded lookup that bails out if
+  the player is already gone (found via manual two-tab reconnect testing, not the scripted
+  e2e run).
+- **MCQ answer surface**: single-select shows a 1.5s "annuler" undo window (`setTimeout`) before
+  the choice locks in and submits, matching how the timer-pressure brief (§9) describes
+  single-answer MCQ feeling forgiving of a mis-tap; multi-select has no such window — it shows a
+  `Badge tone="gold"` "Plusieurs réponses" hint (from `sanitize.ts`'s aggregate `multiSelect`
+  flag, §_prep_ above) plus an explicit "Valider" button, since silently auto-submitting on the
+  n-th click would be surprising for a multi-answer question. Keyboard shortcuts (1-6 / A-F) are
+  wired via a single `keydown` listener for speed-mode players who don't want to reach for a
+  mouse.
+- **Geo answer surface splits on interaction model, not just question type**: click-to-answer
+  modes (`locate_country`, `capital_of`) render `GeoMap mode="pick"` with `onSelect` — the click
+  target *is* the answer, so no separate submit step. Visual-prompt modes
+  (`name_country`/`find_capital`/`name_from_shape`) render the map read-only with
+  `revealIso3` driving `highlight`/`focusOn`, paired with a text `OpenAnswerSurface` — the map
+  here is illustrating the question, not collecting the answer.
+- **Removed the "Rejouer" button from `Podium`**, keeping only "Retour à l'accueil". The brief
+  has no replay-same-configuration feature (a new room is always a fresh `room:create` with its
+  own config), so a "Rejouer" button would either need to silently open the create-room modal
+  (surprising) or do nothing useful — cut rather than ship a button that overpromises.
+- **E2E verification cut short intentionally, per explicit user instruction mid-Phase-8.** Core
+  flow was verified working end-to-end via a scripted `socket.io-client` two-browser Playwright
+  run through: login → lobby visibility → room create/join → waiting-room sync → game start →
+  first question rendering correctly on both clients (confirmed via raw WS frame tracing). A
+  failure surfaced afterward in the *test script's* answer-detection step during automated
+  play-through — not confirmed to be an app bug, not pursued further. `pnpm lint`/`typecheck`/
+  `test` (97 tests, 6 files) and a full `pnpm build` all pass. Formal `tests/e2e` suites remain
+  Phase 12's job per the brief's own phase plan (§16) — this wasn't skipped, just not pulled
+  forward early.
 
 <!-- New decisions appended below as phases progress. -->

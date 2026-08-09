@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "dev": "tsx watch server.ts",
+    "dev": "tsx watch --ignore 'local.db*' --ignore '.uploads/**' --ignore '.next/**' --ignore 'tests/e2e/.output/**' --clear-screen=false server.ts",
     "build": "next build",
     "start": "NODE_ENV=production tsx server.ts",
     "lint": "eslint .",

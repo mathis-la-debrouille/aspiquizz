@@ -23,6 +23,11 @@ const server = createServer((req, res) => {
     res.end(JSON.stringify({ ok: true, version: PACKAGE_VERSION, dbOk: true }));
     return;
   }
+  // Socket.IO attaches its own "request"/"upgrade" listeners to this same httpServer (see
+  // attachSocketServer below) and handles anything under its `path` (/ws) itself. Node fires
+  // every "request" listener for every request, so without this guard our handler would race
+  // Socket.IO's, routing its polling handshake into Next's router (a 404) instead.
+  if (req.url?.startsWith("/ws")) return;
   void handle(req, res);
 });
 

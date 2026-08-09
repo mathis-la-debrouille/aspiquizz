@@ -95,8 +95,10 @@ tests/ (unit/, e2e/)
 ```
 
 `src/server/db`, `src/server/auth`, `src/components/map`, `src/server/game`, and
-`src/server/socket` exist (Phases 2–7); `src/components/game` only has the authoring-time
-`QuestionPreview` so far — the real timed/interactive game screens land in Phase 8. Don't
+`src/server/socket` exist (Phases 2–7); `src/components/room` (waiting room, question/reveal/
+scoreboard/podium screens, per-type answer surfaces), `src/components/lobby` (room list, create
+modal), `src/lib/socket/client.ts` (the `useSocket()` hook), and `src/hooks/useClockOffset.ts`
+exist as of Phase 8. `src/components/game` only has the authoring-time `QuestionPreview`. Don't
 assume a path exists; check first.
 
 Realtime (Phase 7): `server.ts` attaches Socket.IO via `src/server/socket/index.ts` (path

@@ -210,7 +210,10 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
       socket.join(roomChannel(code));
       ack({ ok: true });
       socket.emit("room:state", toRoomStateView(room));
-      const player = room.players.get(user.id)!;
+      // A concurrent room:leave (e.g. a fast reconnect race) can remove this player between the
+      // await above and here — never assume a Map lookup still holds after an await.
+      const player = room.players.get(user.id);
+      if (!player) return;
       io.to(roomChannel(code)).emit("room:player_joined", {
         userId: player.userId,
         username: player.username,

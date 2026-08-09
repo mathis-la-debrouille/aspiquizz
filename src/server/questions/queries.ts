@@ -1,6 +1,23 @@
 import { and, desc, eq, like } from "drizzle-orm";
 import { db } from "@/server/db";
-import { questions, categories, users, type QuestionType } from "@/server/db/schema";
+import { questions, categories, users, quizzes, type QuestionType } from "@/server/db/schema";
+
+export interface QuizListItem {
+  id: string;
+  title: string;
+  authorUsername: string;
+}
+
+export async function listPublishedQuizzes(): Promise<QuizListItem[]> {
+  const rows = await db
+    .select({ id: quizzes.id, title: quizzes.title, authorUsername: users.username })
+    .from(quizzes)
+    .innerJoin(users, eq(quizzes.authorId, users.id))
+    .where(eq(quizzes.status, "published"))
+    .orderBy(desc(quizzes.createdAt))
+    .limit(100);
+  return rows;
+}
 
 export interface QuestionListItem {
   id: string;
