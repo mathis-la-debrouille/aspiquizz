@@ -58,8 +58,8 @@ pnpm test            # vitest run (unit tests, tests/unit/)
 pnpm test:watch
 pnpm test:e2e        # playwright test (tests/e2e/) — boots its own server on :3100 against a temp DB
 pnpm db:generate     # drizzle-kit generate — writes a new migration from schema.ts (from Phase 2)
-pnpm db:migrate      # applies pending migrations (also runs automatically at server boot)
-pnpm db:seed         # seeds countries + categories + badges (from Phase 2)
+pnpm db:migrate      # applies pending migrations — will also run at server boot from Phase 12 on
+pnpm db:seed         # seeds countries (scripts/data/countries.fr.json) + categories + badges
 pnpm db:studio       # drizzle-kit studio
 ```
 
@@ -87,7 +87,8 @@ src/
     socket/ (index.ts, handlers/, events.ts)
   lib/ (schemas/, utils/, sound/, i18n copy constants)
   styles/ (tokens.css, globals.css)
-scripts/ (seed-countries.ts, seed-demo.ts, create-user.ts, build-iso-lookup.ts, migrate.ts)
+scripts/ (seed-countries.ts, seed-categories.ts, seed-badges.ts, create-user.ts, migrate.ts,
+          data/countries.fr.json, build-iso-lookup.ts [Phase 4], seed-demo.ts [dev fixtures, later phase])
 public/geo/ (countries-110m.json, countries-50m.json)
 public/sfx/
 tests/ (unit/, e2e/)

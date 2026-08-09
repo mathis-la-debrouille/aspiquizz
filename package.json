@@ -27,7 +27,7 @@
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:seed": "tsx scripts/seed-countries.ts && tsx scripts/seed-demo.ts",
+    "db:seed": "tsx scripts/seed-countries.ts && tsx scripts/seed-categories.ts && tsx scripts/seed-badges.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
