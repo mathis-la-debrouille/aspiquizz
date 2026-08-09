@@ -6,8 +6,23 @@ import type { AnswerMode, ColorToken, GeoMode, QuestionType } from "@/server/db/
  * carries the answer-bearing fields (isCorrect, targetIso3, …) so callers
  * can pass the full DB row straight through — `toSanitisedQuestion` is the
  * only place that's allowed to read them, and `SanitisedQuestion`'s type
- * structurally has nowhere to put them. See tests/unit/sanitize.test.ts.
+ * structurally has nowhere to put the ones that don't belong. See
+ * tests/unit/sanitize.test.ts.
+ *
+ * Geo is the one type with a real subtlety: for the three "visual
+ * identification" modes (name_country, find_capital, name_from_shape) the
+ * map has to *show* the target country to pose the question at all — a
+ * highlighted shape or silhouette is the puzzle, not a leaked answer. Only
+ * the two "click to answer" modes (locate_country, capital_of) must hide
+ * `targetIso3`, since sending it there would let a client trivially
+ * auto-click the correct country instead of a human finding it.
  */
+
+const GEO_MODES_REVEALING_TARGET: readonly GeoMode[] = [
+  "name_country",
+  "find_capital",
+  "name_from_shape",
+];
 
 export interface RawChoice {
   id: string;
@@ -30,12 +45,12 @@ export interface QuestionForSanitizing {
   authorAvatarSeed: string;
   /** open / image(open) only — never forwarded. */
   acceptedAnswers?: string[];
-  /** mcq / image(mcq) only — isCorrect never forwarded. */
+  /** mcq / image(mcq) only — isCorrect never forwarded, only the aggregate multiSelect fact. */
   choices?: RawChoice[];
   /** image only. */
   mediaId?: string;
   answerMode?: AnswerMode;
-  /** geo only — targetIso3 never forwarded. */
+  /** geo only — targetIso3 forwarded only for the visual-identification modes, see above. */
   geo?: {
     mode: GeoMode;
     targetIso3: string;
@@ -63,15 +78,24 @@ export interface SanitisedQuestion {
   authorDisplayName: string;
   authorAvatarSeed: string;
   choices?: SanitisedChoice[];
+  /** Whether more than one choice is correct — brief §6.2's "Plusieurs réponses" UI needs to
+   *  know this *before* the player answers, without knowing which ones. */
+  multiSelect?: boolean;
   mediaId?: string;
   answerMode?: AnswerMode;
   geoMode?: GeoMode;
+  /** Only present for the visual-identification geo modes — see module doc comment. */
+  revealIso3?: string;
   showLabels?: boolean;
   showNeighbours?: boolean;
 }
 
 function stripChoice(choice: RawChoice): SanitisedChoice {
   return { id: choice.id, label: choice.label };
+}
+
+function isMultiSelect(choices: RawChoice[]): boolean {
+  return choices.filter((c) => c.isCorrect).length > 1;
 }
 
 export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion {
@@ -95,22 +119,34 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       return base;
 
     case "mcq":
-      return { ...base, choices: (q.choices ?? []).map(stripChoice) };
+      return {
+        ...base,
+        choices: (q.choices ?? []).map(stripChoice),
+        multiSelect: isMultiSelect(q.choices ?? []),
+      };
 
     case "image":
       return {
         ...base,
         mediaId: q.mediaId,
         answerMode: q.answerMode,
-        ...(q.answerMode === "mcq" ? { choices: (q.choices ?? []).map(stripChoice) } : {}),
+        ...(q.answerMode === "mcq"
+          ? {
+              choices: (q.choices ?? []).map(stripChoice),
+              multiSelect: isMultiSelect(q.choices ?? []),
+            }
+          : {}),
       };
 
-    case "geo":
+    case "geo": {
+      const revealTarget = q.geo && GEO_MODES_REVEALING_TARGET.includes(q.geo.mode);
       return {
         ...base,
         geoMode: q.geo?.mode,
+        revealIso3: revealTarget ? q.geo?.targetIso3 : undefined,
         showLabels: q.geo?.showLabels,
         showNeighbours: q.geo?.showNeighbours,
       };
+    }
   }
 }

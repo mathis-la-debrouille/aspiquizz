@@ -284,4 +284,19 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   `question:show` payloads confirmed free of `isCorrect`/accepted-answer text over the wire
   (not just in the pure `sanitize.ts` unit tests — the actual socket payload).
 
+## 2026-08-09 — Phase 8 prep (sanitize.ts refinement)
+
+- **Found while planning the geo answer surfaces, before writing any UI**: `toSanitisedQuestion`
+  stripped `targetIso3` for *every* geo mode, but three of the five modes structurally need the
+  client to know which country to render — `name_country` (highlight it), `find_capital`
+  (highlight it, ask for its capital), and `name_from_shape` (silhouette *of* it). Showing a
+  highlighted shape or silhouette on the map isn't leaking the answer any more than the prompt
+  text itself is — it's the puzzle. Only the two click-to-answer modes (`locate_country`,
+  `capital_of`) must hide it, since sending the iso3 there would let a client auto-click the
+  correct country instead of a human finding it. Added `revealIso3` (present only for the three
+  visual modes) and `multiSelect` (the aggregate "is more than one choice correct" fact MCQ
+  needs to render "Plusieurs réponses" *before* answering, without naming which choices) to
+  `SanitisedQuestion` — both still go through the same whitelist mapper, still unit-tested per
+  mode (brief §14).
+
 <!-- New decisions appended below as phases progress. -->

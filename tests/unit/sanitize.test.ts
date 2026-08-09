@@ -31,7 +31,7 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     expect(sanitised).not.toHaveProperty("acceptedAnswers");
   });
 
-  it("mcq: choices are forwarded without isCorrect", () => {
+  it("mcq: choices are forwarded without isCorrect, only the aggregate multiSelect fact", () => {
     const input: QuestionForSanitizing = {
       ...baseFields,
       type: "mcq",
@@ -43,10 +43,29 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     const sanitised = toSanitisedQuestion(input);
     const json = JSON.stringify(sanitised);
     expect(json).not.toContain("isCorrect");
-    expect(json).not.toContain("true");
     expect(sanitised.choices).toEqual([
       { id: "a", label: "Paris" },
       { id: "b", label: "Lyon" },
+    ]);
+    expect(sanitised.multiSelect).toBe(false);
+  });
+
+  it("mcq: multiSelect is true when more than one choice is correct, without naming which", () => {
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "mcq",
+      choices: [
+        { id: "a", label: "Paris", isCorrect: true },
+        { id: "b", label: "Lyon", isCorrect: true },
+        { id: "c", label: "Nice", isCorrect: false },
+      ],
+    };
+    const sanitised = toSanitisedQuestion(input);
+    expect(sanitised.multiSelect).toBe(true);
+    expect(sanitised.choices).toEqual([
+      { id: "a", label: "Paris" },
+      { id: "b", label: "Lyon" },
+      { id: "c", label: "Nice" },
     ]);
   });
 
@@ -82,26 +101,42 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     expect(sanitised).not.toHaveProperty("choices");
   });
 
-  it("geo: never includes targetIso3 or acceptedAnswers", () => {
-    const input: QuestionForSanitizing = {
-      ...baseFields,
-      type: "geo",
-      acceptedAnswers: [SECRET_ANSWER],
-      geo: {
-        mode: "locate_country",
-        targetIso3: SECRET_ISO3,
-        showLabels: false,
-        showNeighbours: true,
-      },
-    };
-    const sanitised = toSanitisedQuestion(input);
-    const json = JSON.stringify(sanitised);
-    expect(json).not.toContain(SECRET_ISO3);
-    expect(json).not.toContain(SECRET_ANSWER);
-    expect(sanitised).not.toHaveProperty("targetIso3");
-    expect(sanitised).not.toHaveProperty("acceptedAnswers");
-    expect(sanitised.geoMode).toBe("locate_country");
-  });
+  it.each(["locate_country", "capital_of"] as const)(
+    "geo (%s — click-to-answer): never includes targetIso3 or acceptedAnswers",
+    (mode) => {
+      const input: QuestionForSanitizing = {
+        ...baseFields,
+        type: "geo",
+        acceptedAnswers: [SECRET_ANSWER],
+        geo: { mode, targetIso3: SECRET_ISO3, showLabels: false, showNeighbours: true },
+      };
+      const sanitised = toSanitisedQuestion(input);
+      const json = JSON.stringify(sanitised);
+      expect(json).not.toContain(SECRET_ISO3);
+      expect(json).not.toContain(SECRET_ANSWER);
+      expect(sanitised).not.toHaveProperty("targetIso3");
+      expect(sanitised).not.toHaveProperty("acceptedAnswers");
+      expect(sanitised.revealIso3).toBeUndefined();
+      expect(sanitised.geoMode).toBe(mode);
+    },
+  );
+
+  it.each(["name_country", "find_capital", "name_from_shape"] as const)(
+    "geo (%s — visual identification): reveals the target iso3 (the map must show it), still hides acceptedAnswers",
+    (mode) => {
+      const input: QuestionForSanitizing = {
+        ...baseFields,
+        type: "geo",
+        acceptedAnswers: [SECRET_ANSWER],
+        geo: { mode, targetIso3: "PRT", showLabels: false, showNeighbours: true },
+      };
+      const sanitised = toSanitisedQuestion(input);
+      const json = JSON.stringify(sanitised);
+      expect(sanitised.revealIso3).toBe("PRT");
+      expect(json).not.toContain(SECRET_ANSWER);
+      expect(sanitised).not.toHaveProperty("acceptedAnswers");
+    },
+  );
 
   it("preserves author credit and shared metadata for every type", () => {
     for (const type of ["open", "mcq", "image", "geo"] as const) {
