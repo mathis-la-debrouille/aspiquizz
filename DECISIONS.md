@@ -103,7 +103,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   Server Actions/Route Handlers/Middleware may call `cookies().set()`/`.delete()`), and our
   local-file libSQL mode (`file:./local.db`) needs Node's native bindings, which aren't
   available in the Edge runtime middleware normally runs in. So: `middleware.ts` only checks
-  whether the session cookie is *present* and redirects accordingly (fast, Edge-safe, no DB
+  whether the session cookie is _present_ and redirects accordingly (fast, Edge-safe, no DB
   call) — the real authority is `getSession()` (DB-backed, read-only, safe in Server
   Components), called from the `(app)` and `(auth)` layouts, which redirect on an invalid/
   expired/deactivated session regardless of what middleware decided. Net effect is unchanged
@@ -129,5 +129,48 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   injected `$ACTION_REF`/`$ACTION_KEY` fields) — they cannot be exercised with a plain curl
   POST. Verified the login/logout flow with Playwright instead, which doubles as a rough draft
   of e2e test 1 (formalized properly in Phase 12).
+
+## 2026-08-09 — Phase 4 (vector map engine)
+
+- `scripts/build-iso-lookup.ts` cross-referenced world-atlas's actual topology data (not
+  assumed from memory) against `countries.fr.json`: 165/193 countries have geometry at 110m,
+  193/193 at 50m, and exactly one (Tuvalu, 26 km² of atolls) has none at either resolution —
+  confirmed programmatically, see `tests/unit/iso-lookup.test.ts`. 37 non-sovereign
+  territories appear in the topology with their own numeric id (Greenland, Hong Kong, Puerto
+  Rico, …); each is hand-mapped to its sovereign parent's iso3 in `TERRITORY_PARENT`. 10
+  features (Western Sahara, Palestine, Taiwan, Antarctica, Vatican, N. Cyprus, Somaliland,
+  Kosovo, French Indian Ocean Ter., Siachen Glacier) have no parent and are explicitly
+  excluded — the generator hard-fails on any _unresolved_ feature so this list can't silently
+  go stale as world-atlas's data changes.
+- **Small/zero-geometry country fallback**: 27 countries (Singapore, Malta, Monaco, several
+  Caribbean/Pacific micro-states, …) have zero polygon in the 110m file used for the world
+  view — not just "hard to click", genuinely absent, confirmed by testing (Singapore was
+  initially unclickable in Playwright verification). Generated a static
+  `src/lib/geo/country-centroids.ts` (iso3 → seeded `[lon, lat]`) from `countries.fr.json`;
+  `GeoMap` diffs the loaded topology's iso3 set against this list and renders an extra
+  invisible hit-circle (`FallbackHitCircles`) for every country missing from what actually
+  loaded, projected live through the current projection. This is the same mechanism as the
+  brief's §8.2 "small country" hit-circle, just triggered by _zero_ on-screen area instead of
+  a _small_ one. Verified: Portugal, Lesotho, Singapore, France (the brief's own §16 Phase 4
+  test list) all resolve correctly by clicking.
+- Country/territory labels: a country whose parent has several scattered territories (France,
+  UK) would otherwise get its name repeated over every one of them (French Guiana labelled
+  "France" in South America, again in the Pacific, …). `Labels` picks only the
+  largest-on-screen feature per iso3 to label.
+- Camera framing (`focusOn`) animates the zoom transform's x/y/k with `d3-interpolate`'s
+  `interpolate()`, driven by `requestAnimationFrame`, not `Selection.transition()` — the
+  latter's TypeScript types need `@types/d3-transition`, an extra dependency for one call
+  site; the rAF version uses `d3-interpolate` (an explicitly locked dependency, brief §3)
+  directly and is easier to reason about.
+- **Testing methodology note**: Playwright's default element `.click()` targets the
+  bounding-box center, which lands outside the actual shape for thin/concave countries
+  (Portugal's bbox center falls in Spain). Verification instead finds a real on-screen pixel
+  where `document.elementFromPoint` — the browser's actual hit-test — resolves to the target
+  iso3, which is what confirms `GeoMap`'s click handling itself is correct rather than
+  papering over a flaky test.
+- Bundle code-splitting verified concretely, not just assumed: grepped the production build's
+  `.next/static/chunks` — d3-zoom internals (`scaleExtent`) only appear in lazily-loaded
+  chunks reachable from `/dev/map`'s `next/dynamic` import, never in the shared chunks any
+  other route loads.
 
 <!-- New decisions appended below as phases progress. -->
