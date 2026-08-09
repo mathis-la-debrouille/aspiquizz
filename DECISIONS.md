@@ -96,4 +96,38 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   column type, not `integer()` — these are floating-point coordinates; brief §5 doesn't specify
   a SQL type and `integer` would silently truncate precision.
 
+## 2026-08-09 — Phase 3 (auth)
+
+- **Middleware is a coarse, Edge-compatible gate (cookie presence only), not the authoritative
+  check.** Next.js forbids mutating cookies during a plain Server Component render (only
+  Server Actions/Route Handlers/Middleware may call `cookies().set()`/`.delete()`), and our
+  local-file libSQL mode (`file:./local.db`) needs Node's native bindings, which aren't
+  available in the Edge runtime middleware normally runs in. So: `middleware.ts` only checks
+  whether the session cookie is *present* and redirects accordingly (fast, Edge-safe, no DB
+  call) — the real authority is `getSession()` (DB-backed, read-only, safe in Server
+  Components), called from the `(app)` and `(auth)` layouts, which redirect on an invalid/
+  expired/deactivated session regardless of what middleware decided. Net effect is unchanged
+  from the brief's "middleware redirects unauthenticated users… and authenticated users away
+  from /connexion": every request still gets redirected correctly, just via two cooperating
+  layers instead of one. Verified via Playwright: unauth → /connexion, authed → bounced off
+  /connexion, /accueil unreachable both before login and after logout.
+- **Sliding session renewal lives in a Route Handler (`POST /api/session/touch`), not inside
+  `getSession()` itself**, for the same cookie-mutation-during-render reason above.
+  `getSession()` returns `needsRenewal: boolean`; a tiny client component (`SessionTouch`,
+  mounted in the `(app)` layout) fires the touch request once per shell mount when true. This
+  keeps `getSession()` safely callable from any Server Component while still achieving
+  activity-based sliding renewal without a full logout/login cycle.
+- Rate limiting verified end-to-end: 5 failed attempts succeed (with the generic error), the
+  6th returns "Trop de tentatives" — matches brief §9 exactly.
+- Fixed a real mobile layout bug while building the header: at 390px the nav + full user
+  cluster overflowed the viewport by ~30px, clipping the logout button off-screen. Fixed by
+  hiding the (currently redundant, single-link) nav below `sm:` and tightening gaps — not
+  deferred to the Phase 11 polish pass, since a clipped logout button is a correctness bug,
+  not a polish nicety. Revisit with a proper mobile nav drawer once /creer and /admin add more
+  links (Phase 6/10).
+- Server Actions require real browser form submission (multipart-encoded, with React's
+  injected `$ACTION_REF`/`$ACTION_KEY` fields) — they cannot be exercised with a plain curl
+  POST. Verified the login/logout flow with Playwright instead, which doubles as a rough draft
+  of e2e test 1 (formalized properly in Phase 12).
+
 <!-- New decisions appended below as phases progress. -->

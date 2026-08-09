@@ -94,9 +94,15 @@ public/sfx/
 tests/ (unit/, e2e/)
 ```
 
-Most of `src/server`, `src/components/game`, `src/components/map`, and `scripts/` don't exist
-yet — they land in the phases that need them (see the phase list below). Don't assume a path
-exists; check first.
+`src/server/db` and `src/server/auth` exist (Phases 2–3); `src/server/game` and
+`src/server/socket`, `src/components/game`, and `src/components/map` don't yet — they land in
+the phases that need them (see the phase list below). Don't assume a path exists; check first.
+
+Auth (Phase 3): `middleware.ts` is a coarse, Edge-compatible, cookie-presence-only gate: it
+doesn't touch the DB. The authoritative check is `getSession()` (`src/server/auth/session.ts`),
+called from the `(app)` and `(auth)` layouts. Sliding session renewal happens via
+`POST /api/session/touch` (a Route Handler), not inside `getSession()` — Next.js forbids
+mutating cookies during a plain Server Component render. See DECISIONS.md for why.
 
 ## Conventions
 
