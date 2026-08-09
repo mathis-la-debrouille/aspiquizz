@@ -173,4 +173,29 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   chunks reachable from `/dev/map`'s `next/dynamic` import, never in the shared chunks any
   other route loads.
 
+## 2026-08-09 — Phase 5 (grading + scoring)
+
+- Verified the Autriche/Australie pair empirically before writing tests, per brief §7's own
+  instruction to "verify your thresholds against this pair specifically and tune if needed":
+  distance is 4 against an 8-char threshold of 2, so the brief's literal thresholds already
+  reject it correctly — no tuning needed. Also checked a few other geography near-misses
+  (Chili/Chine, Niger/Nigeria, Bolivie/Colombie) the same way, computationally, rather than
+  eyeballing edit distances — one pair (Iran/Irak, distance 1 at the 4-7 char/threshold-1
+  bucket) *would* fuzzy-match, which is an inherent consequence of the brief's own specified
+  thresholds, not something introduced here; not "fixed" since the thresholds are locked.
+  `damerauLevenshtein` is the optimal-string-alignment variant (one adjacent transposition,
+  not the full unrestricted Damerau-Levenshtein) — standard for typo-tolerance and what's
+  conventionally meant by the term in this context.
+  `matchesAnyVariant`'s fuzzy threshold is computed from the **accepted variant's** normalised
+  length, not the player's input length — a very-wrong short guess shouldn't get an easier
+  threshold just because it happens to be short.
+- `computePoints`'s `streak` parameter is the resulting streak count *including* the answer
+  being scored (not the pre-answer streak) — confirmed against the brief's worked example
+  (msTaken=16000/20000, streak=3 → ×1.3 → 780 pts on a 1000-point question), which only
+  reproduces exactly under that reading.
+- `ScoringResult` returns `speedRatio`/`streakMultiplier` (the *factors*), not brief §12's
+  additive display breakdown ("rapidité +140 · série ×1,3") — reconstructing that exact
+  presentation string is a Phase 8 reveal-screen concern once real question/points data exists,
+  not something the pure scoring function needs to produce itself.
+
 <!-- New decisions appended below as phases progress. -->
