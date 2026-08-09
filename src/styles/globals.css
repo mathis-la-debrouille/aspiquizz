@@ -26,7 +26,9 @@
   --color-gold-deep: var(--gold-deep);
   --color-clay: var(--clay);
   --color-clay-soft: var(--clay-soft);
+  --color-clay-deep: var(--clay-deep);
   --color-plum: var(--plum);
+  --color-plum-deep: var(--plum-deep);
 
   --color-correct: var(--correct);
   --color-wrong: var(--wrong);
@@ -129,6 +131,22 @@
 }
 .btn-physical:active {
   transform: translateY(2px);
+}
+
+@keyframes ember-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.15);
+  }
+}
+
+.ember-flicker {
+  animation: ember-flicker 1.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

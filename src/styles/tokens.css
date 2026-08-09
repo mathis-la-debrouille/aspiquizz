@@ -27,7 +27,9 @@
   --gold-deep: #8a6a26;
   --clay: #c4593f;
   --clay-soft: #e08268;
+  --clay-deep: #833a29;
   --plum: #7a5a78;
+  --plum-deep: #4f3a4e;
 
   /* Semantic */
   --correct: var(--moss);

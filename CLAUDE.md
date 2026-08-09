@@ -13,23 +13,23 @@ identifiers, comments, and commit messages stay in **English**.
 
 ## Stack
 
-| Concern | Choice |
-|---|---|
-| Framework | Next.js 15, App Router, TypeScript strict, React 19 |
-| Runtime | Node ≥22, custom server (`server.ts`) run via `tsx` |
-| Styling | Tailwind CSS v4 (CSS-first `@theme`), CSS custom properties in `src/styles/tokens.css` |
-| Realtime | Socket.IO 4.x, attached to the same HTTP server as Next, path `/ws` |
-| DB | Turso (libSQL) via `@libsql/client`; falls back to `file:./local.db` locally |
-| ORM | Drizzle ORM + drizzle-kit |
-| Validation | Zod — every value crossing a trust boundary (server action, route handler, socket payload) is parsed with a schema from `src/lib/schemas/` |
-| Auth | Hand-rolled: `sessions` table + httpOnly cookie, `@node-rs/argon2` (argon2id) |
-| Maps | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images |
-| Animation | `motion`, used sparingly, `prefers-reduced-motion` always respected |
-| Sound | Plain `HTMLAudioElement`, no audio library |
-| Unit tests | Vitest (`tests/unit/`) |
-| E2E | Playwright (`tests/e2e/`) |
-| Package manager | pnpm |
-| Lint/format | ESLint flat config (`eslint.config.mjs`) + Prettier |
+| Concern         | Choice                                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework       | Next.js 15, App Router, TypeScript strict, React 19                                                                                        |
+| Runtime         | Node ≥22, custom server (`server.ts`) run via `tsx`                                                                                        |
+| Styling         | Tailwind CSS v4 (CSS-first `@theme`), CSS custom properties in `src/styles/tokens.css`                                                     |
+| Realtime        | Socket.IO 4.x, attached to the same HTTP server as Next, path `/ws`                                                                        |
+| DB              | Turso (libSQL) via `@libsql/client`; falls back to `file:./local.db` locally                                                               |
+| ORM             | Drizzle ORM + drizzle-kit                                                                                                                  |
+| Validation      | Zod — every value crossing a trust boundary (server action, route handler, socket payload) is parsed with a schema from `src/lib/schemas/` |
+| Auth            | Hand-rolled: `sessions` table + httpOnly cookie, `@node-rs/argon2` (argon2id)                                                              |
+| Maps            | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images               |
+| Animation       | `motion`, used sparingly, `prefers-reduced-motion` always respected                                                                        |
+| Sound           | Plain `HTMLAudioElement`, no audio library                                                                                                 |
+| Unit tests      | Vitest (`tests/unit/`)                                                                                                                     |
+| E2E             | Playwright (`tests/e2e/`)                                                                                                                  |
+| Package manager | pnpm                                                                                                                                       |
+| Lint/format     | ESLint flat config (`eslint.config.mjs`) + Prettier                                                                                        |
 
 **Why a custom server:** the app runs as a single deployable process — Next.js and Socket.IO
 share one Node process on one port (`server.ts`). This is incompatible with Turbopack, so dev
