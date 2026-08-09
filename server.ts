@@ -5,6 +5,7 @@
  */
 import { createServer } from "node:http";
 import next from "next";
+import { attachSocketServer } from "@/server/socket";
 
 const port = Number(process.env["PORT"] ?? 3000);
 const dev = process.env["NODE_ENV"] !== "production";
@@ -25,7 +26,7 @@ const server = createServer((req, res) => {
   void handle(req, res);
 });
 
-// Socket.IO is attached to this same server in Phase 7 (see src/server/socket).
+const io = await attachSocketServer(server);
 
 server.listen(port, () => {
   console.log(
@@ -40,6 +41,7 @@ server.listen(port, () => {
 
 function shutdown(signal: string): void {
   console.log(JSON.stringify({ event: "shutdown_start", signal }));
+  io.close();
   server.close(() => {
     console.log(JSON.stringify({ event: "shutdown_complete" }));
     process.exit(0);

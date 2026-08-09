@@ -94,9 +94,19 @@ public/sfx/
 tests/ (unit/, e2e/)
 ```
 
-`src/server/db`, `src/server/auth`, and `src/components/map` exist (Phases 2–4);
-`src/server/game`, `src/server/socket`, and `src/components/game` don't yet — they land in the
-phases that need them (see the phase list below). Don't assume a path exists; check first.
+`src/server/db`, `src/server/auth`, `src/components/map`, `src/server/game`, and
+`src/server/socket` exist (Phases 2–7); `src/components/game` only has the authoring-time
+`QuestionPreview` so far — the real timed/interactive game screens land in Phase 8. Don't
+assume a path exists; check first.
+
+Realtime (Phase 7): `server.ts` attaches Socket.IO via `src/server/socket/index.ts` (path
+`/ws`, cookie-handshake auth). The authoritative per-room game state is in-memory
+(`src/server/game/engine.ts`, one process, a `Map<code, RoomState>`) with the DB as the durable
+record — `RoomState` carries both `id` (the DB `rooms.id` ULID — use this for every
+`room_players`/`room_questions`/`answers` foreign key) and `code` (the public 6-char join code
+— use this for Socket.IO channel names and client-facing lookups). Mixing the two up compiles
+fine (both are `string`) but fails at runtime with a `FOREIGN KEY constraint failed` — see
+DECISIONS.md, this exact bug happened once already.
 
 Map (Phase 4): only import `GeoMap` via `next/dynamic(() => import("@/components/map"), { ssr:
 false })` — never a static import — so d3 stays out of shared bundles (verified against a real

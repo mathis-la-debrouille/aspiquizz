@@ -219,7 +219,7 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   `string` in the success branch across every call site; a real discriminant field fixes it
   outright rather than fighting inference.
 - **Bug found and fixed via the e2e check, not by inspection**: `ImageForm` always sent both the
-  default (empty) MCQ `choices` array *and* the open-answer fields regardless of which
+  default (empty) MCQ `choices` array _and_ the open-answer fields regardless of which
   `answerMode` was selected, so submitting in "open" mode failed the MCQ branch's
   choice-label validation even though MCQ fields were irrelevant. Fixed by only sending the
   active mode's fields. Caught by actually creating an image question end-to-end with
@@ -234,5 +234,54 @@ Running log of judgement calls made while building ASPI Quiz, in chronological o
   autosuggested Kenya/Portugal prompts) plus a quiz, all appearing in the pool with
   `Proposée par @testuser` author credit — this is e2e test 2's scenario, run ad hoc now and to
   be formalized into `tests/e2e` in Phase 12.
+
+## 2026-08-09 — Phase 7 (realtime core)
+
+- **Real bug found via testing, not inspection**: `room_players`/`room_questions`/`answers`
+  all foreign-key to `rooms.id` (the ULID primary key), not `rooms.code` (the 6-char public
+  join code) — but the engine/handlers were written passing `code` everywhere, since `code` is
+  what's used for Socket.IO channel names and client-facing lookups and felt like "the room
+  identifier" while writing that code. This surfaced immediately as a `FOREIGN KEY constraint
+  failed` the first time a real two-client test tried to join a room — never caught by
+  typecheck (both are plain `string`). Fixed by giving `RoomState` both `id` (DB writes) and
+  `code` (channels, client-facing), and auditing every `roomId:`/`eq(roomPlayers.roomId, …)`
+  call site. Reinforces why the "verify with a scripted client" step matters even for
+  server-only phases — this class of bug is invisible to `tsc`.
+- **`manualAdvance` added to `RoomConfig`**, not present in brief §5's literal config shape —
+  §11.1's own event table documents `host:next` as "advance during a reveal, if
+  `manualAdvance`," which only means something if the config carries that flag. Defaults
+  `false` so the automatic reveal→scoreboard→next pacing brief §11.3 describes is the default;
+  hosts opt into manual pacing.
+- **Private rooms are joinable by code but excluded from `lobby:rooms` broadcasts** — the only
+  join mechanism in the whole protocol is `room:join({code})`; there's no separate invite
+  event. Read literally, "private-without-invite" rejection would make private rooms
+  unjoinable by anyone including the host, which can't be right. Sharing the code *is* the
+  invite (the same pattern Kahoot/Jackbox-style games use) — `visibility` controls
+  discoverability in the public lobby list, not code-based joinability.
+- **`host:skip` is implemented via the game loop's own poll**, not a hard interrupt — it sets
+  `room.deadlineMs = Date.now()`, which `waitForAnswersOrDeadline`'s ~150ms poll loop picks up
+  on its next tick. Simpler than plumbing a cancellation signal through the loop, and a <150ms
+  skip latency is imperceptible for a host-initiated "everyone's answered, move on" action.
+  `host:next` (manual-advance) is similarly best-effort against the loop's existing `sleep()`
+  calls rather than an instant cut, for the same reason — see the comment at its handler.
+- **User-stats/XP/badge writes are deliberately absent from `finishGame`** — `highlights: []`
+  in the `room:finished` payload and a comment marking where Phase 9 hooks in. Per-question
+  `answers` rows and `room_players.score/streak/finalRank` (the durable per-game record) are
+  written; the cross-game aggregate stats table is explicitly Phase 9's job in the brief's own
+  phase breakdown (§16), not Phase 7's.
+- **Reconnection restores state without an explicit "late join = spectator until next
+  question" UI decision made here** — a socket that (re)joins a `running` room with no existing
+  `players` entry is marked `isSpectator: true` (scores from the next question onward, per
+  brief §11.3), while a *reconnecting* player (already has a `players` entry from before they
+  disconnected) keeps their existing score/streak/spectator status untouched — verified
+  end-to-end: disconnecting mid-question after answering correctly, then reconnecting, shows
+  the preserved (non-zero) score in the fresh `room:state`, not a reset.
+- Verified with real two-client `socket.io-client` scripts (not Playwright UI, since Phase 7
+  has none yet — the brief explicitly allows driving this from a scratch client): full game
+  loop start-to-finish with matching scoreboards on both clients; lobby visibility; host
+  disconnect → migration to the longest-present player → the original host reconnecting does
+  *not* reclaim host status; mid-game disconnect/reconnect with score preservation; sanitised
+  `question:show` payloads confirmed free of `isCorrect`/accepted-answer text over the wire
+  (not just in the pure `sanitize.ts` unit tests — the actual socket payload).
 
 <!-- New decisions appended below as phases progress. -->

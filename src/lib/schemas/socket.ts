@@ -1,0 +1,78 @@
+import { z } from "zod";
+
+/**
+ * Every client->server socket event payload, validated here — sockets are a
+ * trust boundary exactly like a server action or route handler (CLAUDE.md
+ * conventions). Server->client payloads are typed (src/server/socket/events.ts)
+ * but not Zod-validated: the server is the trusted party there.
+ */
+
+const roomCodeSchema = z.string().length(6);
+
+export const lobbySubscribeSchema = z.object({});
+
+export const roomConfigSchema = z.object({
+  questionCount: z.number().int().min(1).max(50),
+  defaultTimeLimitS: z.number().int().min(10).max(60),
+  categoryIds: z.array(z.string()).default([]),
+  difficultyMin: z.number().int().min(1).max(5),
+  difficultyMax: z.number().int().min(1).max(5),
+  allowLateJoin: z.boolean().default(true),
+  maxPlayers: z.number().int().min(2).max(50),
+  revealDurationS: z.number().int().min(2).max(20),
+  scoringMode: z.enum(["speed", "flat"]),
+  /**
+   * Not in the brief's §5 config literal, but §11.1's host:next event is
+   * explicitly documented as "advance during a reveal, if manualAdvance" —
+   * the config shape needs this flag for that event to mean anything. See
+   * DECISIONS.md.
+   */
+  manualAdvance: z.boolean().default(false),
+});
+
+export const roomCreateSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  source: z.enum(["quiz", "random"]),
+  quizId: z.string().optional(),
+  visibility: z.enum(["public", "private"]).default("public"),
+  config: roomConfigSchema,
+});
+
+export const roomJoinSchema = z.object({ code: roomCodeSchema });
+export const roomLeaveSchema = z.object({ code: roomCodeSchema });
+export const roomKickSchema = z.object({ code: roomCodeSchema, userId: z.string() });
+export const roomUpdateConfigSchema = z.object({ code: roomCodeSchema, config: roomConfigSchema });
+export const roomStartSchema = z.object({ code: roomCodeSchema });
+export const hostSkipSchema = z.object({ code: roomCodeSchema });
+export const hostNextSchema = z.object({ code: roomCodeSchema });
+
+export const playerReadySchema = z.object({ code: roomCodeSchema, ready: z.boolean() });
+
+const answerPayloadSchema = z.object({
+  text: z.string().max(200).optional(),
+  choiceIds: z.array(z.string()).max(6).optional(),
+  iso3: z.string().length(3).optional(),
+});
+
+export const answerSubmitSchema = z.object({
+  code: roomCodeSchema,
+  position: z.number().int().min(0),
+  payload: answerPayloadSchema,
+});
+
+export const chatSendSchema = z.object({
+  code: roomCodeSchema,
+  text: z.string().trim().min(1).max(200),
+});
+
+export const REACTION_EMOJIS = ["👏", "😂", "😮", "❤️", "🔥", "😢"] as const;
+export const reactionSendSchema = z.object({
+  code: roomCodeSchema,
+  emoji: z.enum(REACTION_EMOJIS),
+});
+
+export const timeSyncSchema = z.object({ clientTime: z.number() });
+
+export type RoomConfigInput = z.infer<typeof roomConfigSchema>;
+export type RoomCreateInput = z.infer<typeof roomCreateSchema>;
+export type AnswerPayloadInput = z.infer<typeof answerPayloadSchema>;
