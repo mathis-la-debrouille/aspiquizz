@@ -596,4 +596,31 @@ failed` the first time a real two-client test tried to join a room — never cau
   proven correct in `abandonStaleRooms` and the admin delete-guard queries, so this is
   low-risk without re-deriving a full game session to prove it live.
 
+## 2026-08-10 — Post-Phase-12 fix (Railway build failure)
+
+- **First real deploy attempt failed at `pnpm install --frozen-lockfile` on Railway** with
+  `ERROR packages field missing or empty`. Root cause: `pnpm-workspace.yaml` existed only to
+  record `pnpm approve-builds`'s decisions (`allowBuilds: esbuild/sharp/unrs-resolver` — native
+  postinstall scripts pnpm won't run unattended without this), but the file's mere presence
+  makes pnpm treat the repo as a monorepo workspace root, which then requires a `packages:` list.
+  Fixed by adding `packages: ["."]` — declares the root itself as the sole workspace member,
+  with no actual restructuring (this was never a monorepo).
+- **Also fixed, same deploy**: Railpack's build log showed `pnpm │ 9.15.9 │ railpack default (9)`
+  — it found no version hint and silently installed pnpm 9 against a lockfile written by the
+  locally-pinned 11.21.0, which is also what produced the `could not detect pnpm lockfile
+  version` warning right before the failure. `package.json` only had the non-standard
+  `devEngines.packageManager` field; added the Corepack-standard top-level `"packageManager":
+  "pnpm@11.21.0"` field, which Railpack (and most other build platforms) actually read to pin
+  an exact version. Also changed `devEngines.packageManager.version` from `^11.21.0` to an exact
+  `11.21.0` — pnpm itself warned the two fields "specify different versions" (a range vs. an
+  exact pin reads as different even when one satisfies the other) and said it would ignore
+  `packageManager` locally; matching them exactly removes that ambiguity for every tool reading
+  either field, not just pnpm's own CLI.
+- **Verification**: reproduced Railway's exact failure mode locally isn't possible (Railpack
+  internals aren't runnable here), but ran the actual command from its build log —
+  `pnpm install --frozen-lockfile --prefer-offline` — against a from-scratch `node_modules`
+  (moved the existing one aside first, so this wasn't just a cached no-op), which is the
+  precise step that failed in the Railway log. Succeeded cleanly post-fix, followed by
+  `pnpm typecheck`/`test`/`build`, all green.
+
 <!-- New decisions appended below as phases progress. -->

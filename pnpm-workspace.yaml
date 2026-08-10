@@ -1,3 +1,11 @@
+# Not an actual monorepo — this file only exists to record `pnpm approve-builds`'s decisions
+# below. Its mere presence makes pnpm treat the repo as a workspace root, which then requires
+# a `packages:` list or `pnpm install --frozen-lockfile` fails with "packages field missing or
+# empty" (this broke the Railway build — Railpack's pnpm install hit exactly that). Declaring
+# the root itself as the sole workspace member satisfies that without any real restructuring.
+packages:
+  - "."
+
 allowBuilds:
   esbuild: true
   sharp: true
