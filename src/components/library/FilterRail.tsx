@@ -257,6 +257,12 @@ export function FilterRail({
         onChange={(e) => setScalar("groupBy", e.target.checked ? "category" : "")}
       />
 
+      <Toggle
+        label="Jamais relue"
+        checked={query.neverReviewed}
+        onChange={(e) => setScalar("neverReviewed", e.target.checked ? "1" : "")}
+      />
+
       {activeChips.length > 0 && (
         <div className="flex flex-col gap-1.5 border-t border-border-soft pt-3">
           <div className="flex flex-wrap items-center gap-1.5">

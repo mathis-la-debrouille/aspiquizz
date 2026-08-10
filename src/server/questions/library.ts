@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, exists, gte, inArray, like, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, exists, gte, inArray, isNull, like, lte, or, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import {
   questions,
@@ -10,6 +10,7 @@ import {
   users,
   type QuestionType,
   type QuestionStatus,
+  type QuestionSource,
   type ColorToken,
 } from "@/server/db/schema";
 import type { QuestionLibraryQuery } from "@/lib/schemas/library";
@@ -32,6 +33,9 @@ export interface LibraryQuestionItem {
   authorAvatarSeed: string;
   mediaId: string | null;
   answerMode: "mcq" | "open" | null;
+  /** 'manual' (web form/edited), 'import' (reserved, no route produces it yet) or 'mcp' —
+   *  Addendum C.1. Drives the source badge on the card (never shown to players in-game). */
+  source: QuestionSource;
   createdAt: Date;
   timesAsked: number;
   timesCorrect: number;
@@ -96,6 +100,8 @@ export async function listLibraryQuestions(
 
   const authorId = query.author === "me" ? viewer.id : query.author;
   if (authorId) baseConditions.push(eq(questions.authorId, authorId));
+
+  if (query.neverReviewed) baseConditions.push(isNull(questions.reviewedAt));
 
   if (query.q) {
     const pattern = `%${query.q}%`;
@@ -171,6 +177,7 @@ export async function listLibraryQuestions(
         authorAvatarSeed: users.avatarSeed,
         mediaId: questions.mediaId,
         answerMode: questions.answerMode,
+        source: questions.source,
         createdAt: questions.createdAt,
         timesAsked: sql<number>`COALESCE(${questionStats.timesAsked}, 0)`,
         timesCorrect: sql<number>`COALESCE(${questionStats.timesCorrect}, 0)`,

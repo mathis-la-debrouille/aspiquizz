@@ -26,7 +26,7 @@ import {
 } from "@/server/db/schema";
 import { normalizeAnswer, damerauLevenshtein } from "@/server/game/grading";
 import { normalizeForComparison } from "@/server/categories/slug";
-import { createCategoryCore } from "@/server/categories/actions";
+import { createCategoryCore } from "@/server/categories/core";
 import { resolveCountry, type FullCountryRow } from "@/server/geo/resolve";
 import { questionDraftSchema } from "@/lib/schemas/ingest";
 

@@ -7,7 +7,7 @@ import { Eye, Pencil, Copy, Archive, ArchiveRestore } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { CategoryBadge, DifficultyBadge, QuestionTypeBadge } from "@/components/ui/Badge";
+import { CategoryBadge, DifficultyBadge, QuestionTypeBadge, SourceBadge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils/cn";
 import { duplicateQuestion, bulkSetQuestionStatus } from "@/server/questions/library-actions";
 import type { LibraryQuestionItem } from "@/server/questions/library";
@@ -102,6 +102,7 @@ export function LibraryCard({
         <QuestionTypeBadge type={q.type} />
         <CategoryBadge name={q.categoryName} colorToken={q.categoryColorToken} />
         <DifficultyBadge level={q.difficulty as 1 | 2 | 3 | 4 | 5} />
+        <SourceBadge source={q.source} />
       </div>
 
       {q.type === "image" && q.mediaId && (

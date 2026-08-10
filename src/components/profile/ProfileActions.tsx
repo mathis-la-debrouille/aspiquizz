@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Shuffle } from "lucide-react";
+import Link from "next/link";
+import { Pencil, Shuffle, Plug } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EditProfileModal } from "@/components/profile/EditProfileModal";
 import { rerollAvatarAction } from "@/server/progression/actions";
@@ -35,6 +36,11 @@ export function ProfileActions({ displayName, bio }: { displayName: string; bio:
       >
         Modifier
       </Button>
+      <Link href="/profil/parametres/mcp">
+        <Button variant="ghost" size="sm" leadingIcon={<Plug className="h-4 w-4" strokeWidth={1.5} />}>
+          Accès MCP
+        </Button>
+      </Link>
       <EditProfileModal
         open={editOpen}
         onClose={() => setEditOpen(false)}

@@ -1026,4 +1026,90 @@ Not yet built (next commits): the token management UI (C.4 — tokens exist only
 insert in the verification scripts above, deleted after use) and the "À relire" review queue
 (C.7) that's the actual reason a machine-authored draft ever becomes a real question.
 
+## 2026-08-10 — Addendum C.4/C.7: token management UI, review queue, and a real production-boot bug
+
+- **C.4 — `/profil/parametres/mcp`**: create/list/revoke tokens (name, scope checkboxes with
+  `questions:read` the only one checked by default — never a single "full access" preset, per
+  spec), a one-time reveal modal with both the JSON `mcpServers` config block and the `claude mcp
+  add` CLI form, generated from `PUBLIC_BASE_URL` (falling back to `window.location.origin` when
+  unset, e.g. local dev). Admin gets a read-only, cross-user token view folded into a new "MCP"
+  tab in `/admin` alongside the `audit_log` paper trail (one tab, not two — both answer "what
+  happened over MCP" at a glance). `TokenList` is one shared component for both surfaces
+  (`showOwner` toggles the extra column) rather than two near-duplicate tables.
+- **C.7 — "À relire" tab**: a third `/creer` tab, count in the tab label itself (no separate
+  badge slot on the shared `Tabs` component — not worth extending its API for this one caller).
+  Reuses `LibraryCard`'s underlying visual language and `PreviewPanel` as-is (Addendum A.6's own
+  point: the preview must never be a second, drifting implementation) but the row layout and
+  action set (Publier/Modifier/Rejeter, explicit buttons rather than LibraryCard's hover-reveal
+  icons) are a dedicated `ReviewQueueTab` — the existing card's hover actions are Aperçu/Modifier/
+  Dupliquer/Archiver, a different verb set than what a review queue needs front-and-centre.
+  Publish/reject is author-or-admin (checked in `review.ts`'s `requireReviewAccess`), deliberately
+  a separate, less restrictive action set from `library-actions.ts`'s existing `bulkSetQuestionStatus`
+  (admin-only, used by the main library's own bulk toolbar).
+- **Rejection reason has nowhere to live on `questions`** — C.1's schema additions list is
+  `source`/`reviewed_at`/`reviewed_by` only, no column for it. Rather than silently dropping an
+  admin's typed reason, `rejectDraftAction`/`bulkRejectDraftsAction` write it to `audit_log`
+  (action `question_reject`) when non-empty — preserved, just not on the row itself.
+- **"Jamais relue" filter (C.7)** added to both surfaces it names: the library's own
+  `FilterRail`/`questionLibraryQuerySchema` (a `neverReviewed` boolean — parsed from a raw `"1"`/
+  absent URL param, not `z.coerce.boolean()`, which coerces literally any non-empty string
+  including `"false"` to `true`) and `/admin`'s Questions panel (a client-side toggle over the
+  already-loaded rows, plus a small badge per row — this list is capped at 200 and never
+  paginated, so filtering client-side is simpler than threading a new server query param through
+  for a view this size).
+- **The "relire d'abord" nudge is genuinely once per browser session**, via `sessionStorage`
+  (not a React state flag that resets on navigation) plus a permanent `localStorage` "Ne plus
+  afficher" escape hatch, exactly as specified — nagging on every single publish would just
+  train people to click through it without reading.
+- **A real bug, found only by booting the actual production server** (`pnpm build` + `pnpm
+  start`, not just `next build`) **and hitting a route — not by typechecking, which caught
+  nothing wrong here**: the moment `server/mcp/register.ts` (statically imported by `server.ts`
+  via `server/mcp/transport.ts`, for the `/mcp` mount) pulled in `createCategoryCore` et al. from
+  `server/categories/actions.ts` — a `"use server"` file that imports `next/cache`'s
+  `revalidatePath` at module scope — booting the production server and hitting **any** page at
+  all (not just an MCP-related one; `/connexion` alone reproduced it) crashed the whole process
+  with `Error: Invariant: AsyncLocalStorage accessed in runtime where it is not available`,
+  thrown from deep inside Next's own `async-local-storage.js` the first time it got `require()`d.
+  Root cause: `server.ts` isn't compiled by Next's own bundler (it runs directly under `tsx`), so
+  a `"use server"` file's `next/cache` import reaching server.ts's top-level module graph this
+  way — never through Next's own request-scoped bootstrapping — leaves Next's shared
+  `AsyncLocalStorage` singleton in a state where Next's *own* internal code faults on first real
+  use. Isolated by a binary-search of throwaway repro scripts (raw SDK imports alone: fine; SDK +
+  `next` together: fine; the actual `transport.ts` import: crashed) before finding the exact
+  culprit import. **Fixed at the root, not the symptom**: extracted the four MCP-only category
+  mutation functions (`createCategoryCore`, `updateCategoryCore`, `mergeCategoriesCore`,
+  `deleteCategoryStrictCore`) into a new `server/categories/core.ts` — a plain module that
+  imports nothing from `next/cache` or `next/navigation`, ever — and made `server/categories/
+  actions.ts` a thin `"use server"` wrapper around it (only `createCategoryAction`'s web path adds
+  `revalidatePath`). `ingest.ts` and `register.ts` now import from `core.ts`. Verified the fix by
+  re-running the exact same production boot: `/connexion`, `/creer`, `/admin`, `/profil/
+  parametres/mcp` all render 200 with a real session cookie, `/mcp` still 401s a bad token and
+  runs a full real-SDK-client tool call end to end. This is the same class of "only a real boot
+  proves it" bug as the three unauthenticated-crash fixes at the end of Addendum A/B, and the
+  `revalidatePath` bug ingest.ts's own category resolution hit earlier in this same addendum
+  (C.1's commit) — same root cause pattern (a Next-request-scoped API reached from outside a Next
+  request), different manifestation (there it errored obviously at the call site; here it corrupted
+  shared state and crashed on an unrelated route).
+- **New unit tests**: `country-resolve.test.ts` (mirrors `country-search.test.ts`'s fixture and
+  regression cases, plus the iso2/name_en matching this resolver adds and an explicit test that a
+  weak/space-stripped match is surfaced as a suggestion, not silently auto-resolved — a
+  deliberate, documented conservatism difference from the combobox's own ranker, not a bug, and
+  is exactly what a first draft of this test file got wrong before being corrected to match the
+  intended behaviour), `mcp-tokens.test.ts` (format, uniqueness, prefix slicing, sha256
+  determinism), `mcp-rate-limit.test.ts` (the exact 61st-request and 201st-question boundaries
+  named in C.8's acceptance list, plus the 21st category mutation).
+- **Verification**: `pnpm typecheck`/`test` (126 tests, 8→11 files) and `pnpm build` pass. Full
+  production boot + curl pass repeated after the fix (see above) — this time clean on the first
+  try for the parts already covered by the C.1 commit's own verification, and newly clean for
+  every route this commit touches.
+
+Addendum C status: C.1–C.5 and C.7 are complete and committed. C.6 ("what MCP deliberately
+cannot do") was enforced throughout rather than built as a separate feature — see C.1's `image`
+rejection, the hard 25-per-call/200-per-day caps, and the tool list itself having no admin/
+publish/media surface. Not built: new Playwright suites (C.8's own e2e ask) — consistent with
+the standing direction earlier in this engagement not to pursue Playwright verification loops;
+every acceptance-criterion item that's meaningfully testable without a browser has a unit test or
+was exercised directly against a real seeded DB and a real running server instead, per this
+engagement's established methodology.
+
 <!-- New decisions appended below as phases progress. -->

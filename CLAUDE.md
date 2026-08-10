@@ -110,10 +110,22 @@ and `src/lib/schemas/library.ts` exist as of Addendum A; `src/components/categor
 reassignment used by both `/creer`'s Categories tab and every inline "+ Nouvelle catégorie"
 affordance) exist as of Addendum B.1/B.5; `src/lib/geo/country-search.ts` (pure search ranking,
 unit-tested) and `src/components/authoring/CountrySearchCombobox.tsx` exist as of Addendum B.3.
-`src/server/mcp` (tokens.ts, rate-limit.ts, log.ts, transport.ts, register.ts), `src/server/audit`
-(audit_log writer), `src/server/questions/ingest.ts` and `mcp-core.ts`, `src/lib/geo/country-
-resolve.ts`, `src/lib/schemas/ingest.ts` and `tokens.ts` exist as of Addendum C. `src/components/
-game` only has the authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+`src/server/mcp` (tokens.ts, rate-limit.ts, log.ts, transport.ts, register.ts, actions.ts,
+queries.ts), `src/server/audit` (audit_log writer), `src/server/categories/core.ts` (session-
+agnostic category mutations — see below), `src/server/questions/ingest.ts`, `mcp-core.ts` and
+`review.ts`, `src/lib/geo/country-resolve.ts`, `src/lib/schemas/ingest.ts` and `tokens.ts`,
+`src/components/tokens`, `src/app/(app)/profil/parametres/mcp` exist as of Addendum C.
+`src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path exists;
+check first.
+
+**`server/categories/core.ts` vs `server/categories/actions.ts`** (Addendum C): `core.ts` is a
+plain module — no `"use server"`, no `next/cache`/`next/navigation` import, ever. `actions.ts`
+("use server") is a thin wrapper that calls into it and adds `revalidatePath`. This split exists
+because `server.ts` statically imports the MCP transport, which imports `register.ts`, which
+needs these category-mutation functions — and `next/cache` reaching that far outside any Next
+request context previously crashed the *entire* production server on its first real page request
+(not just an MCP route), a real bug documented in DECISIONS.md. Any new function both ingest.ts/
+MCP and the web need must go in `core.ts`, never in a `"use server"` file.
 
 Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates every
 authoring-only behaviour — zoom controls, fullscreen, lazy 50m swap, auto-labels, the

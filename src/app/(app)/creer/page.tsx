@@ -7,6 +7,7 @@ import { listLibraryQuestions, listQuestionAuthors } from "@/server/questions/li
 // module rather than duplicated; the Categories tab (Addendum B.5) needs the exact same
 // question-count-per-category shape /admin's own Categories tab already computes.
 import { listAllCategories } from "@/server/admin/queries";
+import { listReviewQueue } from "@/server/questions/review";
 import { CreerPageShell } from "@/components/library/CreerPageShell";
 
 export const metadata: Metadata = { title: "Bibliothèque — ASPI Quiz" };
@@ -22,10 +23,11 @@ export default async function CreerPage({
   const rawParams = await searchParams;
   const query = parseLibraryQuery(rawParams);
 
-  const [result, categoryRows, authors] = await Promise.all([
+  const [result, categoryRows, authors, reviewQueueItems] = await Promise.all([
     listLibraryQuestions(query, session.user),
     listAllCategories(),
     listQuestionAuthors(),
+    listReviewQueue(),
   ]);
 
   return (
@@ -38,6 +40,7 @@ export default async function CreerPage({
       categoryOptions={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
       categoryRows={categoryRows}
       authors={authors}
+      reviewQueueItems={reviewQueueItems}
       viewerId={session.user.id}
       isAdmin={session.user.role === "admin"}
     />

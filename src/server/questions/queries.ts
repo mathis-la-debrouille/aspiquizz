@@ -39,6 +39,7 @@ export interface QuestionListItem {
   authorDisplayName: string;
   authorAvatarSeed: string;
   createdAt: Date;
+  reviewedAt: Date | null;
 }
 
 export interface ListQuestionsFilters {
@@ -75,6 +76,7 @@ export async function listQuestions(
       authorDisplayName: users.displayName,
       authorAvatarSeed: users.avatarSeed,
       createdAt: questions.createdAt,
+      reviewedAt: questions.reviewedAt,
     })
     .from(questions)
     .innerJoin(categories, eq(questions.categoryId, categories.id))

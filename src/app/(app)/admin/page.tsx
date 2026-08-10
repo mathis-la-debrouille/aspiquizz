@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { listAllUsers, listAllCategories, listAllMedia } from "@/server/admin/queries";
 import { listQuestions } from "@/server/questions/queries";
+import { listAllTokensForAdmin, listAuditLog } from "@/server/mcp/queries";
 import { AdminTabs } from "@/components/admin/AdminTabs";
 
 export const metadata: Metadata = { title: "Administration — ASPI Quiz" };
 
 export default async function AdminPage() {
-  const [users, categoryRows, mediaRows, questionRows] = await Promise.all([
+  const [users, categoryRows, mediaRows, questionRows, mcpTokens, auditRows] = await Promise.all([
     listAllUsers(),
     listAllCategories(),
     listAllMedia(),
     listQuestions({}), // no status filter — moderation sees drafts/archived too
+    listAllTokensForAdmin(),
+    listAuditLog(),
   ]);
 
   return (
@@ -21,6 +24,8 @@ export default async function AdminPage() {
         categories={categoryRows}
         media={mediaRows}
         questions={questionRows}
+        mcpTokens={mcpTokens}
+        auditRows={auditRows}
       />
     </div>
   );

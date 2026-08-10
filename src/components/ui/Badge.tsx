@@ -65,3 +65,13 @@ const QUESTION_TYPE_LABELS_FR = {
 export function QuestionTypeBadge({ type }: { type: keyof typeof QUESTION_TYPE_LABELS_FR }) {
   return <Badge tone="neutral">{QUESTION_TYPE_LABELS_FR[type]}</Badge>;
 }
+
+/** 'manual' renders nothing — the badge exists to tell the group a machine helped write a
+ *  question (Addendum C.7), not to label the (overwhelmingly common) human-authored case. Never
+ *  shown to players during a game — only on the library card/admin, both author-and-review-only
+ *  surfaces. */
+export function SourceBadge({ source }: { source: "manual" | "import" | "mcp" }) {
+  if (source === "manual") return null;
+  if (source === "mcp") return <Badge tone="plum">MCP</Badge>;
+  return <Badge tone="gold">Import</Badge>;
+}

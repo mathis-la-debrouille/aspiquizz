@@ -37,6 +37,12 @@ export const questionLibraryQuerySchema = z.object({
   scope: z.enum(LIBRARY_SCOPES).default("all"),
   sort: z.enum(LIBRARY_SORTS).default("recent"),
   groupBy: z.enum(LIBRARY_GROUP_BY).default("none"),
+  /** "Jamais relue" (Addendum C.7) — questions.reviewed_at IS NULL. Independent of `status`: a
+   *  published question can still be "never reviewed" if it was published before this addendum,
+   *  or authored manually (manual questions have no review step at all, so this reads as "never
+   *  went through one", not "is suspicious"). Parsed from the raw "1"/absent URL string below,
+   *  not `z.coerce.boolean()` — that coerces any non-empty string (including "false") to `true`. */
+  neverReviewed: z.boolean().default(false),
 });
 
 export type QuestionLibraryQuery = z.infer<typeof questionLibraryQuerySchema>;
@@ -66,6 +72,7 @@ export function parseLibraryQuery(searchParams: RawSearchParams): QuestionLibrar
     scope: toScalar(searchParams["scope"]),
     sort: toScalar(searchParams["sort"]),
     groupBy: toScalar(searchParams["groupBy"]),
+    neverReviewed: toScalar(searchParams["neverReviewed"]) === "1",
   });
   return parsed.success ? parsed.data : questionLibraryQuerySchema.parse({});
 }

@@ -29,7 +29,7 @@ import {
   updateCategoryCore,
   mergeCategoriesCore,
   deleteCategoryStrictCore,
-} from "@/server/categories/actions";
+} from "@/server/categories/core";
 import { createQuestionFromDraft, pickColorToken } from "@/server/questions/ingest";
 import { questionDraftSchema } from "@/lib/schemas/ingest";
 import {
