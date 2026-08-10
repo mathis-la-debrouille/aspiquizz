@@ -107,23 +107,16 @@ export async function updateCategoryAction(
     .set({ ...parsed.data, description: parsed.data.description ?? null })
     .where(eq(categories.id, categoryId));
   revalidatePath("/admin");
+  // Also reachable from /creer's Categories tab (Addendum B.5's lighter CategoryEditModal calls
+  // this same action) — a colour/name change must propagate to the library's chips/cards there
+  // too, not just /admin.
+  revalidatePath("/creer");
   return { ok: true };
 }
 
-export async function deleteCategoryAction(categoryId: string): Promise<ActionResult> {
-  await requireAdmin();
-  const [row] = await db
-    .select({ n: sql<number>`count(*)` })
-    .from(questions)
-    .where(eq(questions.categoryId, categoryId));
-  const inUse = Number(row?.n ?? 0);
-  if (inUse > 0) {
-    return { ok: false, error: `${inUse} question(s) utilisent encore cette catégorie.` };
-  }
-  await db.delete(categories).where(eq(categories.id, categoryId));
-  revalidatePath("/admin");
-  return { ok: true };
-}
+// deleteCategoryAction moved to server/categories/actions.ts (Addendum B.5) — that version
+// supports reassigning a category's questions before deleting instead of only blocking, and is
+// shared with the new /creer Categories tab. admin/CategoriesPanel.tsx uses it directly now.
 
 export async function deleteMediaAction(mediaId: string): Promise<ActionResult> {
   await requireAdmin();

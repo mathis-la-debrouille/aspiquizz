@@ -1,9 +1,9 @@
 "use client";
 
-import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils/cn";
+import { CategoryPicker } from "@/components/categories/CategoryPicker";
 import type { CategoryOption } from "@/components/authoring/types";
 
 export interface SharedFieldsValue {
@@ -18,29 +18,31 @@ interface SharedFieldsProps {
   value: SharedFieldsValue;
   onChange: (next: SharedFieldsValue) => void;
   categories: CategoryOption[];
+  /** Lifted state in the caller (QuestionComposer), not just the initial server-fetched list —
+   *  a category created inline (Addendum B.1) needs to show up without remounting the form. */
+  onCategoriesChange: (next: CategoryOption[]) => void;
 }
 
 const DIFFICULTY_LABELS = ["1", "2", "3", "4", "5"];
 
-export function SharedFields({ value, onChange, categories }: SharedFieldsProps) {
+export function SharedFields({
+  value,
+  onChange,
+  categories,
+  onCategoriesChange,
+}: SharedFieldsProps) {
   function set<K extends keyof SharedFieldsValue>(key: K, v: SharedFieldsValue[K]) {
     onChange({ ...value, [key]: v });
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <Select
-        label="Catégorie"
+      <CategoryPicker
+        categories={categories}
+        onCategoriesChange={onCategoriesChange}
         value={value.categoryId}
-        onChange={(e) => set("categoryId", e.target.value)}
-      >
-        <option value="">Choisir…</option>
-        {categories.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </Select>
+        onChange={(id) => set("categoryId", id)}
+      />
 
       <div className="flex flex-col gap-1.5">
         <span className="text-14 font-medium text-ink-mid">Difficulté</span>

@@ -146,6 +146,8 @@ export async function listLibraryQuestions(
         return desc(sql`COALESCE(${questionStats.timesAsked}, 0)`);
       case "never_played":
         return asc(sql`COALESCE(${questionStats.timesAsked}, 0)`);
+      case "category_name":
+        return asc(categories.name);
       case "recent":
       default:
         return desc(questions.createdAt);

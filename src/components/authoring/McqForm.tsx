@@ -41,10 +41,12 @@ function move<T>(list: T[], from: number, to: number): T[] {
 
 export function McqForm({
   categories,
+  onCategoriesChange,
   onCreated,
   initial,
 }: {
   categories: CategoryOption[];
+  onCategoriesChange: (next: CategoryOption[]) => void;
   onCreated: (id: string) => void;
   initial?: McqFormInitial;
 }) {
@@ -159,7 +161,12 @@ export function McqForm({
         )}
       </div>
 
-      <SharedFields value={shared} onChange={setShared} categories={categories} />
+      <SharedFields
+        value={shared}
+        onChange={setShared}
+        categories={categories}
+        onCategoriesChange={onCategoriesChange}
+      />
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button type="button" loading={pending} disabled={!canSubmit} onClick={handleSubmit}>

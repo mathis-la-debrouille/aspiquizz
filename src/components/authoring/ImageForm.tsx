@@ -41,10 +41,12 @@ export interface ImageFormInitial {
 
 export function ImageForm({
   categories,
+  onCategoriesChange,
   onCreated,
   initial,
 }: {
   categories: CategoryOption[];
+  onCategoriesChange: (next: CategoryOption[]) => void;
   onCreated: (id: string) => void;
   initial?: ImageFormInitial;
 }) {
@@ -264,7 +266,12 @@ export function ImageForm({
         </div>
       )}
 
-      <SharedFields value={shared} onChange={setShared} categories={categories} />
+      <SharedFields
+        value={shared}
+        onChange={setShared}
+        categories={categories}
+        onCategoriesChange={onCategoriesChange}
+      />
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button type="button" loading={pending} disabled={!canSubmit} onClick={handleSubmit}>

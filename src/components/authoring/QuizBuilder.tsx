@@ -8,6 +8,8 @@ import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { QuestionCard } from "@/components/authoring/QuestionCard";
+import { CategoryPicker } from "@/components/categories/CategoryPicker";
+import { NewCategoryButton } from "@/components/categories/NewCategoryButton";
 import { createQuiz } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuestionListItem } from "@/server/questions/queries";
@@ -21,12 +23,15 @@ function move<T>(list: T[], from: number, to: number): T[] {
 }
 
 export function QuizBuilder({
-  categories,
+  categories: initialCategories,
   pool,
 }: {
   categories: CategoryOption[];
   pool: QuestionListItem[];
 }) {
+  // Lifted (not just the server-fetched prop) so a category created inline (Addendum B.1) shows
+  // up immediately in both the quiz's own category select and the pool filter below.
+  const [categories, setCategories] = useState(initialCategories);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -90,18 +95,13 @@ export function QuizBuilder({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <Select
+        <CategoryPicker
           label="Catégorie (optionnel)"
+          categories={categories}
+          onCategoriesChange={setCategories}
           value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <option value="">—</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          onChange={setCategoryId}
+        />
 
         <div className="flex flex-col gap-2">
           <span className="text-14 font-medium text-ink-mid">
@@ -183,7 +183,10 @@ export function QuizBuilder({
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-14 font-medium text-ink-mid">Vivier de questions</span>
+        <div className="flex items-center justify-between">
+          <span className="text-14 font-medium text-ink-mid">Vivier de questions</span>
+          <NewCategoryButton categories={categories} onCategoriesChange={setCategories} />
+        </div>
         <div className="flex gap-2">
           <Input
             placeholder="Rechercher…"

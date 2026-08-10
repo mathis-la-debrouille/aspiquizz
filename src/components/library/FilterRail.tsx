@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
+import { Toggle } from "@/components/ui/Toggle";
 import { cn } from "@/lib/utils/cn";
 import { LIBRARY_STATUSES, QUESTION_TYPES, type QuestionLibraryQuery } from "@/lib/schemas/library";
 import type { CategoryOption } from "@/components/authoring/types";
@@ -249,6 +250,12 @@ export function FilterRail({
           ))}
         </div>
       </div>
+
+      <Toggle
+        label="Grouper par catégorie"
+        checked={query.groupBy === "category"}
+        onChange={(e) => setScalar("groupBy", e.target.checked ? "category" : "")}
+      />
 
       {activeChips.length > 0 && (
         <div className="flex flex-col gap-1.5 border-t border-border-soft pt-3">

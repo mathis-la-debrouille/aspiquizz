@@ -6,23 +6,13 @@ import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { CategoryBadge } from "@/components/ui/Badge";
 import { CategoryFormModal } from "@/components/admin/CategoryFormModal";
-import { deleteCategoryAction } from "@/server/admin/actions";
+import { DeleteCategoryModal, type CategoryRef } from "@/components/categories/DeleteCategoryModal";
 import type { AdminCategoryRow } from "@/server/admin/queries";
 
 export function CategoriesPanel({ categories }: { categories: AdminCategoryRow[] }) {
   // undefined = modal closed, null = create, a row = edit — mirrors CategoryFormModal's prop.
   const [editing, setEditing] = useState<AdminCategoryRow | null | undefined>(undefined);
-  const [error, setError] = useState<string | null>(null);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-
-  async function handleDelete(cat: AdminCategoryRow) {
-    if (!confirm(`Supprimer la catégorie « ${cat.name} » ?`)) return;
-    setPendingId(cat.id);
-    setError(null);
-    const result = await deleteCategoryAction(cat.id);
-    setPendingId(null);
-    if (!result.ok) setError(result.error);
-  }
+  const [deleting, setDeleting] = useState<CategoryRef | null>(null);
 
   return (
     <Panel
@@ -34,7 +24,6 @@ export function CategoriesPanel({ categories }: { categories: AdminCategoryRow[]
         </Button>
       }
     >
-      {error && <p className="mb-3 text-14 text-clay-soft">{error}</p>}
       <div className="flex flex-col divide-y divide-border-soft">
         {categories.map((c) => (
           <div key={c.id} className="flex flex-wrap items-center gap-3 py-3">
@@ -53,8 +42,7 @@ export function CategoriesPanel({ categories }: { categories: AdminCategoryRow[]
               variant="ghost"
               size="sm"
               aria-label="Supprimer"
-              loading={pendingId === c.id}
-              onClick={() => handleDelete(c)}
+              onClick={() => setDeleting({ id: c.id, name: c.name })}
             >
               <Trash2 className="h-4 w-4" strokeWidth={1.5} />
             </Button>
@@ -65,6 +53,13 @@ export function CategoriesPanel({ categories }: { categories: AdminCategoryRow[]
         open={editing !== undefined}
         onClose={() => setEditing(undefined)}
         category={editing ?? null}
+      />
+      <DeleteCategoryModal
+        open={deleting !== null}
+        onClose={() => setDeleting(null)}
+        category={deleting}
+        otherCategories={categories.map((c) => ({ id: c.id, name: c.name }))}
+        onDeleted={() => setDeleting(null)}
       />
     </Panel>
   );

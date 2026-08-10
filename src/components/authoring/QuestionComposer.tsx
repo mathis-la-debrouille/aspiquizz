@@ -24,7 +24,7 @@ export interface EditingQuestion {
 }
 
 export function QuestionComposer({
-  categories,
+  categories: initialCategories,
   editing,
 }: {
   categories: CategoryOption[];
@@ -32,6 +32,9 @@ export function QuestionComposer({
 }) {
   const [type, setType] = useState<QuestionType | null>(editing?.type ?? null);
   const [createdId, setCreatedId] = useState<string | null>(null);
+  // Lifted here (not just the server-fetched prop) so a category created inline from any of the
+  // four forms below (Addendum B.1) shows up immediately without remounting the form.
+  const [categories, setCategories] = useState(initialCategories);
 
   if (createdId) {
     return (
@@ -81,15 +84,32 @@ export function QuestionComposer({
     <div className="flex flex-col gap-4">
       {back}
       {type === "open" && (
-        <OpenForm categories={categories} onCreated={setCreatedId} initial={editing?.open} />
+        <OpenForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+          initial={editing?.open}
+        />
       )}
       {type === "mcq" && (
-        <McqForm categories={categories} onCreated={setCreatedId} initial={editing?.mcq} />
+        <McqForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+          initial={editing?.mcq}
+        />
       )}
       {type === "image" && (
-        <ImageForm categories={categories} onCreated={setCreatedId} initial={editing?.image} />
+        <ImageForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+          initial={editing?.image}
+        />
       )}
-      {type === "geo" && <GeoForm categories={categories} onCreated={setCreatedId} />}
+      {type === "geo" && (
+        <GeoForm categories={categories} onCategoriesChange={setCategories} onCreated={setCreatedId} />
+      )}
     </div>
   );
 }

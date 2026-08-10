@@ -68,9 +68,11 @@ function suggestAnswers(mode: GeoMode, country: CountryOption | undefined): stri
 
 export function GeoForm({
   categories,
+  onCategoriesChange,
   onCreated,
 }: {
   categories: CategoryOption[];
+  onCategoriesChange: (next: CategoryOption[]) => void;
   onCreated: (id: string) => void;
 }) {
   const [shared, setShared] = useState(DEFAULT_SHARED);
@@ -225,7 +227,12 @@ export function GeoForm({
         />
       </div>
 
-      <SharedFields value={shared} onChange={setShared} categories={categories} />
+      <SharedFields
+        value={shared}
+        onChange={setShared}
+        categories={categories}
+        onCategoriesChange={onCategoriesChange}
+      />
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button type="button" loading={pending} disabled={!canSubmit} onClick={handleSubmit}>

@@ -5,12 +5,10 @@ import { ArrowUpDown } from "lucide-react";
 import { CategoryBadge, QuestionTypeBadge } from "@/components/ui/Badge";
 import type { LibraryQuestionItem } from "@/server/questions/library";
 
-// "category" gains a sort (category_name) once Addendum B.5 extends LIBRARY_SORTS to match —
-// deliberately not wired here yet, see that task.
 const COLUMNS: { key: string; label: string; sort?: string }[] = [
   { key: "type", label: "Type" },
   { key: "prompt", label: "Question" },
-  { key: "category", label: "Catégorie" },
+  { key: "category", label: "Catégorie", sort: "category_name" },
   { key: "difficulty", label: "Difficulté", sort: "difficulty_desc" },
   { key: "author", label: "Auteur" },
   { key: "status", label: "Statut" },

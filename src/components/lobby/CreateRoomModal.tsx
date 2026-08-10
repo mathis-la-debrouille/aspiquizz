@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioCard } from "@/components/ui/RadioCard";
 import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
+import { NewCategoryButton } from "@/components/categories/NewCategoryButton";
 import { useSocket } from "@/lib/socket/client";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuizListItem } from "@/server/questions/queries";
@@ -16,7 +17,7 @@ import type { QuizListItem } from "@/server/questions/queries";
 export function CreateRoomModal({
   open,
   onClose,
-  categories,
+  categories: initialCategories,
   quizzes,
 }: {
   open: boolean;
@@ -26,6 +27,9 @@ export function CreateRoomModal({
 }) {
   const router = useRouter();
   const { socket } = useSocket();
+  // Lifted (not just the server-fetched prop) so a category created inline (Addendum B.1) shows
+  // up immediately in this filter.
+  const [categories, setCategories] = useState(initialCategories);
   const [name, setName] = useState("");
   const [source, setSource] = useState<"quiz" | "random">("random");
   const [quizId, setQuizId] = useState("");
@@ -128,9 +132,12 @@ export function CreateRoomModal({
           </Select>
         ) : (
           <div className="flex flex-col gap-2">
-            <span className="text-14 font-medium text-ink-mid">
-              Catégories (toutes si aucune choisie)
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-14 font-medium text-ink-mid">
+                Catégories (toutes si aucune choisie)
+              </span>
+              <NewCategoryButton categories={categories} onCategoriesChange={setCategories} />
+            </div>
             <div className="flex flex-wrap gap-3">
               {categories.map((c) => (
                 <Checkbox

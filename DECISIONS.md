@@ -732,4 +732,51 @@ below is a real, acknowledged gap — not an oversight.
   logged-in browser click-through, consistent with the standing direction to not chase
   Playwright verification loops.
 
+## 2026-08-10 — Addendum B.1 + B.5 (inline category creation + management tab)
+
+Built together — B.5 explicitly folds into the library rather than being a separate page, and
+both revolve around the same new `src/server/categories/actions.ts` module.
+
+- **Two `createCategoryAction`s now exist, deliberately.** Admin's own (server/admin/actions.ts,
+  Phase 10) is a full-control tool — explicit slug/position, admin-only, used by /admin's own
+  "+ Catégorie". The new one (server/categories/actions.ts) is B.1's "quick, inline, from
+  wherever a category is picked" path — open to any logged-in user, slug always server-derived
+  (`slugify()`, never trusted from the client), position always auto-appends
+  (`max(position) + 1`). These aren't duplication so much as two different tools for two
+  different trust levels or the same underlying table; admin's create was left untouched.
+  `deleteCategoryAction`, however, *was* consolidated: the old admin-only version only blocked
+  deletion when in use, the new shared one (in the new module) offers reassignment instead —
+  `/admin`'s `CategoriesPanel` now uses the richer one too, a straight upgrade with no downside.
+- **Name uniqueness is case/accent-insensitive, checked in JS, not SQL.** SQLite has no built-in
+  accent folding without an extension; the category count is small enough (fetch all, normalize
+  via the same NFD-strip-combining-marks approach grading.ts's `normalizeAnswer` uses, compare)
+  that a full-table scan here is a non-issue. Verified directly: "Géographie" and "geographie"
+  collide, "Le Sport" and "Sport" deliberately don't (this isn't the grading pipeline, which
+  also strips French articles — a category legitimately named "Le Sport" shouldn't collide with
+  "Sport").
+- **Reorder is up/down arrows, not real drag-and-drop.** No DnD library is a dependency of this
+  project, and the existing "reorder" UI elsewhere in this codebase (MCQ option ordering in the
+  question form) already uses the same arrow-button pattern rather than drag — adding a new
+  dependency just for a ~10-row admin list wasn't worth it. `moveCategoryAction` swaps
+  `position` with the adjacent category in sort order; verified directly against a real DB.
+- **`groupBy=category` only groups the cards view, not the table.** Grouping a `<table>` into
+  per-category sections (nested tbodies or repeated table fragments) is materially more layout
+  work for what the addendum itself treats as a secondary display mode. Grouping itself is
+  client-side, over whatever page of results is already loaded (`useMemo` partitioning the flat
+  `items` array by `categoryId`) — "the existing sort applied inside each group" falls out for
+  free since it's just partitioning an already-sorted list, not a second server round trip.
+  Collapsible sections are a native `<details>`/`<summary>`, not a hand-rolled disclosure widget.
+- **Colour propagation**: every surface that shows a category colour (library cards/table,
+  filter rail chips, the Categories tab, admin's own panel) reads `categories.colorToken` live
+  from the DB on each server render — there's no cached/duplicated copy of the colour anywhere
+  to go stale. The one thing that needed an explicit fix: `updateCategoryAction` only called
+  `revalidatePath("/admin")`, but the new lighter `CategoryEditModal` (B.5's tab) calls that same
+  action from `/creer` — added a second `revalidatePath("/creer")` there.
+- **Verification**: `pnpm typecheck`/`test` pass, `pnpm build` succeeds. The pure slugify/
+  normalize logic checked directly (`node -e`) against the addendum's own worked example
+  ("Géographie Physique" → `geographie-physique`, matching its "Identifiant :
+  geographie-physique" sample exactly). The DB-touching logic — position auto-append on create,
+  case/accent-insensitive clash detection, position-swap on move, reassign-then-delete — was
+  verified by replicating each action's exact steps against a real seeded local DB.
+
 <!-- New decisions appended below as phases progress. -->

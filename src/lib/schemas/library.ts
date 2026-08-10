@@ -20,6 +20,8 @@ export const LIBRARY_SORTS = [
   "success_rate_desc",
   "most_played",
   "never_played",
+  /** Table-view column sort, added by Addendum B.5. */
+  "category_name",
 ] as const;
 export const LIBRARY_GROUP_BY = ["none", "category"] as const;
 

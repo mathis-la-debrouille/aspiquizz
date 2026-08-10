@@ -104,8 +104,11 @@ and `src/components/leaderboard` exist as of Phase 9; `src/server/admin` (guard.
 `src/lib/sound/engine.ts` (procedural WebAudio cues — no `public/sfx/` files, see DECISIONS.md)
 and `src/components/app-shell/MobileNav.tsx` exist as of Phase 11; `src/components/library`,
 `src/server/questions/library.ts` (read) and `library-actions.ts` ("use server" writes/RPCs),
-and `src/lib/schemas/library.ts` exist as of Addendum A. `src/components/game` only has the
-authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+and `src/lib/schemas/library.ts` exist as of Addendum A; `src/components/categories` and
+`src/server/categories/actions.ts` (the open-to-everyone category creation/reorder/delete-with-
+reassignment used by both `/creer`'s Categories tab and every inline "+ Nouvelle catégorie"
+affordance) exist as of Addendum B.1/B.5. `src/components/game` only has the authoring-time
+`QuestionPreview`. Don't assume a path exists; check first.
 
 Question library (Addendum A): `/creer` is the library (browse/filter/preview), not the
 creation form — that moved to `/creer/question` (create) and `/creer/question/[id]` (edit,

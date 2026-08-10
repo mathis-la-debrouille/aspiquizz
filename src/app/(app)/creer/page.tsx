@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { desc } from "drizzle-orm";
-import { db } from "@/server/db";
-import { categories } from "@/server/db/schema";
 import { getSession } from "@/server/auth/session";
 import { parseLibraryQuery } from "@/lib/schemas/library";
 import { listLibraryQuestions, listQuestionAuthors } from "@/server/questions/library";
-import { LibraryClient } from "@/components/library/LibraryClient";
+// listAllCategories is a plain read (no auth check baked in) — reused here from the admin
+// module rather than duplicated; the Categories tab (Addendum B.5) needs the exact same
+// question-count-per-category shape /admin's own Categories tab already computes.
+import { listAllCategories } from "@/server/admin/queries";
+import { CreerPageShell } from "@/components/library/CreerPageShell";
 
 export const metadata: Metadata = { title: "Bibliothèque — ASPI Quiz" };
 
@@ -23,18 +24,19 @@ export default async function CreerPage({
 
   const [result, categoryRows, authors] = await Promise.all([
     listLibraryQuestions(query, session.user),
-    db.select().from(categories).orderBy(desc(categories.position)),
+    listAllCategories(),
     listQuestionAuthors(),
   ]);
 
   return (
-    <LibraryClient
+    <CreerPageShell
       query={query}
       initialItems={result.items}
       total={result.total}
       facets={result.facets}
       hasMore={result.hasMore}
-      categories={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
+      categoryOptions={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
+      categoryRows={categoryRows}
       authors={authors}
       viewerId={session.user.id}
       isAdmin={session.user.role === "admin"}

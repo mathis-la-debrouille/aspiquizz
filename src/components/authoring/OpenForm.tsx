@@ -31,10 +31,12 @@ export interface OpenFormInitial {
 
 export function OpenForm({
   categories,
+  onCategoriesChange,
   onCreated,
   initial,
 }: {
   categories: CategoryOption[];
+  onCategoriesChange: (next: CategoryOption[]) => void;
   onCreated: (id: string) => void;
   /** Present in edit mode (/creer/question/[id]) — saves call updateOpenQuestion instead of
    *  createOpenQuestion, everything else about the form is identical. */
@@ -125,7 +127,12 @@ export function OpenForm({
         onChange={(e) => setStrict(e.target.checked)}
       />
 
-      <SharedFields value={shared} onChange={setShared} categories={categories} />
+      <SharedFields
+        value={shared}
+        onChange={setShared}
+        categories={categories}
+        onCategoriesChange={onCategoriesChange}
+      />
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button
