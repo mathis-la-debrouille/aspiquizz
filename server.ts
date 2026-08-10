@@ -11,6 +11,7 @@ import { prepareForShutdown } from "@/server/game/engine";
 import { client as dbClient } from "@/server/db";
 import { runMigrations } from "./scripts/migrate";
 import { backfillQuestionStats } from "./scripts/backfill-question-stats";
+import { handleMcpRequest } from "@/server/mcp/transport";
 
 const port = Number(process.env["PORT"] ?? 3000);
 const dev = process.env["NODE_ENV"] !== "production";
@@ -44,6 +45,12 @@ const server = createServer((req, res) => {
   // every "request" listener for every request, so without this guard our handler would race
   // Socket.IO's, routing its polling handshake into Next's router (a 404) instead.
   if (req.url?.startsWith("/ws")) return;
+  // Addendum C.2 — mounted here, before Next's handler, so the session-cookie middleware never
+  // sees a /mcp request at all (bearer-token auth only, see server/mcp/transport.ts).
+  if (req.url === "/mcp" || req.url?.startsWith("/mcp?")) {
+    void handleMcpRequest(req, res);
+    return;
+  }
   void handle(req, res);
 });
 

@@ -26,6 +26,7 @@ identifiers, comments, and commit messages stay in **English**.
 | Maps            | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images               |
 | Animation       | `motion`, used sparingly, `prefers-reduced-motion` always respected                                                                        |
 | Sound           | Procedural WebAudio synth (`src/lib/sound/engine.ts`), no audio files/library — see DECISIONS.md (Phase 11)                                |
+| MCP             | `@modelcontextprotocol/sdk`, mounted on the raw HTTP server (`/mcp`), personal access tokens — see Addendum C, `src/server/mcp/`            |
 | Unit tests      | Vitest (`tests/unit/`)                                                                                                                     |
 | E2E             | Playwright (`tests/e2e/`)                                                                                                                  |
 | Package manager | pnpm                                                                                                                                       |
@@ -109,14 +110,28 @@ and `src/lib/schemas/library.ts` exist as of Addendum A; `src/components/categor
 reassignment used by both `/creer`'s Categories tab and every inline "+ Nouvelle catégorie"
 affordance) exist as of Addendum B.1/B.5; `src/lib/geo/country-search.ts` (pure search ranking,
 unit-tested) and `src/components/authoring/CountrySearchCombobox.tsx` exist as of Addendum B.3.
-`src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path
-exists; check first.
+`src/server/mcp` (tokens.ts, rate-limit.ts, log.ts, transport.ts, register.ts), `src/server/audit`
+(audit_log writer), `src/server/questions/ingest.ts` and `mcp-core.ts`, `src/lib/geo/country-
+resolve.ts`, `src/lib/schemas/ingest.ts` and `tokens.ts` exist as of Addendum C. `src/components/
+game` only has the authoring-time `QuestionPreview`. Don't assume a path exists; check first.
 
 Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates every
 authoring-only behaviour — zoom controls, fullscreen, lazy 50m swap, auto-labels, the
 touch/fullscreen-only pending-tap flow, the hover tooltip. Every in-game call site
 (`GeoAnswerSurface`, `RevealScreen`, `QuestionPreview`, `/dev/map`) passes nothing and is
 unaffected — never set `editorChrome` outside `GeoForm`.
+
+MCP authoring server (Addendum C): `POST`/`GET /mcp` is mounted directly on the raw HTTP server
+in `server.ts`, before Next's own handler — never a Next route handler, so the session-cookie
+middleware never runs on it. Auth is a personal access token (`api_tokens` table,
+`aspi_pat_`-prefixed, sha256-hashed, `timingSafeEqual`-compared), never a session cookie.
+`src/server/questions/ingest.ts`'s `createQuestionFromDraft` is the *only* `insert(questions)`
+call site for question creation — the web authoring forms were rewired to go through it too (the
+one exception is `image`, which stays on its own direct-insert path since MCP/import have no
+image variant at all). Every MCP-created question lands `status: 'draft'`, unconditionally,
+enforced at the insert itself, not just by no tool exposing a `statut` parameter. `MCP_ENABLED=
+false` makes `/mcp` 404 with no redeploy. See `src/server/mcp/register.ts` for the full tool/
+resource/prompt list and DECISIONS.md for the auth/rate-limit design.
 
 Empty-room deletion (Addendum B.4, supersedes brief §11.3's 60s figure): a room with zero
 connected players is deleted (not just marked `abandoned`) after 2 minutes —

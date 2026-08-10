@@ -73,6 +73,61 @@ export const sessions = sqliteTable(
 );
 
 // ---------------------------------------------------------------------------
+// MCP personal access tokens (Addendum C.3) — hand-rolled like session auth, sha256
+// (not argon2: the secret is high-entropy random, not a guessable human password).
+// ---------------------------------------------------------------------------
+
+export type ApiTokenScope = "questions:read" | "questions:write" | "categories:write";
+
+export const apiTokens = sqliteTable(
+  "api_tokens",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    name: text("name").notNull(),
+    tokenHash: text("token_hash").notNull(),
+    /** First 12 chars of the full token — narrows the candidate set for lookup; the actual
+     *  trust boundary is the timingSafeEqual comparison against tokenHash, not this field. */
+    tokenPrefix: text("token_prefix").notNull(),
+    scopes: text("scopes", { mode: "json" }).$type<ApiTokenScope[]>().notNull(),
+    createdAt: createdAt(),
+    lastUsedAt: integer("last_used_at", { mode: "timestamp" }),
+    expiresAt: integer("expires_at", { mode: "timestamp" }),
+    revokedAt: integer("revoked_at", { mode: "timestamp" }),
+  },
+  (t) => [
+    index("api_tokens_token_prefix_idx").on(t.tokenPrefix),
+    index("api_tokens_user_id_idx").on(t.userId),
+  ],
+);
+
+/** Every category mutation made over MCP (and, for the same paper-trail reason, the admin
+ *  panel's own category edits) writes one row here — surfaced read-only in /admin. Generic
+ *  `action`/before/after JSON rather than one table per action, since the shape of "what
+ *  changed" varies per action and this is a log, not a queryable domain table. */
+export const auditLog = sqliteTable(
+  "audit_log",
+  {
+    id: id(),
+    actorUserId: text("actor_user_id")
+      .notNull()
+      .references(() => users.id),
+    /** Null when the mutation came from the web UI rather than an MCP call. */
+    tokenId: text("token_id").references(() => apiTokens.id),
+    action: text("action").notNull(),
+    beforeJson: text("before_json", { mode: "json" }).$type<unknown>(),
+    afterJson: text("after_json", { mode: "json" }).$type<unknown>(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("audit_log_actor_user_id_idx").on(t.actorUserId),
+    index("audit_log_created_at_idx").on(t.createdAt),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Content taxonomy
 // ---------------------------------------------------------------------------
 
@@ -118,6 +173,11 @@ export const media = sqliteTable(
 export type QuestionType = "open" | "mcq" | "image" | "geo";
 export type QuestionStatus = "draft" | "published" | "archived";
 export type AnswerMode = "mcq" | "open";
+/** Addendum C.1 — 'manual' is the web form, 'import' is reserved for a future bulk-JSON path
+ *  (not built yet — no route produces it today), 'mcp' is every MCP tool call. All three funnel
+ *  through the same createQuestionFromDraft (ingest.ts); this column is provenance only, never a
+ *  trust signal on its own (an 'mcp' question is still just a 'draft' like any other). */
+export type QuestionSource = "manual" | "import" | "mcp";
 
 export const questions = sqliteTable(
   "questions",
@@ -143,6 +203,10 @@ export const questions = sqliteTable(
     /** Damerau-Levenshtein fuzzy matching disabled when true — see grading.ts (Phase 5). */
     strict: integer("strict", { mode: "boolean" }).notNull().default(false),
     status: text("status").$type<QuestionStatus>().notNull().default("draft"),
+    // Addendum C.1 — provenance + human review trail for machine-authored drafts.
+    source: text("source").$type<QuestionSource>().notNull().default("manual"),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+    reviewedBy: text("reviewed_by").references(() => users.id),
     createdAt: createdAt(),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
@@ -154,6 +218,7 @@ export const questions = sqliteTable(
     index("questions_status_idx").on(t.status),
     index("questions_type_idx").on(t.type),
     index("questions_media_id_idx").on(t.mediaId),
+    index("questions_source_status_idx").on(t.source, t.status),
   ],
 );
 

@@ -926,4 +926,104 @@ side logic (queries, mutations, ranking functions) directly against a real seede
 database, which is where the three bugs above and the two search-ranking bugs in B.3 were
 actually found — in each case, by running the code, not by reading it.
 
+## 2026-08-10 — Addendum C.1/C.2/C.3/C.5: MCP authoring server (ingestion, transport, tools)
+
+Built in dependency order: schema → `ingest.ts` → token auth → transport mounting → tools/
+resources/prompt, each verified against a real seeded local DB before moving on, plus a full
+live protocol round trip (real `@modelcontextprotocol/sdk` client, real running server) at the
+end — not just typechecking. That live round trip is what caught the one real bug below.
+
+- **`createQuestionFromDraft` (ingest.ts) is now the only `insert(questions)` call site for
+  creation** — `createOpenQuestion`/`createMcqQuestion`/`createGeoQuestion` (the web form) were
+  rewired to build a `QuestionDraft` and call it, exactly like every MCP tool call will.
+  `createImageQuestion` is the one deliberate exception: `image` has no MCP/import equivalent at
+  all (C.6 — no upload channel off the web form), so ingest.ts's `QuestionDraft` schema has no
+  `image` variant to route it through; it keeps its own direct insert, documented at the top of
+  ingest.ts so `grep insert(questions)` finds exactly the two expected call sites.
+- **The addendum's own ctx type snippet (`{ authorId, source }`) is smaller than the behaviour
+  its prose describes.** "create it if `allowCreateCategory` and the name is new; otherwise
+  error" only makes sense with an `allowCreateCategory` flag, which the illustrative type didn't
+  list — added it (default `true`, matching B.1's "any logged-in user may create categories").
+  Also added `initialStatus` (manual-only; MCP/import ignore it *by an explicit source check at
+  the insert itself*, not merely by no caller passing it — belt-and-suspenders for the addendum's
+  own "non-negotiable: no parameter lets a model publish directly") and `manualGeo` (see below).
+- **The web geo form's richer capabilities (cadrage/`viewBbox`, editable accepted answers,
+  `strict`) don't fit `QuestionDraft`'s narrow MCP shape** (name-only `pays`, no `viewBbox`, no
+  editable answers — deliberately narrow so the model can't hand-author a capital/population that
+  contradicts `countries`). Rather than fork the insert path to keep both capabilities, added
+  `ctx.manualGeo` — an override only the web form's `createGeoQuestion` ever constructs, never
+  reachable from MCP or import, that skips country-name resolution entirely and uses the
+  already-resolved values verbatim. One insert path, no regression to B.3's authoring UI.
+- **Open questions' MCP-facing `reponses` cap (1–8, per C.5's literal spec text) is tighter than
+  the pre-existing web form's cap (1 primary + ≤20 variants).** Deliberately not widened to avoid
+  quietly loosening what the addendum specifies MCP clients see in the tool's own input schema.
+  In practice no existing question has anywhere near 8 accepted answers; if one ever did, the web
+  form would now surface a validation error instead of silently truncating — an accepted, exceedingly
+  unlikely edge case, not a silent data-loss path.
+- **Dedup has no real FTS5** — same call already made for the library's search (Addendum A):
+  `findSimilarPrompt` does a normalized (accent/case-insensitive) Damerau-Levenshtein nearest-
+  neighbour scan across every existing prompt, length-proportional threshold (~15%, floor 3).
+  Fine at this app's question-pool scale; a warning, never a hard error, so the caller decides.
+- **Category-by-name resolution reuses B.1's exact create-inline semantics** (`createCategoryCore`,
+  extracted out of the "use server" action so it's callable without a session cookie) — a brand
+  new category gets a colour picked deterministically from a hash of its name (not meaningful,
+  just avoids a monochrome batch when a model creates several categories in a row via
+  `creer_question`'s inline `categorie` name).
+- **Country resolution (`src/lib/geo/country-resolve.ts`) is a new, separate pure module from
+  B.3's `country-search.ts`.** They answer different questions: the combobox ranks *live, partial*
+  keystrokes for a picklist (capital included, no "nearest on a total miss" concept); ingest needs
+  a one-shot "resolve fully or fail with the 3 closest suggestions" that also matches `iso2`/
+  `name_en` per C.1 §3's explicit field list, which the combobox never needed to.
+- **Real bug caught by the live-server round trip, not by typechecking**: `createCategoryCore`
+  called `revalidatePath("/creer")` — a Next-request-scoped API. Once `ingest.ts`'s category
+  resolution started calling it from an MCP tool handler (which runs on the raw `server.ts` HTTP
+  server, never inside a Next request), every category-by-name creation over MCP crashed with
+  "Invariant: static generation store missing". Fixed by moving `revalidatePath` out of the core
+  function and into each "use server" action wrapper that actually has a Next request context;
+  `ingest.ts` and every MCP tool call `*Core` functions that are now unconditionally revalidate-
+  free. The same pattern was applied proactively to the three other new MCP-only category cores
+  (`updateCategoryCore`, `mergeCategoriesCore`, `deleteCategoryStrictCore`, all new — the existing
+  admin/web category actions are untouched and keep their own `revalidatePath` calls).
+- **Token auth (C.3)**: `aspi_pat_` + 32 random bytes (`crypto.randomBytes`, base64url), sha256
+  hashed, looked up by a 12-char prefix then compared with `crypto.timingSafeEqual`. Every check
+  (missing/malformed header, unknown prefix, hash mismatch, revoked, expired, deactivated owner)
+  collapses to the same `{ ok: false }` internally and the same byte-identical 401 JSON body at
+  the HTTP layer — verified directly against a live server (a request with no token and one with
+  a syntactically-plausible-but-wrong token both produced the identical error).
+- **MCP sessions are bound to the token that opened them.** `StreamableHTTPServerTransport` is
+  used in stateful mode (`sessionIdGenerator`); on every request for an existing session id, the
+  freshly-reverified token's id must match the one recorded at session creation, or the request
+  gets the same uniform 401 — otherwise a second, differently-scoped token could ride along on a
+  session already opened by a first one.
+- **Rate limiting is in-memory, per-process** (three `Map<tokenId, timestamp[]>` sliding windows:
+  60 req/min, 200 questions/24h, 20 category mutations/24h) — the same "resets on restart, and
+  that's fine at this app's scale" tradeoff already accepted for live game `RoomState` (Phase 7).
+- **`creer_question`/`creer_questions_en_lot` reuse `questionDraftSchema` directly as the tool's
+  `inputSchema`** (the MCP SDK's `registerTool` accepts a full Zod schema, not just a raw shape —
+  checked the installed 1.30.0 API, didn't assume) rather than hand-duplicating the shape, so the
+  JSON schema the model actually sees can never drift from what `ingest.ts` itself accepts.
+- **`modifier_brouillon` only patches common metadata** (prompt/category/difficulty/hint/
+  explanation) — not structural fields (accepted answers, MCQ choices, geo target). A structural
+  change is delete-and-recreate via `creer_question`. Keeps the MCP edit surface to "fix a typo",
+  not a full second editor.
+- **Country-table caching**: `server/geo/resolve.ts` caches the ~193-row `countries` table
+  in-process after first read (never edited at runtime) rather than re-querying per MCP call —
+  same "small, effectively static reference table" precedent as `server/geo/actions.ts`.
+- **Verification**: `pnpm typecheck`/`test` pass throughout. Ran `createQuestionFromDraft`
+  directly against a real seeded local DB (transaction commit, category auto-create with a
+  deterministic colour, geo auto-fill from `countries` while deliberately-wrong `pointsBase`/
+  `status`/`author_id` arguments were passed and confirmed ignored, dedup warning on a repeated
+  prompt, `image` rejection, unknown-country error with suggestions). Then booted the actual
+  `server.ts` on a real port with `MCP_ENABLED=true`/`PUBLIC_BASE_URL` set, and drove it with the
+  real `@modelcontextprotocol/sdk` `Client`/`StreamableHTTPClientTransport` — no token and a
+  malformed token both rejected identically; a valid token walked `lister_categories` →
+  `chercher_pays` → `creer_question` (geo) end to end, landing a real `draft` row; a
+  `questions:read`-only token's `creer_question` call was rejected with the scope named; a
+  player-role token with `categories:write` could call `creer_categorie` but not
+  `fusionner_categories` (admin-only, uniform rejection).
+
+Not yet built (next commits): the token management UI (C.4 — tokens exist only via direct DB
+insert in the verification scripts above, deleted after use) and the "À relire" review queue
+(C.7) that's the actual reason a machine-authored draft ever becomes a real question.
+
 <!-- New decisions appended below as phases progress. -->
