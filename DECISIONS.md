@@ -1112,4 +1112,19 @@ every acceptance-criterion item that's meaningfully testable without a browser h
 was exercised directly against a real seeded DB and a real running server instead, per this
 engagement's established methodology.
 
+**Final C.8 checklist pass**, against the real running production server (booted twice — once
+`MCP_ENABLED` default-true, once explicitly `false`):
+- No/malformed/revoked/expired/deactivated-owner-user tokens: 5 real requests, identical `401`
+  status and byte-identical body, asserted programmatically (not by inspection).
+- `creer_questions_en_lot` with 5 drafts where #3 names a nonexistent country: exactly 4 created,
+  1 failed naming the closest matches — asserted against the actual inserted row count in the DB.
+- A `find_capital` geo question's accepted answer came back "Tokyo" from `countries`, never from
+  anything the tool call supplied (the call didn't supply one at all — there's no field for it).
+- `modifier_categorie` (admin token) renamed a real category; the `slug` was asserted unchanged
+  and the new name read back from a fresh `select`, not from the tool's own echo.
+- `MCP_ENABLED=false` on a fresh boot: `/mcp` 404s, `/healthz` and the rest of the app unaffected.
+All items from the C.8 list not called out explicitly above were covered by the C.1 commit's own
+verification pass (scope/admin gating, dedup warning, status-immutability, timingSafeEqual) or by
+the new unit tests (rate-limit boundaries, token format).
+
 <!-- New decisions appended below as phases progress. -->
