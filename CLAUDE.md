@@ -107,8 +107,16 @@ and `src/components/app-shell/MobileNav.tsx` exist as of Phase 11; `src/componen
 and `src/lib/schemas/library.ts` exist as of Addendum A; `src/components/categories` and
 `src/server/categories/actions.ts` (the open-to-everyone category creation/reorder/delete-with-
 reassignment used by both `/creer`'s Categories tab and every inline "+ Nouvelle catégorie"
-affordance) exist as of Addendum B.1/B.5. `src/components/game` only has the authoring-time
-`QuestionPreview`. Don't assume a path exists; check first.
+affordance) exist as of Addendum B.1/B.5; `src/lib/geo/country-search.ts` (pure search ranking,
+unit-tested) and `src/components/authoring/CountrySearchCombobox.tsx` exist as of Addendum B.3.
+`src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path
+exists; check first.
+
+Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates every
+authoring-only behaviour — zoom controls, fullscreen, lazy 50m swap, auto-labels, the
+touch/fullscreen-only pending-tap flow, the hover tooltip. Every in-game call site
+(`GeoAnswerSurface`, `RevealScreen`, `QuestionPreview`, `/dev/map`) passes nothing and is
+unaffected — never set `editorChrome` outside `GeoForm`.
 
 Question library (Addendum A): `/creer` is the library (browse/filter/preview), not the
 creation form — that moved to `/creer/question` (create) and `/creer/question/[id]` (edit,

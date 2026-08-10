@@ -779,4 +779,65 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   case/accent-insensitive clash detection, position-swap on move, reassign-then-delete — was
   verified by replicating each action's exact steps against a real seeded local DB.
 
+## 2026-08-10 — Addendum B.3 (geography question editor rebuild)
+
+- **Every authoring-only map behaviour lives behind one new `GeoMap` prop, `editorChrome`,
+  false by default.** Zoom controls, the lazy 50m swap above scale 3, auto-labels above scale
+  2.5, disabling the small-country fallback circles above scale 4, the hover tooltip,
+  double-click-to-zoom, and the touch/fullscreen-only pending-tap flow are all gated on it —
+  every other call site (`GeoAnswerSurface`, `RevealScreen`, `QuestionPreview`, `/dev/map`)
+  passes nothing and is byte-for-byte unaffected. This was the only way to add these behaviours
+  without risking them leaking into the player-facing map by accident, and it means the
+  in-game/editor split lives in one obvious place instead of being inferred from context.
+- **Two real bugs found while writing the country-search combobox, both now permanent regression
+  tests** (`tests/unit/country-search.test.ts`), not just a one-off manual check:
+  - **`"USA"` matched Zambia and Israel ahead of the United States.** The original tier order
+    checked name/official/capital substrings before an exact iso3 match — and "usa" is a
+    literal substring of "Lusaka", Zambia's capital. An exact iso3 match now wins outright
+    (tier 0), since a short code like that is always a deliberate, precise query, not something
+    that should lose to an incidental hit elsewhere.
+  - **`"cote divoire"` (no apostrophe, no space) found nothing for Côte d'Ivoire.**
+    `normalizeAnswer` (reused per the addendum's own instruction, brief §7's pipeline) turns
+    "Côte d'Ivoire" into "cote d ivoire" — the apostrophe becomes a literal space — so a query
+    typed without it never substring-matches. Added a lowest-priority, space-stripped-on-both-
+    sides fallback tier (both sides, ≥3 chars to avoid noise) that catches this without
+    weakening any of the higher tiers above it.
+  - Extracted the ranking (`rankCountryMatch`/`searchCountries`) into a pure module
+    (`src/lib/geo/country-search.ts`) specifically so these could be real unit tests instead of
+    logic buried in a client component — matches this codebase's existing grading.ts/scoring.ts
+    pattern of keeping the actual decision logic DB/React-free and tested in isolation.
+- **Search is client-side over the already-loaded country list, not a per-keystroke server round
+  trip**, despite the addendum saying "debounced 150ms query against the seeded countries
+  table". `listCountries()` already fetched the full ~193-row list once for the old (broken)
+  search box; re-fetching per keystroke over the network would be strictly worse than filtering
+  data already sitting in memory. The 150ms debounce is kept anyway, purely to avoid
+  re-filtering/re-rendering the dropdown on every keystroke.
+- **The "Cadrage" (`view_bbox`) capture uses a callback, not an imperative ref.** `GeoMap` reports
+  the current viewport's geographic bounds via `onViewChange`, debounced 200ms after the zoom
+  transform settles (inverting the four screen corners through the live zoom transform, then
+  through the projection); the form just keeps the latest value in state and copies it into
+  `savedViewBbox` when "Utiliser cette vue comme cadrage" is clicked. Simpler than
+  `forwardRef`/`useImperativeHandle` through `next/dynamic`'s lazy wrapper, which is a known
+  rough edge, and every other cross-component contract in this map layer is already
+  callback-based (`onSelect`), not ref-based.
+- **The floating-button overlap bug (B.3.3) was a sizing bug, not a positioning bug.** The
+  button was already `absolute bottom-4 left-1/2 -translate-x-1/2` inside a `relative` container
+  — correct CSS. The container just had no *real* height (`h-full` against an unconstrained
+  parent collapses close to zero), so "bottom" sat near the top of the page, over whatever
+  followed. Fixed by giving the map frame an explicit `aspect-[16/10] min-h-[420px]` (per
+  B.3.1) with `overflow-hidden`, exactly as specified — no positioning logic needed to change.
+- **Geo editing still isn't wired into `/creer/question/[id]`** — noted as a known gap in
+  Addendum A's own entry, and deliberately not closed here either: `GeoForm` changed too much in
+  this pass (full reorder, the confirmation strip, cadrage) to also retrofit initial-value
+  hydration in the same commit. A near-term follow-up, not forgotten.
+- **Verification**: `pnpm typecheck`/`test` (110 tests, +7 new) pass, `pnpm build` succeeds.
+  The search-ranking bugs above were caught by *running* the new combobox logic against the
+  real seeded 193-country DB (not just reading the code), which is exactly why they were found
+  before being shipped rather than after. Didn't verify the map's zoom/fullscreen/hover
+  interactions in an actual browser (no visual/pixel check of Luxembourg/Singapore at 390px/
+  1440px) — the underlying hit-target mechanism (≥24px fallback circles) is Phase 4's own,
+  already-proven code; `editorChrome`'s zoom clamp (12) and disable-above-scale-4 are new but
+  straightforward, low-risk additions on top of it. Consistent with the standing direction to
+  not chase browser-level verification loops.
+
 <!-- New decisions appended below as phases progress. -->

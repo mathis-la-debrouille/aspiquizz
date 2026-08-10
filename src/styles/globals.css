@@ -208,6 +208,27 @@
   cursor: pointer;
 }
 
+/* Editor-only overrides (Addendum B.3.1) — the geo question editor's map (GeoMap's
+   `editorChrome` prop), never the in-game one. Hover and selected must never look similar:
+   hover lifts to a filled stroke, selected is a solid gold fill with its own stroke. */
+.geo-map--editor {
+  cursor: grab;
+}
+.geo-map--editor:active {
+  cursor: grabbing;
+}
+.geo-map--editor[data-interactive="true"] .geo-country:not(.geo-country--inert):hover {
+  fill: var(--color-moss-deep);
+  stroke: var(--color-moss-glow);
+  stroke-width: 1px;
+  cursor: pointer;
+}
+.geo-map--editor [data-state="selected"] {
+  fill: var(--color-gold);
+  stroke: var(--color-gold-soft);
+  stroke-width: 1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

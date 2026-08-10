@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
+import { ZoomIn, ZoomOut, Maximize, Minimize, LocateFixed } from "lucide-react";
 import { geoPath } from "d3-geo";
 import type { GeoPath, GeoProjection } from "d3-geo";
 import { zoom as d3zoom, zoomIdentity, zoomTransform, type ZoomTransform } from "d3-zoom";
@@ -20,9 +21,13 @@ import type { CountryFeature, GeoMapProps } from "@/components/map/types";
 import { cn } from "@/lib/utils/cn";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-const SCALE_EXTENT: [number, number] = [1, 8];
+const DEFAULT_MAX_SCALE = 8;
 const TRANSITION_MS = 450;
 const FOCUS_PADDING = 60;
+// Addendum B.3.1 thresholds — editorChrome only, never applied to the in-game map.
+const RESOLUTION_SWAP_SCALE = 3;
+const LABEL_AUTO_SCALE = 2.5;
+const PRECISE_HIT_TARGETS_SCALE = 4;
 
 function useElementSize<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -55,6 +60,9 @@ export function GeoMap({
   interactive = true,
   onSelect,
   className,
+  maxScale = DEFAULT_MAX_SCALE,
+  editorChrome = false,
+  onViewChange,
 }: GeoMapProps) {
   const [containerRef, size] = useElementSize<HTMLDivElement>();
   const svgRef = useRef<SVGSVGElement>(null);
@@ -62,10 +70,35 @@ export function GeoMap({
   const zoomBehaviorRef = useRef<ReturnType<typeof d3zoom<SVGSVGElement, unknown>> | null>(null);
   const [features, setFeatures] = useState<CountryFeature[] | null>(null);
   const [pendingIso3, setPendingIso3] = useState<string | null>(null);
+  const [scale, setScale] = useState(1);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [hoveredIso3, setHoveredIso3] = useState<string | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
   const reducedMotion = useReducedMotion();
 
   const isSilhouette = mode === "silhouette";
-  const resolution = isSilhouette || focusOn ? "50m" : "110m";
+  const scaleExtent = useMemo<[number, number]>(() => [1, maxScale], [maxScale]);
+  const highRes = isSilhouette || Boolean(focusOn) || (editorChrome && scale > RESOLUTION_SWAP_SCALE);
+  const resolution = highRes ? "50m" : "110m";
+
+  useEffect(() => {
+    if (!editorChrome || typeof window === "undefined") return;
+    const query = window.matchMedia("(pointer: coarse)");
+    setIsCoarsePointer(query.matches);
+    const listener = (e: MediaQueryListEvent) => setIsCoarsePointer(e.matches);
+    query.addEventListener("change", listener);
+    return () => query.removeEventListener("change", listener);
+  }, [editorChrome]);
+
+  useEffect(() => {
+    if (!editorChrome) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && fullscreen) setFullscreen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [editorChrome, fullscreen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,9 +152,15 @@ export function GeoMap({
     if (!svg || !g || !zoomEnabled) return;
 
     const behavior = d3zoom<SVGSVGElement, unknown>()
-      .scaleExtent(SCALE_EXTENT)
+      .scaleExtent(scaleExtent)
+      // Silhouette aside, name_from_shape is the only mode where zoom would trivialise the
+      // question (brief §8.2) — that's already handled by zoomEnabled=false there. Everywhere
+      // editorChrome is on, double-click is repurposed for zoom-to-country below, so it must
+      // not also pan/zoom the whole view on every double-click of the background.
+      .filter((event: Event) => !(editorChrome && event.type === "dblclick"))
       .on("zoom", (event: { transform: ZoomTransform }) => {
         g.setAttribute("transform", event.transform.toString());
+        setScale(event.transform.k);
       });
 
     select(svg).call(behavior);
@@ -131,68 +170,121 @@ export function GeoMap({
       select(svg).on(".zoom", null);
       zoomBehaviorRef.current = null;
     };
-  }, [zoomEnabled]);
+  }, [zoomEnabled, scaleExtent, editorChrome]);
+
+  // --- Cadrage (Addendum B.3.5): report the current viewport's geographic bounds, debounced,
+  //     whenever the zoom transform settles. A screen point maps back through the zoom
+  //     transform first (transform is applied to <g>, outside the projection), then through
+  //     the projection's own inverse to get lon/lat.
+  useEffect(() => {
+    if (!editorChrome || !onViewChange || !projection || !svgRef.current) return;
+    const svg = svgRef.current;
+    const timeout = setTimeout(() => {
+      const transform = zoomTransform(svg);
+      const corners: [number, number][] = [
+        [0, 0],
+        [size.width, 0],
+        [size.width, size.height],
+        [0, size.height],
+      ];
+      const lonLats = corners
+        .map(([sx, sy]): [number, number] | null => {
+          const px = (sx - transform.x) / transform.k;
+          const py = (sy - transform.y) / transform.k;
+          return projection.invert?.([px, py]) ?? null;
+        })
+        .filter(
+          (p): p is [number, number] =>
+            p !== null && Number.isFinite(p[0]) && Number.isFinite(p[1]),
+        );
+      if (lonLats.length === 0) {
+        onViewChange(null);
+        return;
+      }
+      const lons = lonLats.map((p) => p[0]);
+      const lats = lonLats.map((p) => p[1]);
+      onViewChange([Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)]);
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [editorChrome, onViewChange, projection, scale, size.width, size.height]);
+
+  const flyTo = useCallback(
+    (feature: CountryFeature | null) => {
+      const svg = svgRef.current;
+      const behavior = zoomBehaviorRef.current;
+      if (!svg || !behavior || !pathGenerator) return;
+
+      let nextTransform = zoomIdentity;
+      if (feature) {
+        const [[x0, y0], [x1, y1]] = pathGenerator.bounds(feature.geometry);
+        const boxWidth = Math.max(x1 - x0, 1);
+        const boxHeight = Math.max(y1 - y0, 1);
+        const targetScale = Math.min(
+          scaleExtent[1],
+          Math.max(
+            scaleExtent[0],
+            Math.min((size.width - FOCUS_PADDING) / boxWidth, (size.height - FOCUS_PADDING) / boxHeight),
+          ),
+        );
+        const cx = (x0 + x1) / 2;
+        const cy = (y0 + y1) / 2;
+        nextTransform = zoomIdentity
+          .translate(size.width / 2, size.height / 2)
+          .scale(targetScale)
+          .translate(-cx, -cy);
+      }
+
+      const selection = select(svg);
+      if (reducedMotion) {
+        behavior.transform(selection, nextTransform);
+        return;
+      }
+
+      const start = zoomTransform(svg);
+      const interpolateX = interpolate(start.x, nextTransform.x);
+      const interpolateY = interpolate(start.y, nextTransform.y);
+      const interpolateK = interpolate(start.k, nextTransform.k);
+      const startTime = performance.now();
+      const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+      let raf = 0;
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - startTime) / TRANSITION_MS);
+        const eased = easeOutCubic(t);
+        const transform = zoomIdentity
+          .translate(interpolateX(eased), interpolateY(eased))
+          .scale(interpolateK(eased));
+        behavior.transform(selection, transform);
+        if (t < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    },
+    [pathGenerator, size.width, size.height, scaleExtent, reducedMotion],
+  );
 
   // --- Camera framing: focusOn a non-silhouette view eases the zoom transform to fit the
-  //     target's bounds under the shared world projection — brief §8.2 "d3-interpolate on the
-  //     zoom transform, 450ms, eased".
+  //     target's bounds under the shared world projection — brief §8.2.
   useEffect(() => {
+    if (isSilhouette) return;
+    return flyTo(focusOn && targetFeature ? targetFeature : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- flyTo intentionally excluded: it
+    // closes over `size`/`scaleExtent` which already re-trigger this effect via their own
+    // deps below, re-including flyTo itself would double-fire on every resize
+  }, [focusOn, targetFeature, isSilhouette, size.width, size.height]);
+
+  function zoomBy(factor: number) {
     const svg = svgRef.current;
     const behavior = zoomBehaviorRef.current;
-    if (!svg || !behavior || !pathGenerator || isSilhouette) return;
+    if (!svg || !behavior) return;
+    behavior.scaleBy(select(svg), factor);
+  }
 
-    let nextTransform = zoomIdentity;
-    if (focusOn && targetFeature) {
-      const [[x0, y0], [x1, y1]] = pathGenerator.bounds(targetFeature.geometry);
-      const boxWidth = Math.max(x1 - x0, 1);
-      const boxHeight = Math.max(y1 - y0, 1);
-      const scale = Math.min(
-        SCALE_EXTENT[1],
-        Math.max(
-          SCALE_EXTENT[0],
-          Math.min(
-            (size.width - FOCUS_PADDING) / boxWidth,
-            (size.height - FOCUS_PADDING) / boxHeight,
-          ),
-        ),
-      );
-      const cx = (x0 + x1) / 2;
-      const cy = (y0 + y1) / 2;
-      nextTransform = zoomIdentity
-        .translate(size.width / 2, size.height / 2)
-        .scale(scale)
-        .translate(-cx, -cy);
-    }
-
-    const selection = select(svg);
-    if (reducedMotion) {
-      behavior.transform(selection, nextTransform);
-      return;
-    }
-
-    // d3-interpolate on the transform's own x/y/k, driven by rAF rather than d3-transition (whose
-    // Selection.transition() typings need @types/d3-transition, an extra dependency for one call
-    // site) — still "d3-interpolate on the zoom transform, 450ms, eased" per brief §8.2.
-    const start = zoomTransform(svg);
-    const interpolateX = interpolate(start.x, nextTransform.x);
-    const interpolateY = interpolate(start.y, nextTransform.y);
-    const interpolateK = interpolate(start.k, nextTransform.k);
-    const startTime = performance.now();
-    const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
-    let raf = 0;
-
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - startTime) / TRANSITION_MS);
-      const eased = easeOutCubic(t);
-      const transform = zoomIdentity
-        .translate(interpolateX(eased), interpolateY(eased))
-        .scale(interpolateK(eased));
-      behavior.transform(selection, transform);
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [focusOn, targetFeature, pathGenerator, size.width, size.height, isSilhouette, reducedMotion]);
+  function resetView() {
+    const svg = svgRef.current;
+    const behavior = zoomBehaviorRef.current;
+    if (!svg || !behavior) return;
+    behavior.transform(select(svg), zoomIdentity);
+  }
 
   // --- Selection/highlight state applied imperatively — never re-renders the path list. ---
   useEffect(() => {
@@ -229,6 +321,11 @@ export function GeoMap({
     setPendingIso3(null);
   }, [focusOn, selected]);
 
+  // Touch devices and fullscreen keep the old tap-then-confirm flow (the hit target is small
+  // relative to a finger, and fullscreen is itself the "I need precision" signal) — a mouse on
+  // a normal desktop view commits on the first click instead, per B.3.3.
+  const usesPendingFlow = editorChrome && (isCoarsePointer || fullscreen);
+
   const handleClick = useCallback(
     (event: ReactMouseEvent<SVGGElement>) => {
       if (!interactive || !onSelect) return;
@@ -236,6 +333,10 @@ export function GeoMap({
       const iso3 = target?.dataset["iso3"];
       if (!iso3) return;
 
+      if (!usesPendingFlow) {
+        onSelect(iso3);
+        return;
+      }
       if (pendingIso3 === iso3) {
         onSelect(iso3);
         setPendingIso3(null);
@@ -243,7 +344,33 @@ export function GeoMap({
         setPendingIso3(iso3);
       }
     },
-    [interactive, onSelect, pendingIso3],
+    [interactive, onSelect, pendingIso3, usesPendingFlow],
+  );
+
+  const handleDoubleClick = useCallback(
+    (event: ReactMouseEvent<SVGGElement>) => {
+      if (!editorChrome) return;
+      const target = (event.target as Element).closest<SVGElement>("[data-iso3]");
+      const iso3 = target?.dataset["iso3"];
+      if (!iso3 || !features) return;
+      const feature = features.find((f) => f.iso3 === iso3);
+      if (feature) flyTo(feature);
+    },
+    [editorChrome, features, flyTo],
+  );
+
+  const handleMouseMove = useCallback(
+    (event: ReactMouseEvent<SVGGElement>) => {
+      if (!editorChrome) return;
+      const target = (event.target as Element).closest<SVGElement>("[data-iso3]");
+      const iso3 = target?.dataset["iso3"] ?? null;
+      setHoveredIso3(iso3);
+      if (iso3) {
+        const rect = svgRef.current?.getBoundingClientRect();
+        if (rect) setHoverPos({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+      }
+    },
+    [editorChrome],
   );
 
   const confirmPending = useCallback(() => {
@@ -254,11 +381,17 @@ export function GeoMap({
   }, [pendingIso3, onSelect]);
 
   const pendingName = pendingIso3 ? COUNTRY_NAME_FR[pendingIso3] : undefined;
+  const showFallbackHitTargets = !(editorChrome && scale > PRECISE_HIT_TARGETS_SCALE);
+  const effectiveShowLabels = showLabels || (editorChrome && scale > LABEL_AUTO_SCALE);
 
-  return (
+  const mapBody = (
     <div
       ref={containerRef}
-      className={cn("geo-map relative h-full w-full min-h-[280px]", className)}
+      className={cn(
+        "geo-map relative h-full w-full min-h-[280px]",
+        editorChrome && "geo-map--editor",
+        className,
+      )}
       data-interactive={interactive}
       data-dim-others={dimOthers}
     >
@@ -271,13 +404,21 @@ export function GeoMap({
           role={interactive ? "group" : "img"}
           aria-label="Carte du monde"
         >
-          <g ref={gRef} onClick={handleClick}>
+          <g
+            ref={gRef}
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setHoveredIso3(null)}
+          >
             <CountryPaths features={renderFeatures} pathGenerator={pathGenerator} />
-            <HitCircles features={renderFeatures} pathGenerator={pathGenerator} />
-            {projection && missingIso3.length > 0 && (
+            {showFallbackHitTargets && (
+              <HitCircles features={renderFeatures} pathGenerator={pathGenerator} />
+            )}
+            {projection && showFallbackHitTargets && missingIso3.length > 0 && (
               <FallbackHitCircles missingIso3={missingIso3} projection={projection} />
             )}
-            {showLabels && (
+            {effectiveShowLabels && (
               <Labels
                 features={renderFeatures}
                 pathGenerator={pathGenerator}
@@ -287,8 +428,63 @@ export function GeoMap({
           </g>
         </svg>
       )}
-      {pendingIso3 && pendingName && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+
+      {editorChrome && hoveredIso3 && hoverPos && COUNTRY_NAME_FR[hoveredIso3] && (
+        <div
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-sm border border-border-hard bg-bg-raised px-2 py-1 text-12 text-ink-high shadow-[var(--shadow-1)]"
+          style={{ left: hoverPos.x, top: hoverPos.y - 8 }}
+        >
+          {COUNTRY_NAME_FR[hoveredIso3]}
+        </div>
+      )}
+
+      {editorChrome && (
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 rounded-md border border-border-hard bg-bg-raised/95 p-1 shadow-[var(--shadow-1)]">
+          <button
+            type="button"
+            aria-label="Zoom avant"
+            title="Zoom avant"
+            onClick={() => zoomBy(1.5)}
+            className="rounded-sm p-1.5 text-ink-mid hover:bg-bg-surface hover:text-ink-high"
+          >
+            <ZoomIn className="h-4 w-4" strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            aria-label="Zoom arrière"
+            title="Zoom arrière"
+            onClick={() => zoomBy(1 / 1.5)}
+            className="rounded-sm p-1.5 text-ink-mid hover:bg-bg-surface hover:text-ink-high"
+          >
+            <ZoomOut className="h-4 w-4" strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            aria-label="Réinitialiser la vue"
+            title="Réinitialiser la vue"
+            onClick={resetView}
+            className="rounded-sm p-1.5 text-ink-mid hover:bg-bg-surface hover:text-ink-high"
+          >
+            <LocateFixed className="h-4 w-4" strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            aria-label={fullscreen ? "Quitter le plein écran" : "Plein écran"}
+            title={fullscreen ? "Quitter le plein écran" : "Plein écran"}
+            onClick={() => setFullscreen((v) => !v)}
+            className="rounded-sm p-1.5 text-ink-mid hover:bg-bg-surface hover:text-ink-high"
+          >
+            {fullscreen ? (
+              <Minimize className="h-4 w-4" strokeWidth={1.5} />
+            ) : (
+              <Maximize className="h-4 w-4" strokeWidth={1.5} />
+            )}
+          </button>
+        </div>
+      )}
+
+      {usesPendingFlow && pendingIso3 && pendingName && (
+        <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2">
           <button
             type="button"
             onClick={confirmPending}
@@ -298,6 +494,28 @@ export function GeoMap({
           </button>
         </div>
       )}
+
+      {fullscreen && (
+        <div className="absolute right-3 bottom-3 z-10">
+          <button
+            type="button"
+            onClick={() => setFullscreen(false)}
+            className="btn-physical rounded-md border border-border-hard border-b-[3px] bg-bg-surface px-4 py-2 text-14 font-medium text-ink-high active:translate-y-[2px] active:border-b-[1px]"
+          >
+            Terminé
+          </button>
+        </div>
+      )}
     </div>
   );
+
+  if (editorChrome && fullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-bg-void p-4">
+        <div className="h-full w-full">{mapBody}</div>
+      </div>
+    );
+  }
+
+  return mapBody;
 }
