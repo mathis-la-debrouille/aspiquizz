@@ -102,8 +102,18 @@ queries.ts for profile/leaderboard reads, actions.ts for profile edits), `src/co
 and `src/components/leaderboard` exist as of Phase 9; `src/server/admin` (guard.ts's
 `requireAdmin()`, queries.ts, actions.ts) and `src/components/admin` exist as of Phase 10;
 `src/lib/sound/engine.ts` (procedural WebAudio cues — no `public/sfx/` files, see DECISIONS.md)
-and `src/components/app-shell/MobileNav.tsx` exist as of Phase 11. `src/components/game` only
-has the authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+and `src/components/app-shell/MobileNav.tsx` exist as of Phase 11; `src/components/library`,
+`src/server/questions/library.ts` (read) and `library-actions.ts` ("use server" writes/RPCs),
+and `src/lib/schemas/library.ts` exist as of Addendum A. `src/components/game` only has the
+authoring-time `QuestionPreview`. Don't assume a path exists; check first.
+
+Question library (Addendum A): `/creer` is the library (browse/filter/preview), not the
+creation form — that moved to `/creer/question` (create) and `/creer/question/[id]` (edit,
+same `QuestionComposer`/per-type form components, just prefilled — geo editing isn't wired yet,
+see Addendum B.3). `library.ts` (plain reads, takes `viewer` as an explicit argument — never
+call it from a client component) is deliberately separate from `library-actions.ts` ("use
+server", resolves the viewer from the session itself) — the split exists so a "use server"
+file's exports, which become client-callable RPCs, never accept a caller-supplied identity.
 
 Progression (Phase 9): XP/level are computed from `game/scoring.ts`'s `xpFromPoints`/
 `levelFromXp`/`xpForLevel` (brief §12 formula) — `user_stats.xp`/`.level` are a cache of that

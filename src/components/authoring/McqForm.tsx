@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
-import { createMcqQuestion } from "@/server/questions/actions";
+import { createMcqQuestion, updateMcqQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 
 const DEFAULT_SHARED: SharedFieldsValue = {
@@ -24,6 +24,13 @@ interface Choice {
   isCorrect: boolean;
 }
 
+export interface McqFormInitial {
+  id: string;
+  prompt: string;
+  choices: Choice[];
+  shared: SharedFieldsValue;
+}
+
 function move<T>(list: T[], from: number, to: number): T[] {
   if (to < 0 || to >= list.length) return list;
   const copy = [...list];
@@ -35,16 +42,20 @@ function move<T>(list: T[], from: number, to: number): T[] {
 export function McqForm({
   categories,
   onCreated,
+  initial,
 }: {
   categories: CategoryOption[];
   onCreated: (id: string) => void;
+  initial?: McqFormInitial;
 }) {
-  const [shared, setShared] = useState(DEFAULT_SHARED);
-  const [prompt, setPrompt] = useState("");
-  const [choices, setChoices] = useState<Choice[]>([
-    { label: "", isCorrect: false },
-    { label: "", isCorrect: false },
-  ]);
+  const [shared, setShared] = useState(initial?.shared ?? DEFAULT_SHARED);
+  const [prompt, setPrompt] = useState(initial?.prompt ?? "");
+  const [choices, setChoices] = useState<Choice[]>(
+    initial?.choices ?? [
+      { label: "", isCorrect: false },
+      { label: "", isCorrect: false },
+    ],
+  );
   const [mobileTab, setMobileTab] = useState("form");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +79,10 @@ export function McqForm({
   async function handleSubmit() {
     setPending(true);
     setError(null);
-    const result = await createMcqQuestion({ type: "mcq", prompt, choices, ...shared });
+    const payload = { type: "mcq" as const, prompt, choices, ...shared };
+    const result = initial
+      ? await updateMcqQuestion(initial.id, payload)
+      : await createMcqQuestion(payload);
     setPending(false);
     if (!result.ok) setError(result.error);
     else onCreated(result.id);
@@ -149,7 +163,7 @@ export function McqForm({
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button type="button" loading={pending} disabled={!canSubmit} onClick={handleSubmit}>
-        Enregistrer la question
+        {initial ? "Enregistrer les modifications" : "Enregistrer la question"}
       </Button>
     </div>
   );

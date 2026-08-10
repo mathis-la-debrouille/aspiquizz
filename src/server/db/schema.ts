@@ -411,6 +411,21 @@ export const answers = sqliteTable(
   ],
 );
 
+/** Per-question play aggregates for the library (Addendum A.8) — incremented once per question
+ *  at lock time (engine.ts), not aggregated from `answers` on every library page load, which
+ *  would grow unbounded. Backfilled from `answers` by scripts/backfill-question-stats.ts. */
+export const questionStats = sqliteTable("question_stats", {
+  questionId: text("question_id")
+    .primaryKey()
+    .references(() => questions.id),
+  timesAsked: integer("times_asked").notNull().default(0),
+  timesCorrect: integer("times_correct").notNull().default(0),
+  totalMs: integer("total_ms").notNull().default(0),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 // ---------------------------------------------------------------------------
 // Progression
 // ---------------------------------------------------------------------------

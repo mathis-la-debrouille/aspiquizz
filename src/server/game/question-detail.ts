@@ -10,6 +10,7 @@ import {
   type AnswerMode,
   type ColorToken,
   type QuestionType,
+  type QuestionStatus,
 } from "@/server/db/schema";
 import { toSanitisedQuestion, type SanitisedQuestion } from "@/server/game/sanitize";
 import type { GradableQuestion } from "@/server/game/grading";
@@ -25,6 +26,8 @@ export interface FullQuestionDetail {
   categoryColorToken: ColorToken;
   difficulty: number;
   pointsBase: number;
+  status: QuestionStatus;
+  authorId: string;
   authorUsername: string;
   authorDisplayName: string;
   authorAvatarSeed: string;
@@ -41,6 +44,9 @@ export interface FullQuestionDetail {
   } | null;
 }
 
+/** Also the read side of edit mode (Addendum A.1's /creer/question/[id]) — one query, not a
+ *  separate near-duplicate, since the shape it needs (status/authorId included below) is a
+ *  strict superset of what the live game loop reads. */
 export async function getFullQuestionDetail(
   questionId: string,
 ): Promise<FullQuestionDetail | null> {
@@ -56,6 +62,8 @@ export async function getFullQuestionDetail(
       categoryColorToken: categories.colorToken,
       difficulty: questions.difficulty,
       pointsBase: questions.pointsBase,
+      status: questions.status,
+      authorId: questions.authorId,
       authorUsername: users.username,
       authorDisplayName: users.displayName,
       authorAvatarSeed: users.avatarSeed,

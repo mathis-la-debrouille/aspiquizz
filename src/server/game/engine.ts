@@ -7,6 +7,7 @@ import {
   roomQuestions,
   answers,
   userCategoryStats,
+  questionStats,
 } from "@/server/db/schema";
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
@@ -398,6 +399,28 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
           set: {
             answered: sql`${userCategoryStats.answered} + 1`,
             correct: sql`${userCategoryStats.correct} + ${graded.isCorrect ? 1 : 0}`,
+          },
+        });
+
+      // Library play-stats (Addendum A.8) — one row per question, incremented per player-answer
+      // right here rather than aggregated from `answers` on every library page load (that query
+      // would grow unbounded as the pool gets played). "posée Nx" / success rate / avg time all
+      // share this same per-answer denominator, not a per-room-occurrence one.
+      await db
+        .insert(questionStats)
+        .values({
+          questionId: frozen.questionId,
+          timesAsked: 1,
+          timesCorrect: graded.isCorrect ? 1 : 0,
+          totalMs: msTaken,
+        })
+        .onConflictDoUpdate({
+          target: questionStats.questionId,
+          set: {
+            timesAsked: sql`${questionStats.timesAsked} + 1`,
+            timesCorrect: sql`${questionStats.timesCorrect} + ${graded.isCorrect ? 1 : 0}`,
+            totalMs: sql`${questionStats.totalMs} + ${msTaken}`,
+            updatedAt: new Date(),
           },
         });
     }

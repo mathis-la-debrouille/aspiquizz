@@ -10,6 +10,7 @@ import { attachSocketServer } from "@/server/socket";
 import { prepareForShutdown } from "@/server/game/engine";
 import { client as dbClient } from "@/server/db";
 import { runMigrations } from "./scripts/migrate";
+import { backfillQuestionStats } from "./scripts/backfill-question-stats";
 
 const port = Number(process.env["PORT"] ?? 3000);
 const dev = process.env["NODE_ENV"] !== "production";
@@ -26,6 +27,10 @@ const bootedAt = Date.now();
 // arrives. Before app.prepare()/attachSocketServer, both of which can hit the DB immediately
 // (the latter's abandonStaleRooms() query, on the very next line after this block).
 await runMigrations();
+// Idempotent (overwrites, not adds) and cheap at this app's scale — a self-healing safety net
+// for question_stats (Addendum A.8) rather than a true one-time migration step, since the
+// normal path is engine.ts incrementing it live at question lock.
+await backfillQuestionStats();
 
 await app.prepare();
 

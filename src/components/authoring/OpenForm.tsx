@@ -9,7 +9,7 @@ import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
 import { normalizeAnswer } from "@/server/game/grading";
-import { createOpenQuestion } from "@/server/questions/actions";
+import { createOpenQuestion, updateOpenQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 
 const DEFAULT_SHARED: SharedFieldsValue = {
@@ -20,18 +20,31 @@ const DEFAULT_SHARED: SharedFieldsValue = {
   status: "draft",
 };
 
+export interface OpenFormInitial {
+  id: string;
+  prompt: string;
+  strict: boolean;
+  primaryAnswer: string;
+  variants: string[];
+  shared: SharedFieldsValue;
+}
+
 export function OpenForm({
   categories,
   onCreated,
+  initial,
 }: {
   categories: CategoryOption[];
   onCreated: (id: string) => void;
+  /** Present in edit mode (/creer/question/[id]) — saves call updateOpenQuestion instead of
+   *  createOpenQuestion, everything else about the form is identical. */
+  initial?: OpenFormInitial;
 }) {
-  const [shared, setShared] = useState(DEFAULT_SHARED);
-  const [prompt, setPrompt] = useState("");
-  const [strict, setStrict] = useState(false);
-  const [primaryAnswer, setPrimaryAnswer] = useState("");
-  const [variants, setVariants] = useState<string[]>([]);
+  const [shared, setShared] = useState(initial?.shared ?? DEFAULT_SHARED);
+  const [prompt, setPrompt] = useState(initial?.prompt ?? "");
+  const [strict, setStrict] = useState(initial?.strict ?? false);
+  const [primaryAnswer, setPrimaryAnswer] = useState(initial?.primaryAnswer ?? "");
+  const [variants, setVariants] = useState<string[]>(initial?.variants ?? []);
   const [newVariant, setNewVariant] = useState("");
   const [mobileTab, setMobileTab] = useState("form");
   const [pending, setPending] = useState(false);
@@ -42,14 +55,10 @@ export function OpenForm({
   async function handleSubmit() {
     setPending(true);
     setError(null);
-    const result = await createOpenQuestion({
-      type: "open",
-      prompt,
-      strict,
-      primaryAnswer,
-      variants,
-      ...shared,
-    });
+    const payload = { type: "open" as const, prompt, strict, primaryAnswer, variants, ...shared };
+    const result = initial
+      ? await updateOpenQuestion(initial.id, payload)
+      : await createOpenQuestion(payload);
     setPending(false);
     if (!result.ok) setError(result.error);
     else onCreated(result.id);
@@ -125,7 +134,7 @@ export function OpenForm({
         disabled={!prompt || !primaryAnswer || !shared.categoryId}
         onClick={handleSubmit}
       >
-        Enregistrer la question
+        {initial ? "Enregistrer les modifications" : "Enregistrer la question"}
       </Button>
     </div>
   );

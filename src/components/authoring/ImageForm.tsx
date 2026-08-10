@@ -11,7 +11,7 @@ import { SharedFields, type SharedFieldsValue } from "@/components/authoring/Sha
 import { QuestionPreview } from "@/components/game/QuestionPreview";
 import { downscaleImage } from "@/lib/utils/downscale-image";
 import { normalizeAnswer } from "@/server/game/grading";
-import { createImageQuestion } from "@/server/questions/actions";
+import { createImageQuestion, updateImageQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 
 const DEFAULT_SHARED: SharedFieldsValue = {
@@ -27,27 +27,45 @@ interface Choice {
   isCorrect: boolean;
 }
 
+export interface ImageFormInitial {
+  id: string;
+  prompt: string;
+  answerMode: "mcq" | "open";
+  mediaId: string;
+  primaryAnswer: string;
+  variants: string[];
+  choices: Choice[];
+  strict: boolean;
+  shared: SharedFieldsValue;
+}
+
 export function ImageForm({
   categories,
   onCreated,
+  initial,
 }: {
   categories: CategoryOption[];
   onCreated: (id: string) => void;
+  initial?: ImageFormInitial;
 }) {
-  const [shared, setShared] = useState(DEFAULT_SHARED);
-  const [prompt, setPrompt] = useState("");
-  const [answerMode, setAnswerMode] = useState<"mcq" | "open">("open");
-  const [mediaId, setMediaId] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [shared, setShared] = useState(initial?.shared ?? DEFAULT_SHARED);
+  const [prompt, setPrompt] = useState(initial?.prompt ?? "");
+  const [answerMode, setAnswerMode] = useState<"mcq" | "open">(initial?.answerMode ?? "open");
+  const [mediaId, setMediaId] = useState<string | null>(initial?.mediaId ?? null);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    initial?.mediaId ? `/media/${initial.mediaId}` : null,
+  );
   const [uploading, setUploading] = useState(false);
-  const [primaryAnswer, setPrimaryAnswer] = useState("");
-  const [variants, setVariants] = useState<string[]>([]);
+  const [primaryAnswer, setPrimaryAnswer] = useState(initial?.primaryAnswer ?? "");
+  const [variants, setVariants] = useState<string[]>(initial?.variants ?? []);
   const [newVariant, setNewVariant] = useState("");
-  const [choices, setChoices] = useState<Choice[]>([
-    { label: "", isCorrect: false },
-    { label: "", isCorrect: false },
-  ]);
-  const [strict, setStrict] = useState(false);
+  const [choices, setChoices] = useState<Choice[]>(
+    initial?.choices ?? [
+      { label: "", isCorrect: false },
+      { label: "", isCorrect: false },
+    ],
+  );
+  const [strict, setStrict] = useState(initial?.strict ?? false);
   const [mobileTab, setMobileTab] = useState("form");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,8 +103,8 @@ export function ImageForm({
   async function handleSubmit() {
     setPending(true);
     setError(null);
-    const result = await createImageQuestion({
-      type: "image",
+    const payload = {
+      type: "image" as const,
       prompt,
       mediaId: mediaId!,
       answerMode,
@@ -98,7 +116,10 @@ export function ImageForm({
       variants: answerMode === "open" ? variants : [],
       choices: answerMode === "mcq" ? choices : [],
       ...shared,
-    });
+    };
+    const result = initial
+      ? await updateImageQuestion(initial.id, payload)
+      : await createImageQuestion(payload);
     setPending(false);
     if (!result.ok) setError(result.error);
     else onCreated(result.id);
@@ -247,7 +268,7 @@ export function ImageForm({
 
       {error && <p className="text-14 text-clay-soft">{error}</p>}
       <Button type="button" loading={pending} disabled={!canSubmit} onClick={handleSubmit}>
-        Enregistrer la question
+        {initial ? "Enregistrer les modifications" : "Enregistrer la question"}
       </Button>
     </div>
   );

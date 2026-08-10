@@ -1,0 +1,69 @@
+import { z } from "zod";
+
+/**
+ * All library filter/sort/scope state round-trips through the URL (Addendum A.3) — this is the
+ * one schema both the server page (parsing `searchParams`) and any client link-builder use.
+ * Every field has a default, so a malformed or partial URL degrades gracefully instead of
+ * throwing — never `.parse()` this, always `.safeParse()` (or just call `parseLibraryQuery`,
+ * which already does).
+ */
+
+export const QUESTION_TYPES = ["open", "mcq", "image", "geo"] as const;
+export const LIBRARY_STATUSES = ["published", "draft", "archived", "all"] as const;
+export const LIBRARY_SCOPES = ["all", "mine", "drafts"] as const;
+export const LIBRARY_SORTS = [
+  "recent",
+  "oldest",
+  "difficulty_asc",
+  "difficulty_desc",
+  "success_rate_asc",
+  "success_rate_desc",
+  "most_played",
+  "never_played",
+] as const;
+export const LIBRARY_GROUP_BY = ["none", "category"] as const;
+
+export const questionLibraryQuerySchema = z.object({
+  q: z.string().trim().max(200).default(""),
+  type: z.array(z.enum(QUESTION_TYPES)).default([]),
+  cat: z.array(z.string()).default([]),
+  dmin: z.coerce.number().int().min(1).max(5).default(1),
+  dmax: z.coerce.number().int().min(1).max(5).default(5),
+  /** A user id, or the sentinel "me" — resolved against the viewer server-side. */
+  author: z.string().default(""),
+  status: z.enum(LIBRARY_STATUSES).default("published"),
+  scope: z.enum(LIBRARY_SCOPES).default("all"),
+  sort: z.enum(LIBRARY_SORTS).default("recent"),
+  groupBy: z.enum(LIBRARY_GROUP_BY).default("none"),
+});
+
+export type QuestionLibraryQuery = z.infer<typeof questionLibraryQuerySchema>;
+
+type RawSearchParams = Record<string, string | string[] | undefined>;
+
+function toArray(v: string | string[] | undefined): string[] {
+  if (v === undefined) return [];
+  return Array.isArray(v) ? v : [v];
+}
+
+function toScalar(v: string | string[] | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v[0] : v;
+}
+
+/** Never throws — an unparseable URL just falls back to every field's default. */
+export function parseLibraryQuery(searchParams: RawSearchParams): QuestionLibraryQuery {
+  const parsed = questionLibraryQuerySchema.safeParse({
+    q: toScalar(searchParams["q"]),
+    type: toArray(searchParams["type"]),
+    cat: toArray(searchParams["cat"]),
+    dmin: toScalar(searchParams["dmin"]),
+    dmax: toScalar(searchParams["dmax"]),
+    author: toScalar(searchParams["author"]),
+    status: toScalar(searchParams["status"]),
+    scope: toScalar(searchParams["scope"]),
+    sort: toScalar(searchParams["sort"]),
+    groupBy: toScalar(searchParams["groupBy"]),
+  });
+  return parsed.success ? parsed.data : questionLibraryQuerySchema.parse({});
+}

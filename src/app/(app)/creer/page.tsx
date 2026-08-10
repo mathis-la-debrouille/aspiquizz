@@ -1,51 +1,43 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { desc } from "drizzle-orm";
 import { db } from "@/server/db";
 import { categories } from "@/server/db/schema";
 import { getSession } from "@/server/auth/session";
-import { listQuestions } from "@/server/questions/queries";
-import { QuestionComposer } from "@/components/authoring/QuestionComposer";
-import { QuestionCard } from "@/components/authoring/QuestionCard";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { parseLibraryQuery } from "@/lib/schemas/library";
+import { listLibraryQuestions, listQuestionAuthors } from "@/server/questions/library";
+import { LibraryClient } from "@/components/library/LibraryClient";
 
-export const metadata: Metadata = { title: "Créer une question — ASPI Quiz" };
+export const metadata: Metadata = { title: "Bibliothèque — ASPI Quiz" };
 
-export default async function CreerPage() {
+export default async function CreerPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const session = await getSession();
-  const [categoryRows, myDrafts] = await Promise.all([
+  if (!session) redirect("/connexion");
+
+  const rawParams = await searchParams;
+  const query = parseLibraryQuery(rawParams);
+
+  const [result, categoryRows, authors] = await Promise.all([
+    listLibraryQuestions(query, session.user),
     db.select().from(categories).orderBy(desc(categories.position)),
-    session ? listQuestions({ authorId: session.user.id, status: "draft" }) : Promise.resolve([]),
+    listQuestionAuthors(),
   ]);
 
   return (
-    <div className="flex flex-col gap-10">
-      <div>
-        <h1 className="font-display text-34 text-ink-high">Créer une question</h1>
-        <p className="text-16 text-ink-mid">
-          Choisissez un type, remplissez le formulaire — l&apos;aperçu à droite montre exactement ce
-          qu&apos;un joueur verra.
-        </p>
-      </div>
-
-      <QuestionComposer
-        categories={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
-      />
-
-      <div className="flex flex-col gap-3">
-        <h2 className="font-display text-26 text-ink-high">Mes brouillons</h2>
-        {myDrafts.length === 0 ? (
-          <EmptyState
-            title="Aucun brouillon."
-            description="Les questions enregistrées en brouillon apparaîtront ici."
-          />
-        ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {myDrafts.map((q) => (
-              <QuestionCard key={q.id} question={q} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+    <LibraryClient
+      query={query}
+      initialItems={result.items}
+      total={result.total}
+      facets={result.facets}
+      hasMore={result.hasMore}
+      categories={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
+      authors={authors}
+      viewerId={session.user.id}
+      isAdmin={session.user.role === "admin"}
+    />
   );
 }

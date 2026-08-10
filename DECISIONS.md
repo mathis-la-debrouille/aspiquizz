@@ -665,4 +665,71 @@ failed` the first time a real two-client test tried to join a room — never cau
   an `open` question, ran `selectQuestionsForRoom` with a `timeLimitByType: { geo: 40 }` config,
   and confirmed the geo question resolved to 40s and the open question to the 20s default.
 
+## 2026-08-10 — Addendum A (Question Library)
+
+Bigger than any single original phase, and several parts were deliberately simplified against
+the addendum's own spec to fit this alongside everything else in Addendum B. Every simplification
+below is a real, acknowledged gap — not an oversight.
+
+- **FTS5 → plain `LIKE`.** The addendum itself hedges ("fall back to LIKE only if FTS5 is
+  unavailable... detect at boot") — meaning even its author expected this might not always work.
+  Given this app's likely pool size (a private group's questions: dozens to a few hundred, not
+  the volume FTS5 exists for), building and maintaining a synced virtual table plus boot-time
+  capability detection wasn't worth it. Search matches `prompt` directly plus `EXISTS` subqueries
+  against `question_open_answers`/`question_choices` (not a join, which would duplicate rows) —
+  verified directly: searching "Vinci" finds a question only via a choice label, not the prompt.
+- **Offset pagination, not keyset.** The addendum explicitly says "not offset pagination", but
+  true keyset cursors across *eight different sort orders* — several of them computed
+  expressions (`success_rate_asc` sorts on `timesCorrect/timesAsked`, not a stored column) —
+  would need a differently-shaped cursor per sort mode. Offset's known failure mode (skipped/
+  duplicate rows under concurrent inserts during someone's own paging session) isn't a real risk
+  at this app's scale and usage pattern. `PAGE_SIZE = 24`, "Charger plus" button (no
+  `IntersectionObserver` auto-load — simpler, equally functional, one less thing that can misfire).
+- **Facets in one query, not two.** A.10 says "one query for items plus one for facets" —
+  `listLibraryQuestions` does `Promise.all([items, total, facetRows])`, with `facetRows` grouped
+  by `(type, categoryId)` in a single grouped query, then split into `byType`/`byCategory` maps
+  in JS. Facets deliberately ignore the `type`/`cat` filters themselves (while respecting every
+  other filter) so the chips answer "how many if I added this", not "how many given I already
+  did" — the more useful faceted-search convention.
+- **Bulk actions (A.7) simplified to publish/archive.** "Changer de catégorie" and "ajouter à un
+  quiz" each need their own picker modal for what's an admin-only, lower-traffic affordance —
+  deprioritised against the rest of this addendum. No optimistic-update-with-6s-undo-toast either
+  (this app has a `Toast` component from Phase 1 that was never actually mounted anywhere real —
+  wiring up toast infra for the first time just for this felt like scope creep); mutations just
+  refetch the current page directly instead.
+- **Geo editing isn't wired into `/creer/question/[id]` yet.** Addendum B.3 (next) rebuilds
+  `GeoForm` from the ground up, including reordering its fields entirely — building edit-mode
+  support against the form that's about to be replaced would mean doing it twice. The edit page
+  shows an explicit "coming soon" state for geo questions rather than either failing silently or
+  (worse) rendering a blank create-mode `GeoForm` that would submit as a duplicate instead of an
+  update. Still fixed here: `getFullQuestionDetail` gained `status`/`authorId` (needed by every
+  edit form regardless of type) rather than writing a near-duplicate query just for this.
+- **Preview panel (A.6) reuses the real per-type answer-surface components** (`OpenAnswerSurface`
+  etc. from Phase 8), `disabled`, fed through the exact same `toSanitisedQuestion` mapper the live
+  game uses — not a hand-rolled re-implementation (that's what the pre-existing `QuestionPreview`
+  authoring-time component actually is, and it was deliberately *not* reused here for that
+  reason). The "Réponse" section below it uses the raw, unsanitised detail, since this is the
+  author/an admin previewing their own question, not a player mid-game.
+- **`library.ts` (plain reads) vs. `library-actions.ts` ("use server")** is a hard split, not
+  organisational preference: `library.ts`'s `listLibraryQuestions` takes `viewer: SessionUser` as
+  a parameter, and a "use server" file's exports become client-callable RPCs where every argument
+  is attacker-controlled — a viewer identity must never be one of them. `library-actions.ts`
+  re-derives the viewer from `getSession()` itself for every action, even `loadMoreLibraryQuestions`
+  (which re-validates the whole query through the same Zod schema again too, despite it already
+  having passed through `parseLibraryQuery` server-side once for the initial page load).
+- **No full focus-trap in the preview side-sheet** — it's a custom fixed overlay (not the
+  existing centred `Modal`/native `<dialog>`, which doesn't support a side-anchored sheet
+  layout), with `Esc`-to-close and `role="dialog"`/`aria-modal` but no hand-rolled trap. A
+  documented gap, not an oversight — building a correct one from scratch was more than this
+  addendum's budget could absorb on top of everything else in it.
+- **Verification**: `pnpm typecheck`/`test` pass, `pnpm build` succeeds with the new `/creer`,
+  `/creer/question`, `/creer/question/[id]` routes registered. `listLibraryQuestions` verified
+  directly against a real seeded DB: the draft-visibility rule (a stranger asking `status=all`
+  never sees another author's draft, admin does), prompt search, choice-label search via
+  `EXISTS`, type filtering, and facet counts. The choice-distribution/stats aggregation logic
+  (gated behind `getSession()`, not callable from a bare script) was verified by replicating its
+  exact query shape against seeded `answers` rows — confirmed 2/3 → 67%, 1/3 → 33%. Didn't do a
+  logged-in browser click-through, consistent with the standing direction to not chase
+  Playwright verification loops.
+
 <!-- New decisions appended below as phases progress. -->
