@@ -35,7 +35,9 @@ import type {
 const COUNTDOWN_MS = 3_000;
 const ANSWER_GRACE_MS = 300;
 const SCOREBOARD_HOLD_MS = 3_000;
-const EMPTY_ROOM_TIMEOUT_MS = 60_000;
+/** Addendum B.4 — supersedes brief §11.3's 60s "abandoned after 60s empty" figure. */
+const EMPTY_ROOM_TIMEOUT_MS = 120_000;
+export const SWEEP_INTERVAL_MS = 60_000;
 
 export interface ConnectedPlayer {
   userId: string;
@@ -87,6 +89,10 @@ export interface RoomState {
   currentDetail: FullQuestionDetail | null;
   pendingAnswers: Map<string, PendingAnswer>;
   emptyTimer: ReturnType<typeof setTimeout> | null;
+  /** When the empty-room deletion timer will fire, if one is armed — surfaced to clients as
+   *  `RoomStateView.closesAtMs` (Addendum B.4) so a player who reconnects mid-countdown sees
+   *  why. Null whenever the room has at least one connected player. */
+  emptyDeadlineMs: number | null;
   loopCancelled: boolean;
   createdAt: number;
 }
@@ -129,6 +135,7 @@ export function createRoomState(params: {
     currentDetail: null,
     pendingAnswers: new Map(),
     emptyTimer: null,
+    emptyDeadlineMs: null,
     loopCancelled: false,
     createdAt: Date.now(),
   };
@@ -186,6 +193,7 @@ export function toRoomStateView(room: RoomState): RoomStateView {
     position: room.currentIndex,
     total: room.frozenQuestions.length,
     deadlineMs: room.deadlineMs,
+    closesAtMs: room.emptyDeadlineMs,
     serverNowMs: Date.now(),
   };
 }
@@ -205,15 +213,74 @@ export function migrateHostIfNeeded(room: RoomState): boolean {
   return true;
 }
 
-export function scheduleEmptyRoomCheck(room: RoomState, onAbandon: (code: string) => void): void {
+// Duplicated from socket/handlers.ts's own copy (that file can't import from here without a
+// circular dependency the other way) — must stay in sync if either channel name ever changes.
+const LOBBY_CHANNEL = "lobby";
+
+/** Addendum B.4 — (re)arms the 2-minute empty-room timer whenever the room has zero connected
+ *  players, and cancels it the moment anyone (re)joins. `io` is only needed for the deletion
+ *  callback itself, not the scheduling. */
+export function scheduleEmptyRoomCheck(room: RoomState, io: GameIo): void {
   if (room.emptyTimer) clearTimeout(room.emptyTimer);
   const anyConnected = [...room.players.values()].some((p) => p.socketIds.size > 0);
-  if (anyConnected) return;
+  if (anyConnected) {
+    room.emptyDeadlineMs = null;
+    return;
+  }
 
+  room.emptyDeadlineMs = Date.now() + EMPTY_ROOM_TIMEOUT_MS;
   room.emptyTimer = setTimeout(() => {
     const stillEmpty = ![...room.players.values()].some((p) => p.socketIds.size > 0);
-    if (stillEmpty) onAbandon(room.code);
+    if (stillEmpty) void deleteEmptyRoom(io, room);
   }, EMPTY_ROOM_TIMEOUT_MS);
+}
+
+/** Cancel-only counterpart, for the join/reconnect path — doesn't need `io` (nothing gets
+ *  deleted here), unlike scheduleEmptyRoomCheck's re-arm branch. Without this, a rejoining
+ *  player's very first `room:state` snapshot could still carry a stale `closesAtMs`: the armed
+ *  setTimeout already no-ops correctly on its own (it re-checks emptiness when it fires), but
+ *  the deadline shown to clients wouldn't clear until that timer actually fired. */
+export function cancelEmptyRoomCheck(room: RoomState): void {
+  if (room.emptyTimer) {
+    clearTimeout(room.emptyTimer);
+    room.emptyTimer = null;
+  }
+  room.emptyDeadlineMs = null;
+}
+
+/** The actual deletion (Addendum B.4) — never runs for a `finished` room's DB row (those hold
+ *  permanent history), but still frees the in-memory RoomState either way so a room nobody's
+ *  looked at since the podium screen doesn't sit in memory for the rest of the process's life.
+ *  For `lobby`/`running` rooms: detaches (nulls, doesn't delete) any recorded `answers` rows
+ *  before dropping room_questions/room_players/rooms, so question_stats and every per-user
+ *  aggregate already derived from those answers stays intact — see DECISIONS.md for why nulling
+ *  the FK was chosen over cascading the delete. */
+export async function deleteEmptyRoom(io: GameIo, room: RoomState): Promise<void> {
+  deleteRoomState(room.code);
+  if (room.status === "finished") return;
+
+  cancelLoop(room);
+  await db.update(answers).set({ roomId: null }).where(eq(answers.roomId, room.id));
+  await db.delete(roomQuestions).where(eq(roomQuestions.roomId, room.id));
+  await db.delete(roomPlayers).where(eq(roomPlayers.roomId, room.id));
+  await db.delete(roomsTable).where(eq(roomsTable.id, room.id));
+
+  io.to(LOBBY_CHANNEL).emit("lobby:room_removed", room.code);
+}
+
+/** Safety-net sweep (Addendum B.4: "on boot and every 60s") for any in-memory room whose
+ *  per-room `emptyTimer` should have fired by now but somehow didn't — in normal operation this
+ *  is a no-op every time, since `scheduleEmptyRoomCheck`'s own `setTimeout` already handles it.
+ *  Deliberately doesn't touch the DB directly for rooms with no in-memory entry at all (a
+ *  process restart's worth of orphans): that's `abandonStaleRooms`'s job, which runs once at
+ *  boot before this sweeper's interval is even registered — see server.ts/socket/index.ts. */
+export function sweepEmptyRooms(io: GameIo): void {
+  const now = Date.now();
+  for (const room of allRooms()) {
+    if (room.emptyDeadlineMs !== null && room.emptyDeadlineMs <= now) {
+      void deleteEmptyRoom(io, room);
+    }
+  }
 }
 
 /** Rooms left 'lobby' or 'running' at process boot are stale — the in-memory `rooms` Map that

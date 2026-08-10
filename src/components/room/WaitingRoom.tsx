@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Copy, Check, Play } from "lucide-react";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +10,36 @@ import { ChatPanel } from "@/components/room/ChatPanel";
 import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
 import type { GameSocket } from "@/lib/socket/client";
 import type { RoomStateView, ChatMessagePayload } from "@/server/socket/events";
+
+/** Addendum B.4's "Ce salon sera fermé dans 1 min 42 s s'il reste vide." `closesAtMs` is only
+ *  ever non-null in a `room:state` snapshot during the narrow window between the server arming
+ *  the empty-room timer and the next client actually joining — joining is itself what cancels
+ *  it, so in practice this rarely has anything to show. Still correct and cheap to render when
+ *  it does; see DECISIONS.md. Local `Date.now()` ticking, not clock-offset-corrected — a rough
+ *  "about how long" figure is fine for this, unlike a scored question timer. */
+function EmptyRoomCountdown({ closesAtMs }: { closesAtMs: number }) {
+  const [remainingMs, setRemainingMs] = useState(() => closesAtMs - Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setRemainingMs(closesAtMs - Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [closesAtMs]);
+
+  if (remainingMs <= 0) return null;
+  const totalSeconds = Math.ceil(remainingMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return (
+    <p
+      role="status"
+      className="rounded-md border border-clay-deep bg-clay-deep/20 px-4 py-2 text-14 text-clay-soft"
+    >
+      Ce salon sera fermé dans {minutes} min {seconds.toString().padStart(2, "0")} s s&apos;il
+      reste vide.
+    </p>
+  );
+}
 
 export function WaitingRoom({
   state,
@@ -53,6 +83,8 @@ export function WaitingRoom({
 
   return (
     <div className="flex flex-col gap-6">
+      {state.closesAtMs && <EmptyRoomCountdown closesAtMs={state.closesAtMs} />}
+
       <Panel eyebrow="Salle d'attente" title={state.name}>
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">

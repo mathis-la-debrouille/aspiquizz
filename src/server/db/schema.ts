@@ -388,9 +388,10 @@ export const answers = sqliteTable(
   "answers",
   {
     id: id(),
-    roomId: text("room_id")
-      .notNull()
-      .references(() => rooms.id),
+    // Nullable — Addendum B.4: a room emptied and deleted (lobby/running, past the 2-minute
+    // grace period) has its answers rows detached rather than cascade-deleted, so question_stats
+    // and every per-question/per-user aggregate stays intact even though the room is gone.
+    roomId: text("room_id").references(() => rooms.id),
     questionId: text("question_id")
       .notNull()
       .references(() => questions.id),

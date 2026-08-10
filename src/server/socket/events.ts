@@ -49,6 +49,9 @@ export interface RoomStateView {
   position: number;
   total: number;
   deadlineMs: number | null;
+  /** Set only when the room has zero connected players and the empty-room deletion timer
+   *  (Addendum B.4) is armed — lets a client that reconnects mid-countdown show why. */
+  closesAtMs: number | null;
   serverNowMs: number;
 }
 

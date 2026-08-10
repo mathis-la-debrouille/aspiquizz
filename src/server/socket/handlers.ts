@@ -26,6 +26,7 @@ import {
   migrateHostIfNeeded,
   recordAnswer,
   scheduleEmptyRoomCheck,
+  cancelEmptyRoomCheck,
   startGame,
   toLobbySummary,
   toRoomStateView,
@@ -89,6 +90,9 @@ function emitError(socket: GameSocket, code: string, messageFr: string): void {
 
 function addOrReconnectPlayer(room: RoomState, socket: GameSocket): void {
   const user = socket.data.user;
+  // Someone's here — the empty-room deletion countdown (Addendum B.4), if one was running,
+  // no longer applies.
+  cancelEmptyRoomCheck(room);
   const existing = room.players.get(user.id);
   if (existing) {
     existing.socketIds.add(socket.id);
@@ -400,17 +404,10 @@ async function handleLeave(
       io.to(roomChannel(code)).emit("room:host_changed", { hostId: room.hostId });
     }
 
-    scheduleEmptyRoomCheck(room, (abandonedCode) => {
-      const stale = getRoom(abandonedCode);
-      if (!stale) return;
-      cancelLoop(stale);
-      deleteRoomState(abandonedCode);
-      void db
-        .update(roomsTable)
-        .set({ status: "abandoned", endedAt: new Date() })
-        .where(eq(roomsTable.code, abandonedCode));
-      void broadcastLobbyRoomsSafe(io);
-    });
+    // Deletion itself (not just marking 'abandoned') is engine.ts's job now — Addendum B.4.
+    // scheduleEmptyRoomCheck arms its own setTimeout calling deleteEmptyRoom(io, room)
+    // directly, so there's nothing left to do here but (re)arm it.
+    scheduleEmptyRoomCheck(room, io);
 
     await broadcastRoomUpdated(io, room);
   }

@@ -840,4 +840,58 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   straightforward, low-risk additions on top of it. Consistent with the standing direction to
   not chase browser-level verification loops.
 
+## 2026-08-10 — Addendum B.4 (empty rooms deleted after 2 minutes)
+
+- **`answers.roomId` is now nullable** (migration 0003, a table-recreate — SQLite's standard way
+  to relax a column's NOT NULL) — the addendum's own "decide and document": deleting an empty
+  `running` room's `rooms` row while it still has recorded `answers` needs those rows to survive
+  *something*, and nulling the FK (rather than cascading the delete) is what actually satisfies
+  "never lose recorded answers, since `question_stats` is derived from them" — `question_stats`
+  and every per-user aggregate only ever key off `question_id`/`user_id`, never `room_id`, so a
+  detached answer is exactly as useful to them as an attached one. Checked first: nothing in
+  this codebase reads `answers.roomId` besides the insert itself, so nothing else needed to
+  change to tolerate it going null.
+- **Fixed a real pre-existing bug found while implementing this**: the empty-room-check handler
+  ran for *every* room status, including `finished` — a player leaving the podium screen after
+  the last game they were in would, 60s (now would-be 2 minutes) later, have their room's DB
+  status silently overwritten from `finished` to `abandoned`, corrupting the historical record
+  for no reason. Addendum B.4's own "rooms already finished are never deleted" requirement is
+  what surfaced this; `deleteEmptyRoom` now returns immediately for a `finished` room's DB row
+  (after still freeing its in-memory `RoomState`, so a played-out room doesn't just leak in
+  memory for the rest of the process's life — the addendum didn't ask for that half explicitly,
+  but leaving it unbounded once the DB-side deletion had a guard anyway would be a straightforward
+  memory leak with no offsetting benefit).
+- **Cancelling the timer on rejoin needed a second, `io`-free function.** The existing per-room
+  `setTimeout` already re-checks emptiness when it *fires* (so it silently no-ops if someone
+  rejoined in the meantime — the old code already got this right), but that's not the same as
+  the *deadline shown to clients* (`closesAtMs`, new on `RoomStateView`) actually clearing the
+  moment someone reconnects. Added `cancelEmptyRoomCheck(room)` (no `io` parameter — nothing
+  gets deleted here, so it doesn't need one, unlike `scheduleEmptyRoomCheck`'s re-arm branch)
+  and call it from `addOrReconnectPlayer`.
+- **The "show a countdown to the remaining player" UI is real but structurally low-visibility.**
+  Traced the actual reachability: `room:state` (the only thing that carries `closesAtMs`) is
+  sent to a socket in response to `room:join` — and joining is itself what cancels the timer, on
+  the same synchronous path, before that response is even built. A room with zero connected
+  players has, by definition, nobody currently able to receive a fresh snapshot showing it
+  counting down. The banner (`WaitingRoom.tsx`'s `EmptyRoomCountdown`) is still implemented
+  correctly and cheaply for whenever `closesAtMs` *is* present in a snapshot, but this isn't a
+  commonly-visible feature by construction, not because the implementation is incomplete —
+  broadcasting it to lobby browsers instead (letting people see a dying room before joining it)
+  would be a more reachable version of the same idea, but is a bigger, separate change and
+  wasn't built here.
+- **The periodic sweeper is a genuine no-op at boot, always.** `sweepEmptyRooms` reads the
+  in-memory `rooms` Map, which is created fresh and empty on every process start — there is
+  nothing in it to sweep the instant `attachSocketServer` runs. Boot-time orphan cleanup for
+  rooms a *previous* process left behind is `abandonStaleRooms`'s job (already existed, Phase
+  12), which runs first and is DB-driven, not memory-driven. The 60s interval is the sweeper
+  that actually matters, as a redundant safety net behind each room's own `setTimeout`.
+- **Verification**: `pnpm typecheck`/`test` (110 tests, unchanged from B.3) pass, `pnpm build`
+  succeeds, boot/shutdown logs confirmed clean with the new sweeper interval wired in. Ran
+  `deleteEmptyRoom` directly (not a replica — the real function, imported, called with a minimal
+  fake `io` stub) against a real seeded local DB for all three cases: a `lobby` room (rooms/
+  room_players/room_questions all gone, `lobby:room_removed` emitted), a `running` room with a
+  recorded answer (room gone, the answer row survives with `room_id` now `NULL` and every other
+  column — `question_id`, `is_correct`, `ms_taken` — intact), and a `finished` room (completely
+  untouched, no event emitted).
+
 <!-- New decisions appended below as phases progress. -->

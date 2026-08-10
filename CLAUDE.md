@@ -118,6 +118,13 @@ touch/fullscreen-only pending-tap flow, the hover tooltip. Every in-game call si
 (`GeoAnswerSurface`, `RevealScreen`, `QuestionPreview`, `/dev/map`) passes nothing and is
 unaffected — never set `editorChrome` outside `GeoForm`.
 
+Empty-room deletion (Addendum B.4, supersedes brief §11.3's 60s figure): a room with zero
+connected players is deleted (not just marked `abandoned`) after 2 minutes —
+`scheduleEmptyRoomCheck`/`cancelEmptyRoomCheck`/`deleteEmptyRoom`/`sweepEmptyRooms` in
+`engine.ts`. `finished` rooms are never touched in the DB, only freed from the in-memory `rooms`
+Map. `answers.roomId` is nullable — a `running` room's recorded answers survive its deletion
+with `room_id` set to `null`, never cascade-deleted.
+
 Question library (Addendum A): `/creer` is the library (browse/filter/preview), not the
 creation form — that moved to `/creer/question` (create) and `/creer/question/[id]` (edit,
 same `QuestionComposer`/per-type form components, just prefilled — geo editing isn't wired yet,
