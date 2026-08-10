@@ -894,4 +894,36 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   column — `question_id`, `is_correct`, `ms_taken` — intact), and a `finished` room (completely
   untouched, no event emitted).
 
+## 2026-08-10 — Addendum A/B wrap-up: three pre-existing crashes found and fixed
+
+Final pass across the whole addendum: full `pnpm typecheck`/`test`/`build`, then booting the
+actual production build (`pnpm start`, not just `next build`) and curling every route
+unauthenticated to confirm a clean redirect rather than trusting that it would. That last step
+caught three real bugs — none introduced by this addendum, all three pre-dating it (Phase 9),
+never caught before because Phase 8's e2e verification was cut short before this route pattern
+was ever actually curled unauthenticated in production mode.
+
+- **`/profil`, `/profil/[username]`, and `/classement` all crashed (500) instead of redirecting
+  to `/connexion` when hit unauthenticated.** All three used `session!.user...` — a non-null
+  assertion with no actual `if (!session)` check backing it, relying entirely on the `(app)`
+  layout having already redirected. That reliance is exactly the anti-pattern this codebase's
+  own convention (every server action's `requireUser()`, every other page built across every
+  phase and this whole addendum) explicitly rejects: a layout running first is a UX nicety, not
+  a trust boundary a page can lean on — and here, provably, it wasn't safe to lean on either.
+  Fixed all three with the same explicit `if (!session) redirect("/connexion")` used everywhere
+  else. Reported here rather than silently folded in, since none of the addendum work touched
+  these three files.
+- **This is exactly why the final verification step booted the real production server instead
+  of stopping at `pnpm build`** — a successful build only proves the code compiles and
+  prerenders; it says nothing about a runtime `null` dereference on an unauthenticated request
+  path, which a build never exercises.
+
+Addendum A/B status: all six chunks (B.2, A, B.1+B.5, B.3, B.4, this wrap-up) are complete,
+committed, and documented. New Playwright suites (A.10/B.6's own test-additions asks) weren't
+built — consistent with the standing direction from earlier in this engagement to not pursue
+Playwright verification loops. Every chunk was instead verified by running its actual server-
+side logic (queries, mutations, ranking functions) directly against a real seeded local
+database, which is where the three bugs above and the two search-ranking bugs in B.3 were
+actually found — in each case, by running the code, not by reading it.
+
 <!-- New decisions appended below as phases progress. -->

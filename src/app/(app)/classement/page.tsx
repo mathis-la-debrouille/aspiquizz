@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getSession } from "@/server/auth/session";
 import { getLeaderboard } from "@/server/progression/queries";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
@@ -8,6 +9,9 @@ export const metadata: Metadata = { title: "Classement — ASPI Quiz" };
 
 export default async function ClassementPage() {
   const [session, entries] = await Promise.all([getSession(), getLeaderboard(50)]);
+  // Same defensive check as every other page here — the (app) layout's redirect is a UX gate,
+  // not something a page can lean on having already run (see profil/page.tsx's own fix).
+  if (!session) redirect("/connexion");
 
   return (
     <div className="flex flex-col gap-6">
@@ -18,7 +22,7 @@ export default async function ClassementPage() {
           description="Lancez une partie pour apparaître ici."
         />
       ) : (
-        <LeaderboardTable entries={entries} currentUserId={session!.user.id} />
+        <LeaderboardTable entries={entries} currentUserId={session.user.id} />
       )}
     </div>
   );

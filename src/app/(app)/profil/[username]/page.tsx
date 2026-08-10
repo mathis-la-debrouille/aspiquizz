@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/server/auth/session";
 import { getProfileByUsername } from "@/server/progression/queries";
 import { xpForLevel, levelProgress } from "@/server/game/scoring";
@@ -19,9 +19,12 @@ export default async function ProfilePage({
 }) {
   const { username } = await params;
   const [session, profile] = await Promise.all([getSession(), getProfileByUsername(username)]);
+  // Same defensive check as every other page here — the (app) layout's redirect is a UX gate,
+  // not something a page can lean on having already run (see profil/page.tsx's own fix).
+  if (!session) redirect("/connexion");
   if (!profile) notFound();
 
-  const isOwnProfile = session!.user.id === profile.userId;
+  const isOwnProfile = session.user.id === profile.userId;
   const xpToNextLevel = Math.max(0, xpForLevel(profile.stats.level + 1) - profile.stats.xp);
   const earnedCount = profile.badges.filter((b) => b.earnedAt).length;
 

@@ -199,8 +199,11 @@ hardening). Phase N+1 doesn't start until phase N's acceptance criteria pass. Ch
 **Addenda A and B** (question library, and a set of authoring/room fixes — inline category
 creation, duration moving from question to room, a rebuilt geo editor, empty-room deletion,
 category management) landed after the original 12 phases as a second wave of work, on top of an
-already-complete build. Where they supersede a decision from the original brief (§5, §6, §10.1,
-§11.3), the addendum wins — see `DECISIONS.md` entries dated after the Phase 12 hardening one.
+already-complete build, and are themselves complete (all six chunks — B.2, A, B.1/B.5, B.3, B.4,
+and a final verification pass — committed). Where they supersede a decision from the original
+brief (§5, §6, §10.1, §11.3), the addendum wins — see `DECISIONS.md` entries dated after the
+Phase 12 hardening one. Known gap carried forward from Addendum A: geo question editing still
+isn't wired into `/creer/question/[id]` (open/mcq/image are); see that entry for why.
 
 ## Do not
 
