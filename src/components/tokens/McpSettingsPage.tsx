@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { CreateTokenModal } from "@/components/tokens/CreateTokenModal";
 import { TokenRevealModal } from "@/components/tokens/TokenRevealModal";
 import { TokenList } from "@/components/tokens/TokenList";
+import { McpTutorial } from "@/components/tokens/McpTutorial";
 import type { TokenRow } from "@/server/mcp/queries";
 
 export function McpSettingsPage({
@@ -54,6 +55,10 @@ export function McpSettingsPage({
 
           <TokenList tokens={tokens} onChanged={handleChanged} />
         </div>
+      </Panel>
+
+      <Panel eyebrow="Guide" title="Configurer votre client en 6 étapes">
+        <McpTutorial />
       </Panel>
 
       <CreateTokenModal
