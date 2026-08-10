@@ -623,4 +623,46 @@ failed` the first time a real two-client test tried to join a room — never cau
   precise step that failed in the Railway log. Succeeded cleanly post-fix, followed by
   `pnpm typecheck`/`test`/`build`, all green.
 
+## 2026-08-10 — Addendum B.2 (duration moves from question to room)
+
+- **Root cause of an accidental production migration, and a workflow fix.** Running
+  `pnpm db:migrate` locally to test this phase's schema change applied it to the real Turso
+  database instead of `local.db` — a direct consequence of the `.env`-auto-loading fix landed
+  just before this addendum started. That fix was correct (standalone scripts need `.env` to
+  reach the intended DB at all), but it means every bare script now targets whatever
+  `DATABASE_URL` sits in `.env` by default, which is production once real Turso credentials are
+  in there. No harm done this time (confirmed with the user: nothing is live yet), but the
+  addendum's remaining chunks (a new `question_stats` table, an FTS5 virtual table, more schema
+  changes) will need their own local migration testing — from here on, local verification runs
+  with an explicit `DATABASE_URL="file:./local.db"` prefix, never relying on ambient `.env`.
+- **Resolution centralised in one place.** `selectQuestionsForRoom` now returns `{questionId,
+  type}` instead of `{questionId, timeLimitS}` — duration resolution (`timeLimitByType[type] ??
+  timeLimitS`) happens once, in `engine.ts`'s `startGame`, right where `frozenQuestions` gets
+  built and written into `room_questions.time_limit_s`. The old code had the same fallback
+  formula half-duplicated (once in `question-selection.ts` for the random-source branch only,
+  once again in `engine.ts`) and effectively dead, since `questions.time_limit_s` was never null.
+- **`SanitisedQuestion.timeLimitS` (sent to clients in `question:show` and `room:state`) is now
+  an explicit second argument to `toSanitised()`**, not read off `FullQuestionDetail` — the
+  question-detail layer has no concept of duration anymore at all. Both call sites needed a
+  source for it: the live-loop one already had `frozen.timeLimitS` in scope; the `room:state`
+  reconnect-snapshot one (`toRoomStateView`) didn't previously distinguish "the question" from
+  "the room's timing for that question" and had to look it up via
+  `room.frozenQuestions[room.currentIndex]`.
+- **`timeLimitByType` is an explicit 4-key partial object in the Zod schema, not `z.record` with
+  an enum key** — Zod's `record()` with a literal-union/enum key schema can enforce every key be
+  present depending on version, which would defeat "partial" entirely. An explicit
+  `z.object({open, mcq, image, geo}).partial().optional()` is unambiguous regardless.
+- **The waiting room's host config panel didn't exist before this** — `room:update_config` had a
+  server handler since Phase 7 but zero client UI ever called it. Built a minimal one scoped to
+  exactly what B.2 asks for (a "Rythme" section), not a full config editor: a local edit buffer
+  (`RhythmSection`, shared with `CreateRoomModal`) plus an "Appliquer" button that only appears
+  when the buffer actually differs from `state.config`. `room:update_config` has no ack in
+  `events.ts`'s `ClientToServerEvents` — the "confirmation" is just the fresh `room:state`
+  broadcast every client in the channel receives, which flows back into `state.config` as a prop.
+- **Verification**: `pnpm typecheck`/`test`/`build` pass. Generated migration
+  (`0001_typical_mentor.sql`, a single `ALTER TABLE questions DROP COLUMN time_limit_s`) applied
+  clean against a from-scratch local DB. A throwaway script (not committed) inserted a `geo` and
+  an `open` question, ran `selectQuestionsForRoom` with a `timeLimitByType: { geo: 40 }` config,
+  and confirmed the geo question resolved to 40s and the open question to the 20s default.
+
 <!-- New decisions appended below as phases progress. -->

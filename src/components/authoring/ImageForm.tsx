@@ -17,7 +17,6 @@ import type { CategoryOption } from "@/components/authoring/types";
 const DEFAULT_SHARED: SharedFieldsValue = {
   categoryId: "",
   difficulty: 1,
-  timeLimitS: 20,
   hint: "",
   explanation: "",
   status: "draft",

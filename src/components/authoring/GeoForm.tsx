@@ -26,7 +26,6 @@ const GeoMap = dynamic(() => import("@/components/map").then((m) => m.GeoMap), {
 const DEFAULT_SHARED: SharedFieldsValue = {
   categoryId: "",
   difficulty: 1,
-  timeLimitS: 20,
   hint: "",
   explanation: "",
   status: "draft",

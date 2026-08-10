@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioCard } from "@/components/ui/RadioCard";
+import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
 import { useSocket } from "@/lib/socket/client";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuizListItem } from "@/server/questions/queries";
@@ -30,7 +31,7 @@ export function CreateRoomModal({
   const [quizId, setQuizId] = useState("");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [questionCount, setQuestionCount] = useState(10);
-  const [defaultTimeLimitS, setDefaultTimeLimitS] = useState(20);
+  const [rhythm, setRhythm] = useState<RhythmValue>({ timeLimitS: 20 });
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [scoringMode, setScoringMode] = useState<"speed" | "flat">("speed");
@@ -53,7 +54,8 @@ export function CreateRoomModal({
         visibility,
         config: {
           questionCount,
-          defaultTimeLimitS,
+          timeLimitS: rhythm.timeLimitS,
+          timeLimitByType: rhythm.timeLimitByType,
           categoryIds: source === "random" ? categoryIds : [],
           difficultyMin: 1,
           difficultyMax: 5,
@@ -161,21 +163,7 @@ export function CreateRoomModal({
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="default-time" className="text-14 font-medium text-ink-mid">
-            Durée par question — {defaultTimeLimitS}s
-          </label>
-          <input
-            id="default-time"
-            type="range"
-            min={10}
-            max={60}
-            step={5}
-            value={defaultTimeLimitS}
-            onChange={(e) => setDefaultTimeLimitS(Number(e.target.value))}
-            className="accent-moss"
-          />
-        </div>
+        <RhythmSection value={rhythm} onChange={setRhythm} />
 
         <div className="grid grid-cols-2 gap-3">
           <Select

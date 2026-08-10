@@ -8,7 +8,7 @@ import { z } from "zod";
 export const questionSharedSchema = z.object({
   categoryId: z.string().min(1, "Catégorie requise."),
   difficulty: z.coerce.number().int().min(1).max(5),
-  timeLimitS: z.coerce.number().int().min(10).max(60),
+  // No timeLimitS here — duration is set at room creation, not authoring time (Addendum B.2).
   hint: z.string().trim().max(280).optional().or(z.literal("")),
   explanation: z.string().trim().max(1000).optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),

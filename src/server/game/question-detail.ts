@@ -24,7 +24,6 @@ export interface FullQuestionDetail {
   categoryName: string;
   categoryColorToken: ColorToken;
   difficulty: number;
-  timeLimitS: number;
   pointsBase: number;
   authorUsername: string;
   authorDisplayName: string;
@@ -56,7 +55,6 @@ export async function getFullQuestionDetail(
       categoryName: categories.name,
       categoryColorToken: categories.colorToken,
       difficulty: questions.difficulty,
-      timeLimitS: questions.timeLimitS,
       pointsBase: questions.pointsBase,
       authorUsername: users.username,
       authorDisplayName: users.displayName,
@@ -108,7 +106,10 @@ export async function getFullQuestionDetail(
   };
 }
 
-export function toSanitised(detail: FullQuestionDetail): SanitisedQuestion {
+/** `timeLimitS` is the room's resolved value (room_questions.time_limit_s), not a property of
+ *  the question itself — passed in explicitly by the caller (engine.ts, from `frozen.timeLimitS`)
+ *  rather than read off `detail`, which no longer carries one at all (Addendum B.2). */
+export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): SanitisedQuestion {
   return toSanitisedQuestion({
     id: detail.id,
     type: detail.type,
@@ -117,7 +118,7 @@ export function toSanitised(detail: FullQuestionDetail): SanitisedQuestion {
     categoryName: detail.categoryName,
     categoryColorToken: detail.categoryColorToken,
     difficulty: detail.difficulty,
-    timeLimitS: detail.timeLimitS,
+    timeLimitS,
     pointsBase: detail.pointsBase,
     authorUsername: detail.authorUsername,
     authorDisplayName: detail.authorDisplayName,

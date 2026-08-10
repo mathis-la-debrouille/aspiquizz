@@ -9,7 +9,6 @@ import type { CategoryOption } from "@/components/authoring/types";
 export interface SharedFieldsValue {
   categoryId: string;
   difficulty: number;
-  timeLimitS: number;
   hint: string;
   explanation: string;
   status: "draft" | "published";
@@ -68,22 +67,6 @@ export function SharedFields({ value, onChange, categories }: SharedFieldsProps)
             );
           })}
         </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="time-limit" className="text-14 font-medium text-ink-mid">
-          Durée — {value.timeLimitS}s
-        </label>
-        <input
-          id="time-limit"
-          type="range"
-          min={10}
-          max={60}
-          step={5}
-          value={value.timeLimitS}
-          onChange={(e) => set("timeLimitS", Number(e.target.value))}
-          className="accent-moss"
-        />
       </div>
 
       <Input

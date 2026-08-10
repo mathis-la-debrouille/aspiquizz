@@ -11,9 +11,22 @@ const roomCodeSchema = z.string().length(6);
 
 export const lobbySubscribeSchema = z.object({});
 
+/** Explicit keys (not z.record with an enum key) so this stays a genuinely partial map across
+ *  Zod versions — see DECISIONS.md, Addendum B.2. */
+const timeLimitByTypeSchema = z
+  .object({
+    open: z.number().int().min(5).max(120),
+    mcq: z.number().int().min(5).max(120),
+    image: z.number().int().min(5).max(120),
+    geo: z.number().int().min(5).max(120),
+  })
+  .partial()
+  .optional();
+
 export const roomConfigSchema = z.object({
   questionCount: z.number().int().min(1).max(50),
-  defaultTimeLimitS: z.number().int().min(10).max(60),
+  timeLimitS: z.number().int().min(5).max(120),
+  timeLimitByType: timeLimitByTypeSchema,
   categoryIds: z.array(z.string()).default([]),
   difficultyMin: z.number().int().min(1).max(5),
   difficultyMax: z.number().int().min(1).max(5),

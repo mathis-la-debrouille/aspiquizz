@@ -179,7 +179,9 @@ export function toRoomStateView(room: RoomState): RoomStateView {
     visibility: room.visibility,
     phase: room.phase,
     players: [...room.players.values()].map((p) => toPlayerView(room, p)),
-    currentQuestion: room.currentDetail ? toSanitised(room.currentDetail) : null,
+    currentQuestion: room.currentDetail
+      ? toSanitised(room.currentDetail, room.frozenQuestions[room.currentIndex]?.timeLimitS ?? 0)
+      : null,
     position: room.currentIndex,
     total: room.frozenQuestions.length,
     deadlineMs: room.deadlineMs,
@@ -268,7 +270,10 @@ export async function startGame(io: GameIo, room: RoomState): Promise<void> {
   room.frozenQuestions = selected.map((s, position) => ({
     position,
     questionId: s.questionId,
-    timeLimitS: s.timeLimitS || room.config.defaultTimeLimitS,
+    // Resolution order per Addendum B.2: an explicit per-type override wins, else the room's
+    // flat default. Written once here into room_questions.time_limit_s below and never
+    // re-read from config afterwards.
+    timeLimitS: room.config.timeLimitByType?.[s.type] ?? room.config.timeLimitS,
   }));
   room.status = "running";
 
@@ -312,7 +317,7 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     io.to(channel).emit("question:show", {
       position: frozen.position,
       total: room.frozenQuestions.length,
-      question: toSanitised(detail),
+      question: toSanitised(detail, frozen.timeLimitS),
       deadlineMs,
       serverNowMs: Date.now(),
     });

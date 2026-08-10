@@ -134,7 +134,8 @@ export const questions = sqliteTable(
       .notNull()
       .references(() => users.id),
     difficulty: integer("difficulty").notNull().default(1),
-    timeLimitS: integer("time_limit_s").notNull().default(20),
+    // Duration is a room-setup decision, not a question property — Addendum B.2. Dropped from
+    // here; room_questions.time_limit_s (below) is the frozen, resolved-at-room-start value.
     pointsBase: integer("points_base").notNull().default(1000),
     mediaId: text("media_id").references(() => media.id),
     /** Only meaningful for type='image' — the author's chosen answering mechanic. */
@@ -285,7 +286,11 @@ export type ScoringMode = "speed" | "flat";
 
 export interface RoomConfig {
   questionCount: number;
-  defaultTimeLimitS: number;
+  /** Default 20, range 5–120 (brief §5 originally had this as `defaultTimeLimitS`, 10–60 — widened
+   *  and renamed by Addendum B.2, which also moved authoring's own per-question timer here). */
+  timeLimitS: number;
+  /** Per-type override — resolved as `timeLimitByType[type] ?? timeLimitS` at room start (B.2). */
+  timeLimitByType?: Partial<Record<QuestionType, number>>;
   categoryIds: string[];
   difficultyMin: number;
   difficultyMax: number;

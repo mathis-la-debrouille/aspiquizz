@@ -8,6 +8,13 @@
       "when": 1786293291647,
       "tag": "0000_real_prodigy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786364084257,
+      "tag": "0001_typical_mentor",
+      "breakpoints": true
     }
   ]
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { PlayerChip } from "@/components/ui/PlayerChip";
 import { Badge } from "@/components/ui/Badge";
 import { ChatPanel } from "@/components/room/ChatPanel";
+import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
 import type { GameSocket } from "@/lib/socket/client";
 import type { RoomStateView, ChatMessagePayload } from "@/server/socket/events";
 
@@ -27,10 +28,27 @@ export function WaitingRoom({
   const isHost = state.hostId === currentUserId;
   const me = state.players.find((p) => p.userId === currentUserId);
 
+  // Local edit buffer — applied to the room only on demand (see handleApplyRhythm), not synced
+  // on every slider tick, so dragging doesn't spam room:update_config.
+  const [rhythm, setRhythm] = useState<RhythmValue>({
+    timeLimitS: state.config.timeLimitS,
+    timeLimitByType: state.config.timeLimitByType,
+  });
+  const rhythmDirty =
+    rhythm.timeLimitS !== state.config.timeLimitS ||
+    JSON.stringify(rhythm.timeLimitByType ?? {}) !==
+      JSON.stringify(state.config.timeLimitByType ?? {});
+
   function copyCode() {
     void navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  }
+
+  // room:update_config has no ack (see events.ts) — the confirmation is the fresh room:state
+  // broadcast every client in the channel receives, which flows back into `state.config` here.
+  function handleApplyRhythm() {
+    socket.emit("room:update_config", { code, config: { ...state.config, ...rhythm } });
   }
 
   return (
@@ -58,12 +76,27 @@ export function WaitingRoom({
             </Button>
           </div>
           <Badge tone="neutral">{state.config.questionCount} questions</Badge>
-          <Badge tone="neutral">{state.config.defaultTimeLimitS}s / question</Badge>
+          <Badge tone="neutral">{state.config.timeLimitS}s / question</Badge>
           <Badge tone="neutral">
             {state.config.scoringMode === "speed" ? "Notation rapidité" : "Notation fixe"}
           </Badge>
         </div>
       </Panel>
+
+      {isHost && (
+        <Panel
+          title="Rythme"
+          action={
+            rhythmDirty && (
+              <Button size="sm" onClick={handleApplyRhythm}>
+                Appliquer
+              </Button>
+            )
+          }
+        >
+          <RhythmSection value={rhythm} onChange={setRhythm} />
+        </Panel>
+      )}
 
       <Panel title={`Joueurs (${state.players.length}/${state.config.maxPlayers})`}>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">

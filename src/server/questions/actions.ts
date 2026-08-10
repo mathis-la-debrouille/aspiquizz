@@ -49,7 +49,6 @@ export async function createOpenQuestion(input: OpenQuestionInput): Promise<Acti
       categoryId: data.categoryId,
       authorId: user.id,
       difficulty: data.difficulty,
-      timeLimitS: data.timeLimitS,
       strict: data.strict,
       status: data.status,
     })
@@ -84,7 +83,6 @@ export async function createMcqQuestion(input: McqQuestionInput): Promise<Action
       categoryId: data.categoryId,
       authorId: user.id,
       difficulty: data.difficulty,
-      timeLimitS: data.timeLimitS,
       status: data.status,
     })
     .returning({ id: questions.id });
@@ -120,7 +118,6 @@ export async function createImageQuestion(input: ImageQuestionInput): Promise<Ac
       categoryId: data.categoryId,
       authorId: user.id,
       difficulty: data.difficulty,
-      timeLimitS: data.timeLimitS,
       mediaId: data.mediaId,
       answerMode: data.answerMode,
       strict: data.strict,
@@ -168,7 +165,6 @@ export async function createGeoQuestion(input: GeoQuestionInput): Promise<Action
       categoryId: data.categoryId,
       authorId: user.id,
       difficulty: data.difficulty,
-      timeLimitS: data.timeLimitS,
       strict: data.strict,
       status: data.status,
     })
