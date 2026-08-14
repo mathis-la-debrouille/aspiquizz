@@ -29,20 +29,30 @@ const RESOLUTION_SWAP_SCALE = 3;
 const HIGH_RES_SWAP_SCALE = 10;
 const LABEL_AUTO_SCALE = 2.5;
 
+/**
+ * A callback ref, not `useRef` + a `useEffect(..., [])` — the latter captures whichever DOM node
+ * existed at the very first mount and never re-observes if that node is later swapped out (e.g.
+ * GeoMap's fullscreen toggle restructures the JSX around this container; React doesn't guarantee
+ * the same DOM node survives that). A stale, no-longer-in-the-document ResizeObserver target
+ * means `size` silently freezes at whatever it was before entering fullscreen, so the projection
+ * (and the <svg>'s own width/height, both driven by `size`) never adopts the real, much bigger
+ * fullscreen viewport — this is the root cause of "zoom does nothing once fullscreen".
+ */
 function useElementSize<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const observerRef = useRef<ResizeObserver | null>(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+  const ref = useCallback((node: T | null) => {
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+    if (!node) return;
     const observer = new ResizeObserver(([entry]) => {
       if (!entry) return;
       const { width, height } = entry.contentRect;
       setSize({ width: Math.round(width), height: Math.round(height) });
     });
-    observer.observe(el);
-    return () => observer.disconnect();
+    observer.observe(node);
+    observerRef.current = observer;
   }, []);
 
   return [ref, size] as const;
@@ -176,9 +186,17 @@ export function GeoMap({
       .filter((event: Event) => !(editorChrome && event.type === "dblclick"))
       .on("zoom", (event: { transform: ZoomTransform }) => {
         g.setAttribute("transform", event.transform.toString());
+        // Exposes the live zoom factor as a CSS custom property so .geo-label (globals.css) can
+        // counter-scale itself by 1/k — without it, text/stroke widths defined in the same
+        // pre-zoom coordinate space as the country paths grow linearly with k, which at this
+        // component's zoom range reads as "a 10px label rendering 100+px tall" long before
+        // maxScale is reached. .geo-country's border uses the SVG-native equivalent
+        // (vector-effect: non-scaling-stroke) instead, since that's a shape stroke, not text.
+        g.style.setProperty("--zoom-k", String(event.transform.k));
         setScale(event.transform.k);
       });
 
+    g.style.setProperty("--zoom-k", "1");
     select(svg).call(behavior);
     zoomBehaviorRef.current = behavior;
 

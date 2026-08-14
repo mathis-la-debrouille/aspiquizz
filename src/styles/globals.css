@@ -155,6 +155,11 @@
   fill: var(--color-bg-raised);
   stroke: var(--color-border-hard);
   stroke-width: 0.75px;
+  /* Keeps the border a constant on-screen width regardless of the ancestor <g>'s zoom
+     transform — without this, stroke-width scales linearly with zoom (same coordinate space
+     as the path data), so it either disappears at low zoom or gets absurdly thick at high
+     zoom instead of staying a crisp hairline. Native SVG rendering property, no JS needed. */
+  vector-effect: non-scaling-stroke;
   transition:
     fill 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
     opacity 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -194,6 +199,13 @@
   font-size: 10px;
   pointer-events: none;
   text-anchor: middle;
+  /* --zoom-k is set imperatively on the ancestor <g> by GeoMap.tsx's zoom handler, in lockstep
+     with the transform that scales everything inside it. This cancels that ambient scale back
+     out (font-size/stroke-width are in the same pre-zoom coordinate space as the country
+     paths), so labels render at their authored 10px regardless of zoom level. Falls back to 1
+     before the first zoom event has fired. transform-origin is set per-element inline (see
+     Labels.tsx) — without it this scales around the SVG's origin, not the label's own point. */
+  transform: scale(calc(1 / var(--zoom-k, 1)));
 }
 /* Invisible click targets for small/geometry-less countries — brief §8.2. Not `.geo-country`:
    that class carries a visible stroke, which would clutter the map with circle outlines. */

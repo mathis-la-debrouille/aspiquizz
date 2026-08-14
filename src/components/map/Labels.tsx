@@ -49,7 +49,17 @@ function LabelsImpl({ features, pathGenerator, namesByIso3 }: LabelsProps) {
         const centroid = pathGenerator.centroid(f.geometry);
         if (Number.isNaN(centroid[0]) || Number.isNaN(centroid[1])) return null;
         return (
-          <text key={f.iso3} x={centroid[0]} y={centroid[1]} className="geo-label">
+          <text
+            key={f.iso3}
+            x={centroid[0]}
+            y={centroid[1]}
+            className="geo-label"
+            // Counter-scaled by CSS (transform: scale(1/--zoom-k), globals.css) so the label
+            // stays a constant on-screen size as the map zooms — the scale must originate at
+            // this exact point, not the text's own bounding-box center (SVG's default
+            // transform-box), or the label visibly drifts off its country as --zoom-k changes.
+            style={{ transformOrigin: `${centroid[0]}px ${centroid[1]}px` }}
+          >
             {name}
           </text>
         );
