@@ -26,8 +26,8 @@ const TRANSITION_MS = 450;
 const FOCUS_PADDING = 60;
 // Addendum B.3.1 thresholds — editorChrome only, never applied to the in-game map.
 const RESOLUTION_SWAP_SCALE = 3;
+const HIGH_RES_SWAP_SCALE = 10;
 const LABEL_AUTO_SCALE = 2.5;
-const PRECISE_HIT_TARGETS_SCALE = 4;
 
 function useElementSize<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -68,6 +68,17 @@ export function GeoMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const gRef = useRef<SVGGElement>(null);
   const zoomBehaviorRef = useRef<ReturnType<typeof d3zoom<SVGSVGElement, unknown>> | null>(null);
+  // The <svg> only mounts once the world topology has finished loading (async fetch) — a plain
+  // ref alone doesn't notify the zoom-attach effect below when that happens (its dependency
+  // array has nothing that changes at that moment), so the effect's first, only run finds
+  // svgRef.current still null and permanently no-ops: d3-zoom never actually gets attached, and
+  // every zoom control (buttons, wheel, drag) silently does nothing. A callback ref turns "the
+  // node just appeared" into a real state transition the effect can depend on.
+  const [svgMounted, setSvgMounted] = useState(false);
+  const svgCallbackRef = useCallback((node: SVGSVGElement | null) => {
+    svgRef.current = node;
+    setSvgMounted(node !== null);
+  }, []);
   const [features, setFeatures] = useState<CountryFeature[] | null>(null);
   const [pendingIso3, setPendingIso3] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
@@ -80,7 +91,12 @@ export function GeoMap({
   const isSilhouette = mode === "silhouette";
   const scaleExtent = useMemo<[number, number]>(() => [1, maxScale], [maxScale]);
   const highRes = isSilhouette || Boolean(focusOn) || (editorChrome && scale > RESOLUTION_SWAP_SCALE);
-  const resolution = highRes ? "50m" : "110m";
+  // A third, even-finer tier for the editor at deep zoom — 50m's vertex density starts looking
+  // visibly polygonal once a single country fills the frame; 10m (world-atlas ships it, just
+  // not previously copied into public/geo/) fixes that. Never applied in-game: it's a ~3.5MB
+  // file, only worth the fetch when someone is deliberately zoomed in to inspect a shape.
+  const veryHighRes = editorChrome && scale > HIGH_RES_SWAP_SCALE;
+  const resolution = veryHighRes ? "10m" : highRes ? "50m" : "110m";
 
   useEffect(() => {
     if (!editorChrome || typeof window === "undefined") return;
@@ -170,7 +186,7 @@ export function GeoMap({
       select(svg).on(".zoom", null);
       zoomBehaviorRef.current = null;
     };
-  }, [zoomEnabled, scaleExtent, editorChrome]);
+  }, [zoomEnabled, scaleExtent, editorChrome, svgMounted]);
 
   // --- Cadrage (Addendum B.3.5): report the current viewport's geographic bounds, debounced,
   //     whenever the zoom transform settles. A screen point maps back through the zoom
@@ -381,7 +397,13 @@ export function GeoMap({
   }, [pendingIso3, onSelect]);
 
   const pendingName = pendingIso3 ? COUNTRY_NAME_FR[pendingIso3] : undefined;
-  const showFallbackHitTargets = !(editorChrome && scale > PRECISE_HIT_TARGETS_SCALE);
+  // Invisible-until-hover hit targets for tiny/geometry-less countries — kept in-game, where a
+  // player answering locate_country/capital_of has no alternative way to select Monaco/Singapore/
+  // Tuvalu. Dropped entirely in the editor: an author has CountrySearchCombobox right above the
+  // map and can just type the name, and the circles were confusing there (an invisible target
+  // that only reveals itself once your cursor happens to land on it, on top of a country whose
+  // real shape is also clickable, reads as flaky hit-testing rather than a helpful affordance).
+  const showFallbackHitTargets = !editorChrome;
   const effectiveShowLabels = showLabels || (editorChrome && scale > LABEL_AUTO_SCALE);
 
   const mapBody = (
@@ -397,7 +419,7 @@ export function GeoMap({
     >
       {size.width > 0 && size.height > 0 && pathGenerator && (
         <svg
-          ref={svgRef}
+          ref={svgCallbackRef}
           width={size.width}
           height={size.height}
           viewBox={`0 0 ${size.width} ${size.height}`}

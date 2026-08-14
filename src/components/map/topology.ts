@@ -3,7 +3,7 @@ import type { Topology, GeometryCollection } from "topojson-specification";
 import { NUMERIC_TO_ISO3 } from "@/lib/geo/iso-lookup";
 import type { CountryFeature } from "@/components/map/types";
 
-export type TopologyResolution = "110m" | "50m";
+export type TopologyResolution = "110m" | "50m" | "10m";
 
 interface CountryProperties {
   name: string;

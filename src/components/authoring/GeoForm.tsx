@@ -216,7 +216,7 @@ export function GeoForm({
               mode="pick"
               interactive
               editorChrome
-              maxScale={12}
+              maxScale={24}
               selected={targetIso3}
               onSelect={(iso3) => setTargetIso3(iso3)}
               onViewChange={setLiveBbox}
