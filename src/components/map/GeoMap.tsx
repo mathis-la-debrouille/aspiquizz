@@ -26,7 +26,6 @@ const TRANSITION_MS = 450;
 const FOCUS_PADDING = 60;
 // Addendum B.3.1 thresholds — editorChrome only, never applied to the in-game map.
 const RESOLUTION_SWAP_SCALE = 3;
-const HIGH_RES_SWAP_SCALE = 10;
 const LABEL_AUTO_SCALE = 2.5;
 
 /**
@@ -100,13 +99,16 @@ export function GeoMap({
 
   const isSilhouette = mode === "silhouette";
   const scaleExtent = useMemo<[number, number]>(() => [1, maxScale], [maxScale]);
+  // A 10m tier was tried here (world-atlas ships one) and reverted: countries-10m.json has a
+  // real data defect — the Maldives feature's geometry spans the full -180°..180° longitude
+  // range (verified directly against the file with d3-geo's geoBounds, not guessed from a
+  // screenshot), producing a bounding box that covers ~98% of the whole map and rendering as a
+  // solid fill across the entire viewport the moment that feature is anywhere on screen. 50m
+  // has no such defect for any commonly-targeted country, so it stays the ceiling resolution;
+  // maxScale is still raised (see GeoForm.tsx) for finer *positioning*, just not finer *shape
+  // detail* past this point.
   const highRes = isSilhouette || Boolean(focusOn) || (editorChrome && scale > RESOLUTION_SWAP_SCALE);
-  // A third, even-finer tier for the editor at deep zoom — 50m's vertex density starts looking
-  // visibly polygonal once a single country fills the frame; 10m (world-atlas ships it, just
-  // not previously copied into public/geo/) fixes that. Never applied in-game: it's a ~3.5MB
-  // file, only worth the fetch when someone is deliberately zoomed in to inspect a shape.
-  const veryHighRes = editorChrome && scale > HIGH_RES_SWAP_SCALE;
-  const resolution = veryHighRes ? "10m" : highRes ? "50m" : "110m";
+  const resolution = highRes ? "50m" : "110m";
 
   useEffect(() => {
     if (!editorChrome || typeof window === "undefined") return;
