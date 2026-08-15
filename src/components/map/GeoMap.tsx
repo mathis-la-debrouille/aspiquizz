@@ -17,6 +17,8 @@ import { loadWorldTopology } from "@/components/map/topology";
 import { createWorldProjection, createFocusedProjection } from "@/components/map/projection";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import { COUNTRY_CENTROID } from "@/lib/geo/country-centroids";
+import { findPrimaryFeature } from "@/lib/geo/primary-feature";
+import { largestPolygonFeature } from "@/lib/geo/largest-ring";
 import type { CountryFeature, GeoMapProps } from "@/components/map/types";
 import { cn } from "@/lib/utils/cn";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -65,6 +67,7 @@ export function GeoMap({
   correct = null,
   wrong = null,
   focusOn = null,
+  frameOn = null,
   showLabels = false,
   interactive = true,
   onSelect,
@@ -138,25 +141,43 @@ export function GeoMap({
     };
   }, [resolution]);
 
+  // findPrimaryFeature, not features.find(f => f.iso3 === focusOn) — a single iso3 can tag
+  // several separate topology features (NUMERIC_TO_ISO3 maps Guam/Puerto Rico/American Samoa/
+  // the US Virgin Islands to "USA" too, alongside the actual mainland+Alaska+Hawaii feature).
+  // .find() just returns whichever comes first in the topology's own order, which — verified
+  // directly against the real data, not guessed — is Guam, not the mainland. See DECISIONS.md.
   const targetFeature = useMemo(
-    () => (focusOn ? (features?.find((f) => f.iso3 === focusOn) ?? null) : null),
+    () => (focusOn && features ? findPrimaryFeature(features, focusOn) : null),
     [features, focusOn],
+  );
+
+  // Silhouette mode additionally trims to the target's own single largest-area part — a country
+  // whose overseas territories/outlying islands are part of the *same* feature (mainland USA is
+  // one feature with 127 disjoint parts once Alaska's islands are counted) would otherwise fit/
+  // render its whole span, shrinking the recognizable mainland to a speck among scattered
+  // islands. Only for the silhouette guess-the-shape view — the normal world view (and flying
+  // the camera to a country elsewhere in this component) should still show a country whole.
+  const silhouetteFeature = useMemo(
+    () => (isSilhouette && targetFeature ? largestPolygonFeature(targetFeature) : targetFeature),
+    [isSilhouette, targetFeature],
   );
 
   // Silhouette mode: only the target's own geometry, no surrounding context — brief §6.4/§8.2.
   const renderFeatures = useMemo(() => {
     if (!features) return [];
-    if (isSilhouette) return targetFeature ? [targetFeature] : [];
+    if (isSilhouette) return silhouetteFeature ? [silhouetteFeature] : [];
     return features;
-  }, [features, isSilhouette, targetFeature]);
+  }, [features, isSilhouette, silhouetteFeature]);
 
   const projection: GeoProjection | null = useMemo(() => {
     if (!features || size.width === 0 || size.height === 0) return null;
     if (isSilhouette) {
-      return targetFeature ? createFocusedProjection(targetFeature, size.width, size.height) : null;
+      return silhouetteFeature
+        ? createFocusedProjection(silhouetteFeature, size.width, size.height)
+        : null;
     }
     return createWorldProjection(features, size.width, size.height);
-  }, [features, isSilhouette, targetFeature, size.width, size.height]);
+  }, [features, isSilhouette, silhouetteFeature, size.width, size.height]);
 
   const pathGenerator: GeoPath<unknown, Geometry> | null = useMemo(
     () => (projection ? geoPath(projection) : null),
@@ -244,15 +265,15 @@ export function GeoMap({
     return () => clearTimeout(timeout);
   }, [editorChrome, onViewChange, projection, scale, size.width, size.height]);
 
-  const flyTo = useCallback(
-    (feature: CountryFeature | null) => {
+  const flyToBounds = useCallback(
+    (bounds: [[number, number], [number, number]] | null) => {
       const svg = svgRef.current;
       const behavior = zoomBehaviorRef.current;
-      if (!svg || !behavior || !pathGenerator) return;
+      if (!svg || !behavior) return;
 
       let nextTransform = zoomIdentity;
-      if (feature) {
-        const [[x0, y0], [x1, y1]] = pathGenerator.bounds(feature.geometry);
+      if (bounds) {
+        const [[x0, y0], [x1, y1]] = bounds;
         const boxWidth = Math.max(x1 - x0, 1);
         const boxHeight = Math.max(y1 - y0, 1);
         const targetScale = Math.min(
@@ -295,18 +316,57 @@ export function GeoMap({
       raf = requestAnimationFrame(tick);
       return () => cancelAnimationFrame(raf);
     },
-    [pathGenerator, size.width, size.height, scaleExtent, reducedMotion],
+    [size.width, size.height, scaleExtent, reducedMotion],
+  );
+
+  const flyTo = useCallback(
+    (feature: CountryFeature | null) => {
+      if (!pathGenerator) return;
+      return flyToBounds(feature ? pathGenerator.bounds(feature.geometry) : null);
+    },
+    [pathGenerator, flyToBounds],
+  );
+
+  // Cadrage (Addendum B.3.5/C's "Utiliser cette vue comme cadrage") — frames a raw geographic
+  // bounding box rather than a feature. Projects the 4 corners directly (no geometry object to
+  // hand pathGenerator), so this works for a bbox saved from an entirely different session.
+  const flyToBbox = useCallback(
+    (bbox: [number, number, number, number] | null) => {
+      if (!projection) return;
+      if (!bbox) return flyToBounds(null);
+      const [west, south, east, north] = bbox;
+      const corners: [number, number][] = [
+        [west, south],
+        [west, north],
+        [east, south],
+        [east, north],
+      ];
+      const projected = corners
+        .map((c) => projection(c))
+        .filter((p): p is [number, number] => p !== null && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+      if (projected.length === 0) return flyToBounds(null);
+      const xs = projected.map((p) => p[0]);
+      const ys = projected.map((p) => p[1]);
+      return flyToBounds([
+        [Math.min(...xs), Math.min(...ys)],
+        [Math.max(...xs), Math.max(...ys)],
+      ]);
+    },
+    [projection, flyToBounds],
   );
 
   // --- Camera framing: focusOn a non-silhouette view eases the zoom transform to fit the
-  //     target's bounds under the shared world projection — brief §8.2.
+  //     target's bounds under the shared world projection — brief §8.2. frameOn (a raw bbox,
+  //     not an iso3) is the fallback when there's no specific country to fly to — one effect,
+  //     not two, so they can't race/fight over the transform on every render.
   useEffect(() => {
     if (isSilhouette) return;
-    return flyTo(focusOn && targetFeature ? targetFeature : null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- flyTo intentionally excluded: it
-    // closes over `size`/`scaleExtent` which already re-trigger this effect via their own
-    // deps below, re-including flyTo itself would double-fire on every resize
-  }, [focusOn, targetFeature, isSilhouette, size.width, size.height]);
+    if (focusOn && targetFeature) return flyTo(targetFeature);
+    return flyToBbox(frameOn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- flyTo/flyToBbox intentionally
+    // excluded: they close over size/scaleExtent/projection, which already re-trigger this
+    // effect via their own deps below; re-including them would double-fire on every resize.
+  }, [focusOn, targetFeature, frameOn, isSilhouette, size.width, size.height]);
 
   function zoomBy(factor: number) {
     const svg = svgRef.current;
@@ -480,7 +540,7 @@ export function GeoMap({
         </div>
       )}
 
-      {editorChrome && (
+      {editorChrome && !isSilhouette && (
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 rounded-md border border-border-hard bg-bg-raised/95 p-1 shadow-[var(--shadow-1)]">
           <button
             type="button"

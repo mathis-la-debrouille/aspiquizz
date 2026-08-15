@@ -20,6 +20,12 @@ export interface GeoMapProps {
   wrong?: string | null;
   /** iso3 the camera frames. */
   focusOn?: string | null;
+  /** [west, south, east, north] geographic bounding box the camera frames — the "cadrage"
+   *  captured by the geo editor's "Utiliser cette vue comme cadrage" (Addendum B.3.5), consumed
+   *  wherever a saved framing should actually be shown (the question preview; not real gameplay
+   *  yet — see DECISIONS.md). Ignored when `focusOn` is also set (that takes priority) or in
+   *  silhouette mode (which frames the target on its own). */
+  frameOn?: [number, number, number, number] | null;
   showLabels?: boolean;
   interactive?: boolean;
   onSelect?: (iso3: string) => void;

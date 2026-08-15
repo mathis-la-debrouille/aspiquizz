@@ -28,7 +28,16 @@ export type PreviewData =
       choices: PreviewChoice[];
       hint?: string;
     }
-  | { type: "geo"; prompt: string; geoMode: GeoMode; targetIso3: string | null; hint?: string };
+  | {
+      type: "geo";
+      prompt: string;
+      geoMode: GeoMode;
+      targetIso3: string | null;
+      hint?: string;
+      showLabels?: boolean;
+      /** The editor's saved "cadrage" — see GeoMap's `frameOn` prop. */
+      viewBbox?: [number, number, number, number] | null;
+    };
 
 const GEO_MODE_LABELS: Record<GeoMode, string> = {
   locate_country: "Localiser un pays",
@@ -90,22 +99,45 @@ export function QuestionPreview({
         </div>
       )}
 
-      {data.type === "geo" && (
-        <div className="flex h-72 flex-col gap-2">
-          <div className="min-h-0 flex-1 rounded-md border border-border-soft bg-bg-inset">
-            <GeoMap
-              mode={data.geoMode === "name_from_shape" ? "silhouette" : "pick"}
-              interactive={data.geoMode === "locate_country" || data.geoMode === "capital_of"}
-              focusOn={data.geoMode === "name_from_shape" ? data.targetIso3 : null}
-              highlight={
-                data.geoMode === "name_country" && data.targetIso3 ? [data.targetIso3] : []
-              }
-              dimOthers={data.geoMode === "name_country"}
-            />
-          </div>
-        </div>
-      )}
+      {data.type === "geo" && <GeoPreviewMap data={data} />}
     </Card>
+  );
+}
+
+const GEO_CLICK_MODES: GeoMode[] = ["locate_country", "capital_of"];
+
+/**
+ * The map half of the geo preview — split out mainly so its highlight/dim logic can be compared
+ * directly against the real answer surface (GeoAnswerSurface.tsx) that it's supposed to mirror.
+ * Two real bugs lived here: `find_capital` was missing from the highlight/dim condition (only
+ * `name_country` got it, so the target country never showed as anything but a plain map for
+ * "Trouver une capitale" — a real player sees a highlighted country the same way name_country
+ * does), and the saved cadrage/"afficher les noms" toggle were captured by the form but never
+ * actually threaded down into this component's GeoMap at all. `editorChrome` is on here (unlike
+ * the real in-game GeoAnswerSurface) so the author gets zoom controls to actually inspect the
+ * preview, and — the same B.3 change already made to the picker map — no small-country hover
+ * circles cluttering a screen the author isn't actually playing.
+ */
+function GeoPreviewMap({ data }: { data: Extract<PreviewData, { type: "geo" }> }) {
+  const isClickMode = GEO_CLICK_MODES.includes(data.geoMode);
+  const isSilhouette = data.geoMode === "name_from_shape";
+
+  return (
+    <div className="flex h-72 flex-col gap-2">
+      <div className="min-h-0 flex-1 rounded-md border border-border-soft bg-bg-inset">
+        <GeoMap
+          mode={isSilhouette ? "silhouette" : isClickMode ? "pick" : "display"}
+          editorChrome
+          maxScale={24}
+          interactive={isClickMode}
+          focusOn={isSilhouette ? data.targetIso3 : null}
+          frameOn={!isSilhouette ? (data.viewBbox ?? null) : null}
+          highlight={!isSilhouette && data.targetIso3 ? [data.targetIso3] : []}
+          dimOthers={!isClickMode && !isSilhouette}
+          showLabels={data.showLabels ?? false}
+        />
+      </div>
+    </div>
   );
 }
 

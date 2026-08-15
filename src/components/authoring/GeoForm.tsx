@@ -134,9 +134,20 @@ export function GeoForm({
   const [mobileTab, setMobileTab] = useState("form");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [countriesError, setCountriesError] = useState<string | null>(null);
 
   useEffect(() => {
-    void listCountries().then(setCountries);
+    // No .catch() before this would leave `countries` at [] forever on any failure — every
+    // search silently finds nothing, with no error visible anywhere. Surfacing it directly
+    // near the search box beats a client-console-only failure the author has no way to notice.
+    listCountries()
+      .then(setCountries)
+      .catch((err: unknown) => {
+        console.error("listCountries failed", err);
+        setCountriesError(
+          "Impossible de charger la liste des pays — rechargez la page pour réessayer.",
+        );
+      });
   }, []);
 
   const target = countries.find((c) => c.iso3 === targetIso3);
@@ -202,6 +213,7 @@ export function GeoForm({
 
       <div className="flex flex-col gap-2">
         <span className="text-14 font-medium text-ink-mid">Pays cible</span>
+        {countriesError && <p className="text-14 text-clay-soft">{countriesError}</p>}
         {!target && (
           <CountrySearchCombobox
             countries={countries}
@@ -328,7 +340,15 @@ export function GeoForm({
 
   const preview = (
     <QuestionPreview
-      data={{ type: "geo", prompt, geoMode, targetIso3, hint: shared.hint }}
+      data={{
+        type: "geo",
+        prompt,
+        geoMode,
+        targetIso3,
+        hint: shared.hint,
+        showLabels,
+        viewBbox: savedViewBbox,
+      }}
       category={category}
     />
   );
