@@ -56,6 +56,8 @@ interface Sourced<T> {
  */
 interface SnapshotCapital {
   name_fr: string;
+  /** Spelling variants that must also be accepted as answers. */
+  aliases: string[];
   /** "de jure" | "de facto" | null when Wikidata states it plainly, unqualified. */
   role: string | null;
   /** Branch of government seated there, e.g. "pouvoir exécutif". */
@@ -255,7 +257,7 @@ async function fetchCapitals(iso3s: string[]) {
   for (const batch of chunk(iso3s, 30)) {
     rows.push(
       ...(await sparql(`
-        SELECT ?iso3 ?capFr ?roleLabel ?branchLabel ?contested ?rank WHERE {
+        SELECT ?iso3 ?capFr ?alt ?roleLabel ?branchLabel ?contested ?rank WHERE {
           VALUES ?iso3 { ${batch.map((c) => `"${c}"`).join(" ")} }
           ?c wdt:P298 ?iso3 .
           ?c p:P36 ?st .
@@ -264,6 +266,7 @@ async function fetchCapitals(iso3s: string[]) {
           FILTER(?rank != wikibase:DeprecatedRank)
           FILTER NOT EXISTS { ?st pq:P582 ?endDate }
           ?cap rdfs:label ?capFr FILTER(LANG(?capFr) = "fr")
+          OPTIONAL { ?cap skos:altLabel ?alt FILTER(LANG(?alt) IN ("fr", "en")) }
           OPTIONAL { ?st pq:P459 ?role }
           OPTIONAL { ?st pq:P518 ?branch }
           OPTIONAL { ?st pq:P1480 ?contested }
@@ -275,15 +278,24 @@ async function fetchCapitals(iso3s: string[]) {
   }
 
   const byIso = new Map<string, Map<string, SnapshotCapital>>();
+  const aliasCandidates = new Map<string, Set<string>>();
   for (const b of rows) {
     const iso3 = val(b, "iso3");
     const name = val(b, "capFr");
     if (!iso3 || !name) continue;
     if (!byIso.has(iso3)) byIso.set(iso3, new Map());
     const bucket = byIso.get(iso3)!;
+    const alt = val(b, "alt");
+    if (alt) {
+      const key = `${iso3}|${name}`;
+      if (!aliasCandidates.has(key)) aliasCandidates.set(key, new Set());
+      aliasCandidates.get(key)!.add(alt);
+    }
+
     const existing = bucket.get(name);
     const entry: SnapshotCapital = {
       name_fr: name,
+      aliases: existing?.aliases ?? [],
       role: val(b, "roleLabel") ?? existing?.role ?? null,
       branch: val(b, "branchLabel") ?? existing?.branch ?? null,
       contested: Boolean(val(b, "contested")) || (existing?.contested ?? false),
@@ -292,6 +304,35 @@ async function fetchCapitals(iso3s: string[]) {
       url: `https://www.wikidata.org/wiki/Special:EntityData?wdqid=${iso3}`,
     };
     bucket.set(name, entry);
+  }
+
+  // Alias filtering. Wikidata's altLabels for a capital mix genuine spelling
+  // variants with two kinds of poison: historical names for the same place
+  // ("La Plata", "Charcas" for Sucre; "Pyinmana" for Naypyidaw — actually a
+  // different town) and plain descriptions ("capitale de la Palestine",
+  // "troisième ville sainte de l'Islam"). Accepting those wholesale would mark
+  // genuinely wrong answers correct, so only variants that still LOOK like the
+  // name survive: same first word, or a near-identical spelling once spaces are
+  // dropped, or a longer form containing the name outright ("Nuestra Señora de
+  // La Paz"). Everything else is reported, not silently dropped.
+  for (const [key, alts] of aliasCandidates) {
+    const [iso3, name] = key.split("|");
+    const entry = byIso.get(iso3!)?.get(name!);
+    if (!entry) continue;
+    const primary = normalize(name!);
+    const primaryFlat = primary.replace(/\s+/g, "");
+    const primaryFirst = primary.split(" ")[0] ?? "";
+    for (const alt of alts) {
+      const a = normalize(alt);
+      if (!a || a === primary) continue;
+      const aFlat = a.replace(/\s+/g, "");
+      const sameFirstWord = primaryFirst.length >= 3 && a.split(" ")[0] === primaryFirst;
+      const nearSpelling = levenshtein(aFlat, primaryFlat) <= 2;
+      const contains = a.includes(primary) || primary.includes(a);
+      if (sameFirstWord || nearSpelling || contains) entry.aliases.push(alt);
+      else rejectedAliases.push(`${iso3} ${name} <- ${alt}`);
+    }
+    entry.aliases = [...new Set(entry.aliases)];
   }
 
   // De jure first — that is the answer the country itself declares, which is the
@@ -336,6 +377,32 @@ async function fetchWorldBank(indicator: string): Promise<Map<string, Sourced<nu
   }
   return out;
 }
+
+/** Accent- and case-insensitive, matching how grading.ts compares answers. */
+function normalize(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function levenshtein(a: string, b: string): number {
+  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    let diag = prev[0]!;
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const tmp = prev[j]!;
+      prev[j] = Math.min(prev[j]! + 1, prev[j - 1]! + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = tmp;
+    }
+  }
+  return prev[b.length]!;
+}
+
+const rejectedAliases: string[] = [];
 
 const pctDelta = (a: number, b: number) => Math.round((Math.abs(a - b) / Math.max(a, b)) * 1000) / 10;
 
@@ -443,6 +510,12 @@ async function main() {
   if (disputed.length) {
     console.log(`[info] ${disputed.length} countries with several capitals, roles resolved:`);
     for (const d of disputed) console.log(`         ${d}`);
+  }
+  const withAliases = out.filter((c) => c.capitals.some((k) => k.aliases.length > 0));
+  console.log(`[info] ${withAliases.length} countries have capital spelling variants`);
+  if (rejectedAliases.length) {
+    console.log(`[info] ${rejectedAliases.length} altLabels rejected as not-a-spelling-variant (first 12):`);
+    for (const r of rejectedAliases.slice(0, 12)) console.log(`         ${r}`);
   }
   if (noCapital.length) console.log(`[warn] no capital resolved: ${noCapital.join(", ")}`);
   const drift = out.filter((c) => (c.crosscheck.population_delta_pct ?? 0) > 5);

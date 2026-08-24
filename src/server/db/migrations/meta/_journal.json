@@ -50,6 +50,13 @@
       "when": 1787580040114,
       "tag": "0006_exotic_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787582969022,
+      "tag": "0007_woozy_riptide",
+      "breakpoints": true
     }
   ]
 }

@@ -37,6 +37,11 @@
       "capitals": [
         {
           "name_fr": "Kaboul",
+          "aliases": [
+            "Kabol",
+            "Cabul",
+            "Cabool"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -99,6 +104,13 @@
       "capitals": [
         {
           "name_fr": "Luanda",
+          "aliases": [
+            "Loanda",
+            "Luanda, Angola",
+            "Saint Paul of Luanda",
+            "St Paul of Luanda",
+            "St. Paul of Luanda"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -159,6 +171,7 @@
       "capitals": [
         {
           "name_fr": "Tirana",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -221,6 +234,7 @@
       "capitals": [
         {
           "name_fr": "Andorre-la-Vieille",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -283,6 +297,12 @@
       "capitals": [
         {
           "name_fr": "Abou Dabi",
+          "aliases": [
+            "Abu Dhabi",
+            "Abū Dhabi",
+            "Abudhabi",
+            "Abou Dhabi"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -345,6 +365,10 @@
       "capitals": [
         {
           "name_fr": "Buenos Aires",
+          "aliases": [
+            "Ciudad Autonoma de Buenos Aires",
+            "Ciudad de Buenos Aires"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -406,6 +430,12 @@
       "capitals": [
         {
           "name_fr": "Erevan",
+          "aliases": [
+            "Iravan",
+            "Erivan",
+            "Irevan",
+            "Iérevan"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -468,6 +498,10 @@
       "capitals": [
         {
           "name_fr": "Saint John's",
+          "aliases": [
+            "Saint-Jean",
+            "Saint John's, Antigua and Barbuda"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -529,6 +563,10 @@
       "capitals": [
         {
           "name_fr": "Canberra",
+          "aliases": [
+            "Canberra, Australia",
+            "Canberra, Australian Capital Territory"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -591,6 +629,7 @@
       "capitals": [
         {
           "name_fr": "Vienne",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -654,6 +693,10 @@
       "capitals": [
         {
           "name_fr": "Bakou",
+          "aliases": [
+            "Baki",
+            "Baky"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -715,6 +758,9 @@
       "capitals": [
         {
           "name_fr": "Gitega",
+          "aliases": [
+            "Kitega"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -775,6 +821,10 @@
       "capitals": [
         {
           "name_fr": "Bruxelles",
+          "aliases": [
+            "Bruxelles-Ville",
+            "Ville de Bruxelles"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -837,6 +887,7 @@
       "capitals": [
         {
           "name_fr": "Porto-Novo",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -846,6 +897,7 @@
         },
         {
           "name_fr": "Cotonou",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -906,6 +958,9 @@
       "capitals": [
         {
           "name_fr": "Ouagadougou",
+          "aliases": [
+            "Ouaga"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -966,6 +1021,7 @@
       "capitals": [
         {
           "name_fr": "Dacca",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1026,6 +1082,9 @@
       "capitals": [
         {
           "name_fr": "Sofia",
+          "aliases": [
+            "Sofija"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1087,6 +1146,9 @@
       "capitals": [
         {
           "name_fr": "Manama",
+          "aliases": [
+            "al-Manāmah"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1148,6 +1210,10 @@
       "capitals": [
         {
           "name_fr": "Nassau",
+          "aliases": [
+            "City of Nassau",
+            "ville de Nassau"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1208,6 +1274,9 @@
       "capitals": [
         {
           "name_fr": "Sarajevo",
+          "aliases": [
+            "City of Sarajevo"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1269,6 +1338,11 @@
       "capitals": [
         {
           "name_fr": "Minsk",
+          "aliases": [
+            "Mensk",
+            "Miensk",
+            "Minskas"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1331,6 +1405,7 @@
       "capitals": [
         {
           "name_fr": "Belmopan",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1391,6 +1466,9 @@
       "capitals": [
         {
           "name_fr": "Sucre",
+          "aliases": [
+            "The Illustrious and Heroic Sucre"
+          ],
           "role": "de jure",
           "branch": "pouvoir judiciaire",
           "contested": false,
@@ -1400,6 +1478,9 @@
         },
         {
           "name_fr": "La Paz",
+          "aliases": [
+            "Nuestra Señora de La Paz"
+          ],
           "role": "de facto",
           "branch": "pouvoir exécutif",
           "contested": false,
@@ -1460,6 +1541,7 @@
       "capitals": [
         {
           "name_fr": "Brasilia",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1521,6 +1603,7 @@
       "capitals": [
         {
           "name_fr": "Bridgetown",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1582,6 +1665,11 @@
       "capitals": [
         {
           "name_fr": "Bandar Seri Begawan",
+          "aliases": [
+            "Bandar",
+            "Seri Begawan",
+            "Bandar Brunei"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1642,6 +1730,9 @@
       "capitals": [
         {
           "name_fr": "Thimphou",
+          "aliases": [
+            "Thimpu"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1704,6 +1795,9 @@
       "capitals": [
         {
           "name_fr": "Gaborone",
+          "aliases": [
+            "Gaberones"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1764,6 +1858,7 @@
       "capitals": [
         {
           "name_fr": "Bangui",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1824,6 +1919,13 @@
       "capitals": [
         {
           "name_fr": "Ottawa",
+          "aliases": [
+            "City of Ottawa",
+            "Ottawa, ON",
+            "Ottawa, Ontario",
+            "Ottawa (Ontario)",
+            "Ville d'Ottawa"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -1885,6 +1987,9 @@
       "capitals": [
         {
           "name_fr": "Berne",
+          "aliases": [
+            "Berna"
+          ],
           "role": "de facto",
           "branch": null,
           "contested": false,
@@ -1947,6 +2052,11 @@
       "capitals": [
         {
           "name_fr": "Santiago",
+          "aliases": [
+            "Greater Santiago",
+            "Santiago, Chile",
+            "Santiago du Chili"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2008,6 +2118,12 @@
       "capitals": [
         {
           "name_fr": "Pékin",
+          "aliases": [
+            "Peking Shi",
+            "Pe-king",
+            "Pé-king",
+            "Péking"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2068,6 +2184,7 @@
       "capitals": [
         {
           "name_fr": "Yamoussoukro",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2129,6 +2246,11 @@
       "capitals": [
         {
           "name_fr": "Yaoundé",
+          "aliases": [
+            "Yaounde, Cameroon",
+            "Yaoundé, Cameroon",
+            "Yaounde, Ongola"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2189,6 +2311,7 @@
       "capitals": [
         {
           "name_fr": "Kinshasa",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2249,6 +2372,7 @@
       "capitals": [
         {
           "name_fr": "Brazzaville",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2310,6 +2434,7 @@
       "capitals": [
         {
           "name_fr": "Avarua",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2362,6 +2487,12 @@
       "capitals": [
         {
           "name_fr": "Bogota",
+          "aliases": [
+            "Bogota, Colombia",
+            "Bogotá, D.C.",
+            "Santafé de Bogotá",
+            "Bogotá D.C."
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2422,6 +2553,9 @@
       "capitals": [
         {
           "name_fr": "Moroni",
+          "aliases": [
+            "Moroni, Comoros"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2483,6 +2617,7 @@
       "capitals": [
         {
           "name_fr": "Praia",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2545,6 +2680,9 @@
       "capitals": [
         {
           "name_fr": "San José",
+          "aliases": [
+            "San José, Costa Rica"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2607,6 +2745,9 @@
       "capitals": [
         {
           "name_fr": "La Havane",
+          "aliases": [
+            "La Habana"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2668,6 +2809,7 @@
       "capitals": [
         {
           "name_fr": "Nicosie",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2729,6 +2871,9 @@
       "capitals": [
         {
           "name_fr": "Prague",
+          "aliases": [
+            "City of Prague"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2791,6 +2936,9 @@
       "capitals": [
         {
           "name_fr": "Berlin",
+          "aliases": [
+            "Berlin, Germany"
+          ],
           "role": null,
           "branch": "capitale de droit",
           "contested": false,
@@ -2853,6 +3001,10 @@
       "capitals": [
         {
           "name_fr": "Djibouti",
+          "aliases": [
+            "Djibouti City",
+            "Djibouti (city)"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2913,6 +3065,7 @@
       "capitals": [
         {
           "name_fr": "Roseau",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -2974,6 +3127,7 @@
       "capitals": [
         {
           "name_fr": "Copenhague",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3034,6 +3188,9 @@
       "capitals": [
         {
           "name_fr": "Saint-Domingue",
+          "aliases": [
+            "Ville de Saint-Domingue"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3096,6 +3253,7 @@
       "capitals": [
         {
           "name_fr": "Alger",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3156,6 +3314,9 @@
       "capitals": [
         {
           "name_fr": "Quito",
+          "aliases": [
+            "Quito, Ecuador"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3219,6 +3380,9 @@
       "capitals": [
         {
           "name_fr": "Le Caire",
+          "aliases": [
+            "Caire"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3279,6 +3443,9 @@
       "capitals": [
         {
           "name_fr": "Asmara",
+          "aliases": [
+            "Asmera"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3340,6 +3507,9 @@
       "capitals": [
         {
           "name_fr": "Madrid",
+          "aliases": [
+            "Madrid (Espagne)"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3402,6 +3572,9 @@
       "capitals": [
         {
           "name_fr": "Tallinn",
+          "aliases": [
+            "Tallinn, Estonia"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3465,6 +3638,9 @@
       "capitals": [
         {
           "name_fr": "Addis-Abeba",
+          "aliases": [
+            "Addis Abäba"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3525,6 +3701,9 @@
       "capitals": [
         {
           "name_fr": "Helsinki",
+          "aliases": [
+            "Helsingia"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3588,6 +3767,7 @@
       "capitals": [
         {
           "name_fr": "Suva",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3650,6 +3830,9 @@
       "capitals": [
         {
           "name_fr": "Paris",
+          "aliases": [
+            "Ville de Paris"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3711,6 +3894,7 @@
       "capitals": [
         {
           "name_fr": "Palikir",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3772,6 +3956,9 @@
       "capitals": [
         {
           "name_fr": "Libreville",
+          "aliases": [
+            "Libreville, Gabon"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3834,6 +4021,13 @@
       "capitals": [
         {
           "name_fr": "Londres",
+          "aliases": [
+            "Londres, Angleterre",
+            "Lond.",
+            "Loñ",
+            "Lon.",
+            "Loñ."
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3896,6 +4090,10 @@
       "capitals": [
         {
           "name_fr": "Tbilissi",
+          "aliases": [
+            "Tpilisi",
+            "Tpilissi"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -3958,6 +4156,7 @@
       "capitals": [
         {
           "name_fr": "Accra",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4019,6 +4218,7 @@
       "capitals": [
         {
           "name_fr": "Conakry",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4080,6 +4280,9 @@
       "capitals": [
         {
           "name_fr": "Banjul",
+          "aliases": [
+            "City of Banjul"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4141,6 +4344,9 @@
       "capitals": [
         {
           "name_fr": "Bissau",
+          "aliases": [
+            "Bissao"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4203,6 +4409,7 @@
       "capitals": [
         {
           "name_fr": "Ciudad de la Paz",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4263,6 +4470,9 @@
       "capitals": [
         {
           "name_fr": "Athènes",
+          "aliases": [
+            "Athenae"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4324,6 +4534,11 @@
       "capitals": [
         {
           "name_fr": "Saint-Georges",
+          "aliases": [
+            "Saint George's",
+            "Saint George's, Grenada",
+            "Saint Georges, Granada"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4385,6 +4600,14 @@
       "capitals": [
         {
           "name_fr": "Guatemala",
+          "aliases": [
+            "City of Guatemala",
+            "Guate",
+            "Guatemala (Guatemala)",
+            "New Guatemala of Assumption",
+            "Nueva Guatemala de la Asunción",
+            "Ville de Guatemala"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4446,6 +4669,9 @@
       "capitals": [
         {
           "name_fr": "Georgetown",
+          "aliases": [
+            "Georgetown, British Guiana"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4507,6 +4733,7 @@
       "capitals": [
         {
           "name_fr": "Tegucigalpa",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4568,6 +4795,7 @@
       "capitals": [
         {
           "name_fr": "Zagreb",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4630,6 +4858,9 @@
       "capitals": [
         {
           "name_fr": "Port-au-Prince",
+          "aliases": [
+            "Port-Républicain"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4693,6 +4924,17 @@
       "capitals": [
         {
           "name_fr": "Budapest",
+          "aliases": [
+            "Buda Pest",
+            "Buda-Pest",
+            "Buda-Pesth",
+            "Budapesta",
+            "Budapeszt",
+            "Pešť",
+            "Pest",
+            "Budapest, Hungary",
+            "Buda"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4755,6 +4997,15 @@
       "capitals": [
         {
           "name_fr": "Jakarta",
+          "aliases": [
+            "Djakarta",
+            "Jakarta, Indonesia",
+            "DKI Jakarta",
+            "Jakarta Province",
+            "Specific Region of Jakarta",
+            "Specific Capital Region of Jakarta",
+            "Jakarta Specific Region"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4816,6 +5067,9 @@
       "capitals": [
         {
           "name_fr": "New Delhi",
+          "aliases": [
+            "New Delhi Municipal Council Area"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4878,6 +5132,11 @@
       "capitals": [
         {
           "name_fr": "Dublin",
+          "aliases": [
+            "City of Dublin",
+            "Dublin city",
+            "Dublin, Ireland"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -4940,6 +5199,9 @@
       "capitals": [
         {
           "name_fr": "Téhéran",
+          "aliases": [
+            "Ṭihrán"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5001,6 +5263,10 @@
       "capitals": [
         {
           "name_fr": "Bagdad",
+          "aliases": [
+            "Baghdād",
+            "Bagdat"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5064,6 +5330,10 @@
       "capitals": [
         {
           "name_fr": "Reykjavik",
+          "aliases": [
+            "Reykjavikurborg",
+            "Reykjavíkurborg"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5125,6 +5395,9 @@
       "capitals": [
         {
           "name_fr": "Jérusalem",
+          "aliases": [
+            "Salem"
+          ],
           "role": null,
           "branch": null,
           "contested": true,
@@ -5187,6 +5460,9 @@
       "capitals": [
         {
           "name_fr": "Rome",
+          "aliases": [
+            "Rome, Italy"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5249,6 +5525,10 @@
       "capitals": [
         {
           "name_fr": "Kingston",
+          "aliases": [
+            "Kingston, Jamaica",
+            "Kingston, Surrey"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5311,6 +5591,11 @@
       "capitals": [
         {
           "name_fr": "Amman",
+          "aliases": [
+            "Ammon",
+            "Aman",
+            "Amman, Jordan"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5372,6 +5657,21 @@
       "capitals": [
         {
           "name_fr": "Tokyo",
+          "aliases": [
+            "Tokio",
+            "Tokei",
+            "Tokyo, Japan",
+            "Tokyo Prefecture",
+            "préfecture de Tokyo",
+            "Tokyo (Japan)",
+            "Tokyo Metropolis",
+            "Tokyo Metropolitan prefecture",
+            "Tokyo-to",
+            "Tôkyô-to",
+            "Tōkyō-to",
+            "métropole de Tokyo",
+            "préfecture métropolitaine de Tokyo"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5432,6 +5732,7 @@
       "capitals": [
         {
           "name_fr": "Astana",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5493,6 +5794,9 @@
       "capitals": [
         {
           "name_fr": "Nairobi",
+          "aliases": [
+            "Nairobi, Kenya"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5554,6 +5858,7 @@
       "capitals": [
         {
           "name_fr": "Bichkek",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5615,6 +5920,7 @@
       "capitals": [
         {
           "name_fr": "Phnom Penh",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5675,6 +5981,7 @@
       "capitals": [
         {
           "name_fr": "Tarawa-Sud",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5736,6 +6043,7 @@
       "capitals": [
         {
           "name_fr": "Basseterre",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5797,6 +6105,11 @@
       "capitals": [
         {
           "name_fr": "Séoul",
+          "aliases": [
+            "Ville spéciale de Séoul",
+            "Seoul Special City",
+            "Sŏul"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5859,6 +6172,12 @@
       "capitals": [
         {
           "name_fr": "Koweït",
+          "aliases": [
+            "Kuwait",
+            "Koweit City",
+            "Koweït City",
+            "Ville de Koweït"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5919,6 +6238,10 @@
       "capitals": [
         {
           "name_fr": "Vientiane",
+          "aliases": [
+            "urban Vientiane",
+            "Vientane"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -5981,6 +6304,9 @@
       "capitals": [
         {
           "name_fr": "Beyrouth",
+          "aliases": [
+            "Beyrout"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6042,6 +6368,7 @@
       "capitals": [
         {
           "name_fr": "Monrovia",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6104,6 +6431,7 @@
       "capitals": [
         {
           "name_fr": "Tripoli",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6165,6 +6493,7 @@
       "capitals": [
         {
           "name_fr": "Castries",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6226,6 +6555,9 @@
       "capitals": [
         {
           "name_fr": "Vaduz",
+          "aliases": [
+            "Vaduz, Liechtenstein"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6289,6 +6621,9 @@
       "capitals": [
         {
           "name_fr": "Sri Jayawardenapura",
+          "aliases": [
+            "Sri Jayewardenepura-Kotte"
+          ],
           "role": "de jure",
           "branch": "pouvoir législatif",
           "contested": false,
@@ -6298,6 +6633,7 @@
         },
         {
           "name_fr": "Colombo",
+          "aliases": [],
           "role": "de facto",
           "branch": "pouvoir exécutif",
           "contested": false,
@@ -6360,6 +6696,7 @@
       "capitals": [
         {
           "name_fr": "Maseru",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6421,6 +6758,13 @@
       "capitals": [
         {
           "name_fr": "Vilnius",
+          "aliases": [
+            "Vilnyus",
+            "Vilnia",
+            "Viĺnia",
+            "Vilnious",
+            "Wilnjus"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6483,6 +6827,13 @@
       "capitals": [
         {
           "name_fr": "Luxembourg",
+          "aliases": [
+            "Luxemburg",
+            "City of Luxembourg",
+            "Luxembourg City",
+            "Luxembourg-Ville",
+            "Ville de Luxembourg"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6546,6 +6897,12 @@
       "capitals": [
         {
           "name_fr": "Riga",
+          "aliases": [
+            "Rige",
+            "Rija",
+            "Riia",
+            "Rīgõ"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6609,6 +6966,9 @@
       "capitals": [
         {
           "name_fr": "Rabat",
+          "aliases": [
+            "Rabbat"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6673,6 +7033,14 @@
       "capitals": [
         {
           "name_fr": "Monaco",
+          "aliases": [
+            "Principality and Diocese of Monaco",
+            "Principality of Monaco",
+            "Principato di Monaco",
+            "Principauté de Monaco",
+            "la Principauté de Monaco",
+            "Monaco (rattachée au District de Menton en 1793)"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6734,6 +7102,10 @@
       "capitals": [
         {
           "name_fr": "Chișinău",
+          "aliases": [
+            "Chisnau",
+            "Khisinau"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6796,6 +7168,7 @@
       "capitals": [
         {
           "name_fr": "Antananarivo",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6858,6 +7231,9 @@
       "capitals": [
         {
           "name_fr": "Malé",
+          "aliases": [
+            "Malé City"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6920,6 +7296,12 @@
       "capitals": [
         {
           "name_fr": "Mexico",
+          "aliases": [
+            "City of Mexico",
+            "Mexico City, Mexico",
+            "Mexico D.F.",
+            "Cité de Mexico"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -6981,6 +7363,10 @@
       "capitals": [
         {
           "name_fr": "Majuro",
+          "aliases": [
+            "Mājro",
+            "Majuro, Marshall Islands"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7043,6 +7429,10 @@
       "capitals": [
         {
           "name_fr": "Skopje",
+          "aliases": [
+            "Scopie",
+            "Skoplje"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7104,6 +7494,7 @@
       "capitals": [
         {
           "name_fr": "Bamako",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7165,6 +7556,10 @@
       "capitals": [
         {
           "name_fr": "La Valette",
+          "aliases": [
+            "La Vallette",
+            "Ville de la Valette"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7227,6 +7622,12 @@
       "capitals": [
         {
           "name_fr": "Naypyidaw",
+          "aliases": [
+            "Nay Pyi Taw",
+            "Naypyitaw",
+            "Nay Pyi Daw",
+            "Naypidaw"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7289,6 +7690,9 @@
       "capitals": [
         {
           "name_fr": "Podgorica",
+          "aliases": [
+            "Pogdorica"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7350,6 +7754,7 @@
       "capitals": [
         {
           "name_fr": "Oulan-Bator",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7412,6 +7817,7 @@
       "capitals": [
         {
           "name_fr": "Maputo",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7474,6 +7880,11 @@
       "capitals": [
         {
           "name_fr": "Nouakchott",
+          "aliases": [
+            "Nouakchot",
+            "Nouakchott, Mauritania",
+            "Noukchott"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7534,6 +7945,7 @@
       "capitals": [
         {
           "name_fr": "Port-Louis",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7596,6 +8008,7 @@
       "capitals": [
         {
           "name_fr": "Lilongwe",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7658,6 +8071,9 @@
       "capitals": [
         {
           "name_fr": "Kuala Lumpur",
+          "aliases": [
+            "Federal Territory of Kuala Lumpur"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7667,6 +8083,9 @@
         },
         {
           "name_fr": "Putrajaya",
+          "aliases": [
+            "Wilayah Persekutuan Putrajaya"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7729,6 +8148,10 @@
       "capitals": [
         {
           "name_fr": "Windhoek",
+          "aliases": [
+            "Windhuk",
+            "Windhök"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7791,6 +8214,11 @@
       "capitals": [
         {
           "name_fr": "Niamey",
+          "aliases": [
+            "Ville de Niamey",
+            "Communauté Urbaine de Niamey",
+            "Niamey Urban Community"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7854,6 +8282,7 @@
       "capitals": [
         {
           "name_fr": "Abuja",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7914,6 +8343,13 @@
       "capitals": [
         {
           "name_fr": "Managua",
+          "aliases": [
+            "Managua Municipality",
+            "Municipalité de Managua",
+            "Managua (municipalité)",
+            "Managua, Nicaragua",
+            "Municipality of Managua"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -7975,6 +8411,9 @@
       "capitals": [
         {
           "name_fr": "Alofi",
+          "aliases": [
+            "Alofi, Niue"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8028,6 +8467,11 @@
       "capitals": [
         {
           "name_fr": "Amsterdam",
+          "aliases": [
+            "Amsterdam, Netherlands",
+            "Amsterdam, NL",
+            "Amsterdam, North Holland"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8088,6 +8532,9 @@
       "capitals": [
         {
           "name_fr": "Oslo",
+          "aliases": [
+            "Oslo, Norway"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8151,6 +8598,12 @@
       "capitals": [
         {
           "name_fr": "Katmandou",
+          "aliases": [
+            "Katmandu",
+            "Káthmándú",
+            "Katmandir",
+            "Khatmandu"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8212,6 +8665,10 @@
       "capitals": [
         {
           "name_fr": "Yaren",
+          "aliases": [
+            "Jarren",
+            "District de Yaren"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8273,6 +8730,13 @@
       "capitals": [
         {
           "name_fr": "Wellington",
+          "aliases": [
+            "Wellington, New Zealand",
+            "Wellington metropolitan area",
+            "Wellington, NZ",
+            "District de Wellington",
+            "Ville de Wellington"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8333,6 +8797,11 @@
       "capitals": [
         {
           "name_fr": "Mascate",
+          "aliases": [
+            "Masqat",
+            "Muscat",
+            "Maskat"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8394,6 +8863,7 @@
       "capitals": [
         {
           "name_fr": "Islamabad",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8455,6 +8925,11 @@
       "capitals": [
         {
           "name_fr": "Panama",
+          "aliases": [
+            "Ciudad de Panama",
+            "Ciudad de Panamá",
+            "Ville de Panama"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8516,6 +8991,7 @@
       "capitals": [
         {
           "name_fr": "Lima",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8578,6 +9054,9 @@
       "capitals": [
         {
           "name_fr": "Manille",
+          "aliases": [
+            "Ville de Manille"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8640,6 +9119,7 @@
       "capitals": [
         {
           "name_fr": "Ngerulmud",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8702,6 +9182,7 @@
       "capitals": [
         {
           "name_fr": "Port Moresby",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8762,6 +9243,7 @@
       "capitals": [
         {
           "name_fr": "Varsovie",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8824,6 +9306,14 @@
       "capitals": [
         {
           "name_fr": "Pyongyang",
+          "aliases": [
+            "P’yŏng-yang",
+            "Pyeongyang",
+            "Hpyeng-yang",
+            "Hpyengyang",
+            "P'yŏngyang",
+            "Phyŏngyang"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8884,6 +9374,7 @@
       "capitals": [
         {
           "name_fr": "Lisbonne",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -8947,6 +9438,10 @@
       "capitals": [
         {
           "name_fr": "Asuncion",
+          "aliases": [
+            "Asu",
+            "La Muy Noble y Leal Ciudad de Nuestra Señora Santa María de la Asunción"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9009,6 +9504,7 @@
       "capitals": [
         {
           "name_fr": "Jérusalem-Est",
+          "aliases": [],
           "role": "de jure",
           "branch": "de jure",
           "contested": false,
@@ -9018,6 +9514,7 @@
         },
         {
           "name_fr": "Ramallah",
+          "aliases": [],
           "role": "de facto",
           "branch": "de facto",
           "contested": false,
@@ -9080,6 +9577,7 @@
       "capitals": [
         {
           "name_fr": "Doha",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9142,6 +9640,12 @@
       "capitals": [
         {
           "name_fr": "Bucarest",
+          "aliases": [
+            "București",
+            "Bucuresti",
+            "Bucureşti",
+            "municipalité de Bucarest"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9204,6 +9708,7 @@
       "capitals": [
         {
           "name_fr": "Moscou",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9268,6 +9773,13 @@
       "capitals": [
         {
           "name_fr": "Kigali",
+          "aliases": [
+            "Kigali Province",
+            "Kigali Ville",
+            "Ville de Kigali",
+            "Kigali City",
+            "City of Kigali"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9329,6 +9841,14 @@
       "capitals": [
         {
           "name_fr": "Riyad",
+          "aliases": [
+            "Al Riyadh",
+            "Al-Riyadh",
+            "AlRiyadh",
+            "Reyadh",
+            "ar-Riyāḍ",
+            "Ar-Riyadh"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9390,6 +9910,9 @@
       "capitals": [
         {
           "name_fr": "Khartoum",
+          "aliases": [
+            "Khartum"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9453,6 +9976,7 @@
       "capitals": [
         {
           "name_fr": "Dakar",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9514,6 +10038,9 @@
       "capitals": [
         {
           "name_fr": "Singapour",
+          "aliases": [
+            "République de Singapour"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9575,6 +10102,7 @@
       "capitals": [
         {
           "name_fr": "Honiara",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9637,6 +10165,7 @@
       "capitals": [
         {
           "name_fr": "Freetown",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9699,6 +10228,7 @@
       "capitals": [
         {
           "name_fr": "San Salvador",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9760,6 +10290,7 @@
       "capitals": [
         {
           "name_fr": "Saint-Marin",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9820,6 +10351,7 @@
       "capitals": [
         {
           "name_fr": "Mogadiscio",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9881,6 +10413,10 @@
       "capitals": [
         {
           "name_fr": "Belgrade",
+          "aliases": [
+            "Belgrade, Serbia",
+            "City of Belgrade"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -9943,6 +10479,9 @@
       "capitals": [
         {
           "name_fr": "Djouba",
+          "aliases": [
+            "Juba"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10006,6 +10545,7 @@
       "capitals": [
         {
           "name_fr": "São Tomé",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10068,6 +10608,7 @@
       "capitals": [
         {
           "name_fr": "Paramaribo",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10130,6 +10671,7 @@
       "capitals": [
         {
           "name_fr": "Bratislava",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10193,6 +10735,10 @@
       "capitals": [
         {
           "name_fr": "Ljubljana",
+          "aliases": [
+            "Ljubljana, Slovenia",
+            "Lublana"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10255,6 +10801,7 @@
       "capitals": [
         {
           "name_fr": "Stockholm",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10317,6 +10864,7 @@
       "capitals": [
         {
           "name_fr": "Mbabane",
+          "aliases": [],
           "role": "de jure",
           "branch": "pouvoir exécutif",
           "contested": false,
@@ -10326,6 +10874,7 @@
         },
         {
           "name_fr": "Lobamba",
+          "aliases": [],
           "role": "de facto",
           "branch": "pouvoir législatif",
           "contested": false,
@@ -10386,6 +10935,10 @@
       "capitals": [
         {
           "name_fr": "Victoria",
+          "aliases": [
+            "Port Victoria",
+            "Victoria, Seychelles"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10447,6 +11000,9 @@
       "capitals": [
         {
           "name_fr": "Damas",
+          "aliases": [
+            "Mint of Damascus"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10508,6 +11064,10 @@
       "capitals": [
         {
           "name_fr": "N'Djaména",
+          "aliases": [
+            "NDjamena",
+            "Ndjamena"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10568,6 +11128,11 @@
       "capitals": [
         {
           "name_fr": "Lomé",
+          "aliases": [
+            "Lome, Togo",
+            "Lomé, Togo",
+            "Lomé la belle"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10630,6 +11195,9 @@
       "capitals": [
         {
           "name_fr": "Bangkok",
+          "aliases": [
+            "Bangkok, Thailand"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10692,6 +11260,7 @@
       "capitals": [
         {
           "name_fr": "Douchanbé",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10752,6 +11321,11 @@
       "capitals": [
         {
           "name_fr": "Achgabat",
+          "aliases": [
+            "Ashkabat",
+            "Achgabad",
+            "Achkabad"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10813,6 +11387,9 @@
       "capitals": [
         {
           "name_fr": "Dili",
+          "aliases": [
+            "City of Dili"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10874,6 +11451,9 @@
       "capitals": [
         {
           "name_fr": "Nukuʻalofa",
+          "aliases": [
+            "Nukualofa"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10936,6 +11516,10 @@
       "capitals": [
         {
           "name_fr": "Port-d'Espagne",
+          "aliases": [
+            "Port of Spain",
+            "Port-of-Spain"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -10998,6 +11582,7 @@
       "capitals": [
         {
           "name_fr": "Tunis",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11061,6 +11646,7 @@
       "capitals": [
         {
           "name_fr": "Ankara",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11123,6 +11709,9 @@
       "capitals": [
         {
           "name_fr": "Funafuti",
+          "aliases": [
+            "Funafuti Island"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11183,6 +11772,14 @@
       "capitals": [
         {
           "name_fr": "Taipei",
+          "aliases": [
+            "City of Taipei",
+            "Tai Pei",
+            "Taibei",
+            "Taipei City",
+            "Taipak",
+            "Tâi-pak"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11236,6 +11833,9 @@
       "capitals": [
         {
           "name_fr": "Dodoma",
+          "aliases": [
+            "Dodoma City"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11298,6 +11898,7 @@
       "capitals": [
         {
           "name_fr": "Kampala",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11359,6 +11960,17 @@
       "capitals": [
         {
           "name_fr": "Kiev",
+          "aliases": [
+            "Kiou",
+            "Kief",
+            "Kiew",
+            "Kieff",
+            "Kiof",
+            "Kiow",
+            "Kiyev",
+            "Kyïv",
+            "Kyїv"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11420,6 +12032,9 @@
       "capitals": [
         {
           "name_fr": "Montevideo",
+          "aliases": [
+            "San Felipe y Santiago de Montevideo"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11482,6 +12097,17 @@
       "capitals": [
         {
           "name_fr": "Washington",
+          "aliases": [
+            "City of Washington, D.C.",
+            "Washington City, D.C.",
+            "D.C. Washington",
+            "Washington, District of Columbia",
+            "Washington D.C.",
+            "Washington DC",
+            "Washington, D.C.",
+            "Washington, district de Columbia",
+            "Washington, District de Columbia"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11544,6 +12170,9 @@
       "capitals": [
         {
           "name_fr": "Tachkent",
+          "aliases": [
+            "Toshkent"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11605,6 +12234,16 @@
       "capitals": [
         {
           "name_fr": "Vatican",
+          "aliases": [
+            "Cité du Vatican",
+            "The Vatican",
+            "Città del Vaticano",
+            "State of Vatican City",
+            "Stato della Città del Vaticano",
+            "Status Civitatis Vaticanae",
+            "Vatican City State",
+            "État de la Cité du Vatican"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11658,6 +12297,7 @@
       "capitals": [
         {
           "name_fr": "Kingstown",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11720,6 +12360,10 @@
       "capitals": [
         {
           "name_fr": "Caracas",
+          "aliases": [
+            "Santiago de León de Caracas",
+            "Carracas"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11782,6 +12426,10 @@
       "capitals": [
         {
           "name_fr": "Hanoï",
+          "aliases": [
+            "Ha Noi",
+            "Hà Nội"
+          ],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11843,6 +12491,7 @@
       "capitals": [
         {
           "name_fr": "Port-Vila",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11904,6 +12553,7 @@
       "capitals": [
         {
           "name_fr": "Apia",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -11964,6 +12614,13 @@
       "capitals": [
         {
           "name_fr": "Sanaa",
+          "aliases": [
+            "Sana",
+            "Ṣanʿāʾ",
+            "Sana'a",
+            "San'a'",
+            "Ṣanʻāʼ"
+          ],
           "role": "de jure",
           "branch": "de jure",
           "contested": false,
@@ -11973,6 +12630,7 @@
         },
         {
           "name_fr": "Aden",
+          "aliases": [],
           "role": "de facto",
           "branch": "de facto",
           "contested": false,
@@ -12035,6 +12693,7 @@
       "capitals": [
         {
           "name_fr": "Le Cap",
+          "aliases": [],
           "role": null,
           "branch": "pouvoir législatif",
           "contested": false,
@@ -12044,6 +12703,13 @@
         },
         {
           "name_fr": "Pretoria",
+          "aliases": [
+            "Pretoria, Gauteng",
+            "Pretoria, Gauteng, South Africa",
+            "Pretoria, S Africa",
+            "Pretoria, S. Africa",
+            "Pretoria, South Africa"
+          ],
           "role": null,
           "branch": "pouvoir exécutif",
           "contested": false,
@@ -12053,6 +12719,7 @@
         },
         {
           "name_fr": "Bloemfontein",
+          "aliases": [],
           "role": null,
           "branch": "pouvoir judiciaire",
           "contested": false,
@@ -12114,6 +12781,7 @@
       "capitals": [
         {
           "name_fr": "Lusaka",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,
@@ -12177,6 +12845,7 @@
       "capitals": [
         {
           "name_fr": "Harare",
+          "aliases": [],
           "role": null,
           "branch": null,
           "contested": false,

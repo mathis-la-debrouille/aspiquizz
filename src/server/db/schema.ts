@@ -321,6 +321,10 @@ export const countryCapitals = sqliteTable(
     branch: text("branch"),
     /** Wikidata flags the statement itself as contested (P1480). */
     contested: integer("contested", { mode: "boolean" }).notNull().default(false),
+    /** Spelling variants that must also grade as correct. Wikidata's French label
+     *  for Sri Lanka's capital is the truncated "Sri Jayawardenapura", so a player
+     *  typing the real full name "Sri Jayawardenepura Kotte" was marked wrong. */
+    aliases: text("aliases", { mode: "json" }).$type<string[]>().notNull().default([]),
     /** Leads the list: de jure first, else Wikidata's preferred statement. */
     position: integer("position").notNull().default(0),
     sourceUrl: text("source_url"),

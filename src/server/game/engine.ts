@@ -13,6 +13,7 @@ import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
 import { computePoints, pointsForDifficulty } from "@/server/game/scoring";
+import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import {
   getFullQuestionDetail,
   toSanitised,
@@ -561,8 +562,21 @@ function describeCorrectAnswer(detail: FullQuestionDetail): string {
             .map((c) => c.label)
             .join(", ")
         : (detail.openAnswers[0] ?? "");
-    case "geo":
-      return detail.geo?.targetIso3 ?? "";
+    case "geo": {
+      // Never the iso3. The reveal used to print "JPN" for « Quelle est la capitale
+      // du Japon ? » and "LKA" for Sri Lanka — a country code is not an answer to
+      // anything a player was asked.
+      //
+      // find_capital / name_country / name_from_shape carry their accepted text in
+      // openAnswers, and ALL of it is shown: a Bolivia reveal reading "Sucre ou
+      // La Paz" is the whole point of accepting both. The two click-to-answer modes
+      // (locate_country, capital_of) store no text, so the country's French name
+      // stands in — from the generated lookup, no DB round-trip.
+      const shown = detail.primaryAnswers.length > 0 ? detail.primaryAnswers : detail.openAnswers;
+      if (shown.length > 0) return shown.join(" ou ");
+      const iso3 = detail.geo?.targetIso3 ?? "";
+      return COUNTRY_NAME_FR[iso3] ?? iso3;
+    }
   }
 }
 
