@@ -59,6 +59,15 @@ export const roomStartSchema = z.object({ code: roomCodeSchema });
 export const hostSkipSchema = z.object({ code: roomCodeSchema });
 export const hostNextSchema = z.object({ code: roomCodeSchema });
 
+/** Correction phase — the host ruling on one player's answer. */
+export const correctionSetSchema = z.object({
+  code: roomCodeSchema,
+  position: z.number().int().min(0),
+  userId: z.string().min(1),
+  verdict: z.boolean(),
+});
+export const correctionNextSchema = z.object({ code: roomCodeSchema });
+
 export const playerReadySchema = z.object({ code: roomCodeSchema, ready: z.boolean() });
 
 const answerPayloadSchema = z.object({

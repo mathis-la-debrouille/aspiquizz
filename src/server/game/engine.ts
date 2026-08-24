@@ -34,14 +34,11 @@ import type {
   PodiumEntry,
   QuestionHistoryEntry,
   AnswerLogEntry,
+  CorrectionShowPayload,
 } from "@/server/socket/events";
 
 const COUNTDOWN_MS = 3_000;
 const ANSWER_GRACE_MS = 300;
-const SCOREBOARD_HOLD_MS = 3_000;
-/** The between-questions scoreboard interrupts the game's pace — show it every Nth question,
- *  not after every single one. */
-const SCOREBOARD_INTERVAL = 5;
 /** Addendum B.4 — supersedes brief §11.3's 60s "abandoned after 60s empty" figure. */
 const EMPTY_ROOM_TIMEOUT_MS = 120_000;
 export const SWEEP_INTERVAL_MS = 60_000;
@@ -102,6 +99,25 @@ export interface RoomState {
   emptyDeadlineMs: number | null;
   loopCancelled: boolean;
   createdAt: number;
+  /** Set once the answer run ends. Nothing is scored before this exists. */
+  correction: CorrectionState | null;
+}
+
+export interface CorrectionEntry {
+  payload: AnswerPayloadInput;
+  msTaken: number;
+  /** What the grader concluded — a pre-fill for the host, never the verdict. */
+  suggested: boolean;
+  verdict: boolean;
+}
+
+export interface CorrectionState {
+  /** Which question the room is currently ruling on. */
+  index: number;
+  /** position -> userId -> ruling */
+  entries: Map<number, Map<string, CorrectionEntry>>;
+  /** Resolver the loop parks on while waiting for the host to advance. */
+  advance: (() => void) | null;
 }
 
 const rooms = new Map<string, RoomState>();
@@ -138,6 +154,7 @@ export function createRoomState(params: {
     frozenQuestions: [],
     currentIndex: -1,
     phase: "lobby",
+    correction: null,
     deadlineMs: null,
     currentDetail: null,
     pendingAnswers: new Map(),
@@ -370,14 +387,20 @@ export async function startGame(io: GameIo, room: RoomState): Promise<void> {
 
 async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
   const channel = roomChannel(room.code);
+  room.correction = { index: 0, entries: new Map(), advance: null };
 
   for (const frozen of room.frozenQuestions) {
     if (room.loopCancelled) return;
 
     room.currentIndex = frozen.position;
-    room.phase = "countdown";
-    await sleep(COUNTDOWN_MS);
-    if (room.loopCancelled) return;
+    // Countdown before the first question only. Between questions the run must not
+    // stop — no reveal, no scoreboard, no "get ready": that pause is exactly what
+    // this format removes.
+    if (frozen.position === 0) {
+      room.phase = "countdown";
+      await sleep(COUNTDOWN_MS);
+      if (room.loopCancelled) return;
+    }
 
     const detail = await getFullQuestionDetail(frozen.questionId);
     if (!detail) continue; // question was deleted mid-flight — skip rather than crash the room
@@ -403,133 +426,51 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     room.phase = "locked";
     io.to(channel).emit("question:lock", { position: frozen.position });
 
+    // NOTHING is graded or scored here. The run goes straight from one question to
+    // the next, and every ruling happens afterwards in the correction phase with
+    // the room watching (KCulture's shape: answer everything, then correct
+    // together). The grader still runs — its verdict is stored as `suggested` and
+    // pre-fills the host's toggles, because 40 questions times six players is far
+    // too many decisions to make from a blank slate.
     const gradable = toGradable(detail);
-    const perPlayer: {
-      userId: string;
-      isCorrect: boolean;
-      msTaken: number;
-      pointsAwarded: number;
-      newScore: number;
-      streak: number;
-    }[] = [];
+    const ledger = new Map<string, CorrectionEntry>();
 
     for (const player of room.players.values()) {
       if (player.isSpectator) continue;
       const pending = room.pendingAnswers.get(player.userId);
       const msTaken = pending ? pending.submittedAt - startedAt : frozen.timeLimitS * 1000;
-      const graded = pending ? gradeAnswer(gradable, pending.payload) : { isCorrect: false };
+      const suggested = pending ? gradeAnswer(gradable, pending.payload).isCorrect : false;
+      const payload = pending?.payload ?? { text: "" };
 
-      player.streak = graded.isCorrect ? player.streak + 1 : 0;
-      player.bestStreak = Math.max(player.bestStreak, player.streak);
+      ledger.set(player.userId, { payload, msTaken, suggested, verdict: suggested });
       player.questionsSeen += 1;
-      if (graded.isCorrect) player.correctCount += 1;
 
-      const { points } = computePoints({
-        isCorrect: graded.isCorrect,
-        msTaken,
-        timeLimitMs: frozen.timeLimitS * 1000,
-        // Difficulty is the multiplier — see pointsForDifficulty. Not read off
-        // detail.pointsBase, which is 1000 for every question ever created.
-        pointsBase: pointsForDifficulty(detail.difficulty),
-        streak: player.streak,
-        scoringMode: room.config.scoringMode,
-      });
-      player.score += points;
-
-      perPlayer.push({
-        userId: player.userId,
-        isCorrect: graded.isCorrect,
-        msTaken,
-        pointsAwarded: points,
-        newScore: player.score,
-        streak: player.streak,
-      });
-
-      await db.insert(answers).values({
-        roomId: room.id,
-        questionId: frozen.questionId,
-        userId: player.userId,
-        position: frozen.position,
-        payload: pending?.payload ?? { text: "" },
-        isCorrect: graded.isCorrect,
-        msTaken,
-        pointsAwarded: points,
-      });
+      // Persisted now, with isCorrect/pointsAwarded provisional: an answer typed
+      // into a live game should survive a server restart, and the correction phase
+      // updates these rows in place (there's a unique index on
+      // room_id/position/user_id). The per-question aggregates deliberately wait
+      // for the real verdict.
       await db
-        .update(roomPlayers)
-        .set({ score: player.score, streak: player.streak, correctCount: player.correctCount })
-        .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, player.userId)));
-
-      // Live per-category running total — feeds the profile's category breakdown and the
-      // geography-themed badges (globe-trotteur/cartographe) without a separate aggregation pass.
-      await db
-        .insert(userCategoryStats)
+        .insert(answers)
         .values({
-          userId: player.userId,
-          categoryId: detail.categoryId,
-          answered: 1,
-          correct: graded.isCorrect ? 1 : 0,
-        })
-        .onConflictDoUpdate({
-          target: [userCategoryStats.userId, userCategoryStats.categoryId],
-          set: {
-            answered: sql`${userCategoryStats.answered} + 1`,
-            correct: sql`${userCategoryStats.correct} + ${graded.isCorrect ? 1 : 0}`,
-          },
-        });
-
-      // Library play-stats (Addendum A.8) — one row per question, incremented per player-answer
-      // right here rather than aggregated from `answers` on every library page load (that query
-      // would grow unbounded as the pool gets played). "posée Nx" / success rate / avg time all
-      // share this same per-answer denominator, not a per-room-occurrence one.
-      await db
-        .insert(questionStats)
-        .values({
+          roomId: room.id,
           questionId: frozen.questionId,
-          timesAsked: 1,
-          timesCorrect: graded.isCorrect ? 1 : 0,
-          totalMs: msTaken,
+          userId: player.userId,
+          position: frozen.position,
+          payload,
+          isCorrect: false,
+          msTaken,
+          pointsAwarded: 0,
         })
-        .onConflictDoUpdate({
-          target: questionStats.questionId,
-          set: {
-            timesAsked: sql`${questionStats.timesAsked} + 1`,
-            timesCorrect: sql`${questionStats.timesCorrect} + ${graded.isCorrect ? 1 : 0}`,
-            totalMs: sql`${questionStats.totalMs} + ${msTaken}`,
-            updatedAt: new Date(),
-          },
-        });
+        .onConflictDoNothing();
     }
-
-    room.phase = "reveal";
-    const correctAnswerLabel = describeCorrectAnswer(detail);
-    io.to(channel).emit("question:reveal", {
-      position: frozen.position,
-      correct: correctAnswerLabel,
-      explanation: detail.explanation,
-      perPlayer,
-      nextInMs: room.config.revealDurationS * 1000,
-    });
-
-    await sleep(room.config.revealDurationS * 1000);
-    if (room.loopCancelled) return;
-
-    const isLast = frozen.position === room.frozenQuestions.length - 1;
-    // 1-indexed question number — the scoreboard lands every SCOREBOARD_INTERVAL-th question
-    // (5, 10, 15…), not after each one; the podium at finishGame already covers the last
-    // question regardless of where it falls in that cadence.
-    const questionNumber = frozen.position + 1;
-    if (!isLast && questionNumber % SCOREBOARD_INTERVAL === 0) {
-      room.phase = "scoreboard";
-      io.to(channel).emit("scoreboard:update", buildScoreboard(room));
-      await sleep(SCOREBOARD_HOLD_MS);
-      if (room.loopCancelled) return;
-    }
+    room.correction!.entries.set(frozen.position, ledger);
 
     room.currentDetail = null;
     room.deadlineMs = null;
   }
 
+  await runCorrectionPhase(io, room);
   await finishGame(io, room);
 }
 
@@ -547,6 +488,187 @@ async function waitForAnswersOrDeadline(room: RoomState, deadlineMs: number): Pr
     await sleep(step);
     elapsed += step;
   }
+}
+
+/**
+ * The correction phase. One question at a time, the room sees the accepted answer
+ * and what everyone typed, the host rules on each, and only then are points
+ * awarded. Modelled on KCulture: the run is uninterrupted, the judging is
+ * collective, and a human always has the last word over the grader.
+ *
+ * Scoring stays exactly the same formula as before — speed and streak included —
+ * it just runs here instead of at lock time. `msTaken` was recorded during the
+ * run, so answering fast still pays.
+ */
+async function runCorrectionPhase(io: GameIo, room: RoomState): Promise<void> {
+  const channel = roomChannel(room.code);
+  const correction = room.correction;
+  if (!correction) return;
+
+  // Streaks have to be rebuilt in question order, so they are reset once here
+  // rather than carried over from the run (where nothing was graded).
+  for (const player of room.players.values()) {
+    player.streak = 0;
+    player.bestStreak = 0;
+    player.correctCount = 0;
+    player.score = 0;
+  }
+
+  for (const frozen of room.frozenQuestions) {
+    if (room.loopCancelled) return;
+    const ledger = correction.entries.get(frozen.position);
+    if (!ledger) continue;
+
+    const detail = await getFullQuestionDetail(frozen.questionId);
+    if (!detail) continue;
+
+    correction.index = frozen.position;
+    room.phase = "correction";
+    room.currentDetail = detail;
+    io.to(channel).emit("correction:show", buildCorrectionPayload(room, frozen, detail, ledger));
+
+    // Park until the host advances. No deadline: the room is reading answers out
+    // loud and arguing about them, which takes as long as it takes.
+    await new Promise<void>((resolve) => {
+      correction.advance = resolve;
+    });
+    correction.advance = null;
+    if (room.loopCancelled) return;
+
+    // Deliberately no scoreboard:update here. Emitting one would flip every client
+    // out of the correction phase, which is the interruption this whole redesign
+    // removes; scores land on the podium.
+    await applyCorrectionForQuestion(room, frozen, detail, ledger);
+  }
+
+  room.currentDetail = null;
+}
+
+export function buildCorrectionPayload(
+  room: RoomState,
+  frozen: FrozenQuestion,
+  detail: FullQuestionDetail,
+  ledger: Map<string, CorrectionEntry>,
+): CorrectionShowPayload {
+  const answersView = [...ledger.entries()].map(([userId, entry]) => {
+    const player = room.players.get(userId);
+    const payload = entry.payload as { text?: string; iso3?: string; choiceIds?: string[] };
+    return {
+      userId,
+      displayName: player?.displayName ?? userId,
+      text: payload.text ?? "",
+      iso3: payload.iso3,
+      suggested: entry.suggested,
+      verdict: entry.verdict,
+      msTaken: entry.msTaken,
+    };
+  });
+  return {
+    position: frozen.position,
+    total: room.frozenQuestions.length,
+    prompt: detail.prompt,
+    correct: describeCorrectAnswer(detail),
+    explanation: detail.explanation,
+    difficulty: detail.difficulty,
+    answers: answersView,
+  };
+}
+
+/** Turns one question's rulings into points, streaks and the durable aggregates. */
+async function applyCorrectionForQuestion(
+  room: RoomState,
+  frozen: FrozenQuestion,
+  detail: FullQuestionDetail,
+  ledger: Map<string, CorrectionEntry>,
+): Promise<void> {
+  for (const [userId, entry] of ledger) {
+    const player = room.players.get(userId);
+    if (!player) continue;
+
+    player.streak = entry.verdict ? player.streak + 1 : 0;
+    player.bestStreak = Math.max(player.bestStreak, player.streak);
+    if (entry.verdict) player.correctCount += 1;
+
+    const { points } = computePoints({
+      isCorrect: entry.verdict,
+      msTaken: entry.msTaken,
+      timeLimitMs: frozen.timeLimitS * 1000,
+      pointsBase: pointsForDifficulty(detail.difficulty),
+      streak: player.streak,
+      scoringMode: room.config.scoringMode,
+    });
+    player.score += points;
+
+    await db
+      .update(answers)
+      .set({ isCorrect: entry.verdict, pointsAwarded: points })
+      .where(
+        and(
+          eq(answers.roomId, room.id),
+          eq(answers.position, frozen.position),
+          eq(answers.userId, userId),
+        ),
+      );
+    await db
+      .update(roomPlayers)
+      .set({ score: player.score, streak: player.streak, correctCount: player.correctCount })
+      .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, userId)));
+
+    await db
+      .insert(userCategoryStats)
+      .values({
+        userId,
+        categoryId: detail.categoryId,
+        answered: 1,
+        correct: entry.verdict ? 1 : 0,
+      })
+      .onConflictDoUpdate({
+        target: [userCategoryStats.userId, userCategoryStats.categoryId],
+        set: {
+          answered: sql`${userCategoryStats.answered} + 1`,
+          correct: sql`${userCategoryStats.correct} + ${entry.verdict ? 1 : 0}`,
+        },
+      });
+
+    await db
+      .insert(questionStats)
+      .values({
+        questionId: frozen.questionId,
+        timesAsked: 1,
+        timesCorrect: entry.verdict ? 1 : 0,
+        totalMs: entry.msTaken,
+      })
+      .onConflictDoUpdate({
+        target: questionStats.questionId,
+        set: {
+          timesAsked: sql`${questionStats.timesAsked} + 1`,
+          timesCorrect: sql`${questionStats.timesCorrect} + ${entry.verdict ? 1 : 0}`,
+          totalMs: sql`${questionStats.totalMs} + ${entry.msTaken}`,
+          updatedAt: new Date(),
+        },
+      });
+  }
+}
+
+/** Host flips one ruling. Returns false when the room is not in correction. */
+export function setCorrectionVerdict(
+  room: RoomState,
+  position: number,
+  userId: string,
+  verdict: boolean,
+): boolean {
+  if (room.phase !== "correction" || !room.correction) return false;
+  const entry = room.correction.entries.get(position)?.get(userId);
+  if (!entry) return false;
+  entry.verdict = verdict;
+  return true;
+}
+
+/** Host commits the current question and moves on. */
+export function advanceCorrection(room: RoomState): boolean {
+  if (room.phase !== "correction" || !room.correction?.advance) return false;
+  room.correction.advance();
+  return true;
 }
 
 function describeCorrectAnswer(detail: FullQuestionDetail): string {

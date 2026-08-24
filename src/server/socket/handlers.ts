@@ -11,6 +11,8 @@ import {
   roomStartSchema,
   hostSkipSchema,
   hostNextSchema,
+  correctionSetSchema,
+  correctionNextSchema,
   playerReadySchema,
   answerSubmitSchema,
   chatSendSchema,
@@ -31,6 +33,8 @@ import {
   toLobbySummary,
   toRoomStateView,
   cancelLoop,
+  setCorrectionVerdict,
+  advanceCorrection,
   type RoomState,
 } from "@/server/game/engine";
 import type {
@@ -318,6 +322,32 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!room || room.hostId !== user.id) return;
     if (room.phase !== "question" || !room.deadlineMs) return;
     room.deadlineMs = Date.now(); // the loop's poll picks this up within one tick
+  });
+
+  socket.on("correction:set", (payload) => {
+    const parsed = correctionSetSchema.safeParse(payload);
+    if (!parsed.success) return;
+    const room = getRoom(parsed.data.code);
+    if (!room) return;
+    // Host-only, checked here rather than in the UI: this is the trust boundary, and
+    // a player who could flip their own verdict could award themselves the game.
+    if (room.hostId !== user.id)
+      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    const { position, userId, verdict } = parsed.data;
+    if (!setCorrectionVerdict(room, position, userId, verdict)) return;
+    // Broadcast, not acked: the whole room watches the correction, so everyone sees
+    // the toggle flip, not just the host who clicked it.
+    io.to(roomChannel(room.code)).emit("correction:verdict", { position, userId, verdict });
+  });
+
+  socket.on("correction:next", (payload) => {
+    const parsed = correctionNextSchema.safeParse(payload);
+    if (!parsed.success) return;
+    const room = getRoom(parsed.data.code);
+    if (!room) return;
+    if (room.hostId !== user.id)
+      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    advanceCorrection(room);
   });
 
   socket.on("host:next", (payload) => {

@@ -12,11 +12,13 @@ import { QuestionScreen } from "@/components/room/QuestionScreen";
 import { RevealScreen } from "@/components/room/RevealScreen";
 import { ScoreboardScreen } from "@/components/room/ScoreboardScreen";
 import { Podium } from "@/components/room/Podium";
+import { CorrectionScreen } from "@/components/room/CorrectionScreen";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type {
   ChatMessagePayload,
   QuestionRevealPayload,
+  CorrectionShowPayload,
   QuestionShowPayload,
   RoomFinishedPayload,
   RoomPhase,
@@ -41,6 +43,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
   const [activeQuestion, setActiveQuestion] = useState<QuestionShowPayload | null>(null);
   const [answeredUserIds, setAnsweredUserIds] = useState<Set<string>>(new Set());
   const [reveal, setReveal] = useState<QuestionRevealPayload | null>(null);
+  const [correction, setCorrection] = useState<CorrectionShowPayload | null>(null);
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([]);
   const [finished, setFinished] = useState<RoomFinishedPayload | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
@@ -109,6 +112,29 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
         };
       });
     };
+    const onCorrectionShow = (payload: CorrectionShowPayload) => {
+      setPhase("correction");
+      setCorrection(payload);
+    };
+    /** Broadcast to the whole room, so a non-host watching sees the toggles flip live. */
+    const onCorrectionVerdict = ({
+      position,
+      userId,
+      verdict,
+    }: {
+      position: number;
+      userId: string;
+      verdict: boolean;
+    }) => {
+      setCorrection((prev) =>
+        prev && prev.position === position
+          ? {
+              ...prev,
+              answers: prev.answers.map((a) => (a.userId === userId ? { ...a, verdict } : a)),
+            }
+          : prev,
+      );
+    };
     const onScoreboard = (entries: ScoreboardEntry[]) => {
       setPhase("scoreboard");
       setScoreboard(entries);
@@ -171,6 +197,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     socket.on("question:answered", onAnswered);
     socket.on("question:lock", onQuestionLock);
     socket.on("question:reveal", onReveal);
+    socket.on("correction:show", onCorrectionShow);
+    socket.on("correction:verdict", onCorrectionVerdict);
     socket.on("scoreboard:update", onScoreboard);
     socket.on("room:finished", onFinished);
     socket.on("chat:message", onChat);
@@ -186,6 +214,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
       socket.off("question:answered", onAnswered);
       socket.off("question:lock", onQuestionLock);
       socket.off("question:reveal", onReveal);
+      socket.off("correction:show", onCorrectionShow);
+      socket.off("correction:verdict", onCorrectionVerdict);
       socket.off("scoreboard:update", onScoreboard);
       socket.off("room:finished", onFinished);
       socket.off("chat:message", onChat);
@@ -236,11 +266,13 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
           ? "countdown"
           : (phase === "question" || phase === "locked") && activeQuestion
             ? "question"
-            : phase === "reveal" && reveal
-              ? "reveal"
-              : phase === "scoreboard"
-                ? "scoreboard"
-                : "loading";
+            : phase === "correction" && correction
+              ? "correction"
+              : phase === "reveal" && reveal
+                ? "reveal"
+                : phase === "scoreboard"
+                  ? "scoreboard"
+                  : "loading";
 
   return (
     <div className="flex flex-col gap-6">
@@ -280,6 +312,13 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               locked={phase === "locked"}
               clockOffset={clockOffset}
               myStreak={state.players.find((p) => p.userId === currentUserId)?.streak ?? 0}
+            />
+          ) : viewKey === "correction" && correction ? (
+            <CorrectionScreen
+              socket={socket}
+              code={code}
+              payload={correction}
+              isHost={state.hostId === currentUserId}
             />
           ) : viewKey === "reveal" && reveal ? (
             <RevealScreen reveal={reveal} state={state} currentUserId={currentUserId} />
