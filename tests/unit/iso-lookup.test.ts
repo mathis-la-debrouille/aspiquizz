@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { NUMERIC_TO_ISO3, EXCLUDED_TOPOLOGY_FEATURES } from "@/lib/geo/iso-lookup";
-import countries from "../../scripts/data/countries.fr.json";
+import baseCountries from "../../scripts/data/countries.fr.json";
+// Addendum D's 198-country perimeter — same two files seed-countries.ts and
+// build-iso-lookup.ts both read together; this test needs the same union or it fails
+// on every one of the 5 extra countries as soon as the generator resolves them correctly.
+import extraCountries from "../../scripts/data/countries.extra.fr.json";
+
+const countries = [...baseCountries, ...extraCountries];
 
 interface TopologyGeometry {
   id?: string;

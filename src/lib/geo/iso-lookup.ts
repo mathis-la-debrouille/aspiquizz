@@ -51,11 +51,12 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "148": "TCD",
   "152": "CHL",
   "156": "CHN",
+  "158": "TWN",
   "170": "COL",
   "174": "COM",
   "178": "COG",
   "180": "COD",
-  "184": "NZL",
+  "184": "COK",
   "188": "CRI",
   "191": "HRV",
   "192": "CUB",
@@ -84,6 +85,7 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "266": "GAB",
   "268": "GEO",
   "270": "GMB",
+  "275": "PSE",
   "276": "DEU",
   "288": "GHA",
   "296": "KIR",
@@ -96,6 +98,7 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "328": "GUY",
   "332": "HTI",
   "334": "AUS",
+  "336": "VAT",
   "340": "HND",
   "344": "CHN",
   "348": "HUN",
@@ -157,7 +160,7 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "558": "NIC",
   "562": "NER",
   "566": "NGA",
-  "570": "NZL",
+  "570": "NIU",
   "574": "AUS",
   "578": "NOR",
   "580": "USA",
@@ -238,7 +241,7 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "876": "FRA",
   "882": "WSM",
   "887": "YEM",
-  "894": "ZMB",
+  "894": "ZMB"
 };
 
 /**
@@ -249,14 +252,10 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
  */
 export const EXCLUDED_TOPOLOGY_FEATURES: Readonly<Record<string, string>> = {
   "10": "Antarctica — no sovereign state",
-  "158": "Taiwan — not a UN member (DECISIONS.md)",
-  "275": "Palestine — UN observer state, not a full member (DECISIONS.md)",
-  "336": "Vatican City — not a UN member, no sovereign parent to resolve to",
   "732": "Western Sahara — disputed territory, no UN-recognised sovereign",
-  "name:Indian Ocean Ter.":
-    "French administrative district, not a distinct territory with a clear target",
+  "name:Indian Ocean Ter.": "French administrative district, not a distinct territory with a clear target",
   "name:Kosovo": "Not a UN member (DECISIONS.md)",
   "name:N. Cyprus": "Self-declared, recognised only by Turkey",
   "name:Siachen Glacier": "Disputed India/Pakistan glacier region, not a territory of either",
-  "name:Somaliland": "Self-declared, not internationally recognised",
+  "name:Somaliland": "Self-declared, not internationally recognised"
 };

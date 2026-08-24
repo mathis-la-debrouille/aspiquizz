@@ -1253,3 +1253,31 @@ the new unit tests (rate-limit boundaries, token format).
   what was asked. `HitCircles.tsx`/`FallbackHitCircles.tsx` and the `.geo-hit-circle` CSS rule
   were deleted rather than left dark, since nothing references them any more.
 
+## 2026-08-24 — Taiwan (and Palestine/Vatican/Cook Islands/Niue) unclickable: Addendum D's own
+generator was never updated for its own new data file
+
+- **Root cause, reported as "can't click Taiwan":** `scripts/build-iso-lookup.ts` (which
+  generates `src/lib/geo/iso-lookup.ts`, `country-names.ts`, `country-centroids.ts` — the map
+  engine's only source of truth for numeric-topology-id → iso3, never resolved at runtime) still
+  read only `scripts/data/countries.fr.json`, the pre-Addendum-D 193-UN-member file.
+  `scripts/seed-countries.ts` reads `countries.fr.json` **and** `countries.extra.fr.json` (the 5
+  Addendum-D additions — VAT/PSE/TWN/COK/NIU) and always has, but the generator was never given
+  the same second file. Concretely, before this fix: Taiwan (158) and Palestine (275) were still
+  in this script's own `EXCLUDED_BY_NUMERIC` list (stale copies of the pre-Addendum-D exclusion
+  rule, now contradicted by DECISIONS.md's own Addendum D entry), Vatican (336) likewise, and
+  Cook Islands (184)/Niue (570) were still in `TERRITORY_PARENT` mapping to `NZL` — meaning a
+  click on Cook Islands would have silently graded as New Zealand, not merely failed. The DB
+  `countries` table had the right 198 rows the whole time; only the map's own derived lookup
+  tables were stale.
+- Fix: the generator reads both files exactly like `seed-countries.ts` does, and the 5
+  now-redundant hardcoded entries (3 in `EXCLUDED_BY_NUMERIC`, 2 in `TERRITORY_PARENT`) are
+  removed rather than left as dead-but-harmless code, since a future reader skimming this file
+  would otherwise still see "Taiwan — not a UN member" and reasonably (but wrongly) conclude the
+  exclusion is live. `tests/unit/iso-lookup.test.ts` had the identical gap — it separately
+  imports `countries.fr.json` to check the generated output against — and needed the same fix
+  (`baseCountries` + `extraCountries` union) to keep passing once the generator started actually
+  resolving all 5.
+- Regenerated with `pnpm tsx scripts/build-iso-lookup.ts`: 198 names (was 193), 233 mapped
+  topology features, 7 exclusions (Western Sahara, Antarctica, and the 5 name-keyed disputed
+  territories — N. Cyprus, Somaliland, Kosovo, Indian Ocean Ter., Siachen Glacier).
+

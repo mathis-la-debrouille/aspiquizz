@@ -6,12 +6,22 @@
  * world-atlas's topology (Natural Earth data) keys features by UN M49 /
  * ISO 3166-1 numeric id, and includes many features our `countries` table
  * doesn't have rows for: overseas territories/dependencies (Greenland,
- * Puerto Rico, Hong Kong, …) and disputed/non-UN-member entities (Western
- * Sahara, Taiwan, Kosovo, …). Per DECISIONS.md:
+ * Puerto Rico, Hong Kong, …) and disputed/genuinely-stateless entities
+ * (Western Sahara, Kosovo, …). Per DECISIONS.md:
  *   - territories resolve to their sovereign parent's iso3 (clicking
  *     Greenland counts as Denmark)
- *   - disputed/non-member entities have no parent and are explicitly
+ *   - disputed/stateless entities have no parent and are explicitly
  *     excluded — never a valid answer, never a click target
+ *
+ * countries.fr.json (193 UN members) + countries.extra.fr.json (5 more —
+ * Vatican/Palestine/Taiwan/Cook Islands/Niue, Addendum D's 198-country
+ * perimeter) together are the full set this generator resolves against —
+ * same two files scripts/seed-countries.ts reads, and for the same reason:
+ * this script is what previously excluded/territory-mapped all 5 of them,
+ * so reading only the first file silently un-does Addendum D's own point
+ * (Taiwan etc. become unclickable, Cook Islands/Niue silently grade as New
+ * Zealand) even though the DB has the right rows. Regenerate whenever
+ * either file changes, not just countries.fr.json.
  *
  * Run: pnpm tsx scripts/build-iso-lookup.ts
  */
@@ -65,8 +75,6 @@ const TERRITORY_PARENT: Record<string, string> = {
   "832": "GBR", // Jersey
   "831": "GBR", // Guernsey
   "833": "GBR", // Isle of Man
-  "570": "NZL", // Niue
-  "184": "NZL", // Cook Islands
   "533": "NLD", // Aruba
   "531": "NLD", // Curaçao
   "534": "NLD", // Sint Maarten
@@ -92,10 +100,7 @@ const TERRITORY_PARENT: Record<string, string> = {
  */
 const EXCLUDED_BY_NUMERIC: Record<string, string> = {
   "732": "Western Sahara — disputed territory, no UN-recognised sovereign",
-  "275": "Palestine — UN observer state, not a full member (DECISIONS.md)",
-  "158": "Taiwan — not a UN member (DECISIONS.md)",
   "10": "Antarctica — no sovereign state",
-  "336": "Vatican City — not a UN member, no sovereign parent to resolve to",
 };
 const EXCLUDED_BY_NAME: Record<string, string> = {
   "N. Cyprus": "Self-declared, recognised only by Turkey",
@@ -112,9 +117,15 @@ function loadTopology(filename: string): TopologyFile {
 }
 
 function main(): void {
-  const countries = JSON.parse(
+  // Both files, like seed-countries.ts — see the doc comment above for why reading only
+  // countries.fr.json silently un-does Addendum D's 198-country perimeter for this generator.
+  const baseCountries = JSON.parse(
     readFileSync(path.join(repoRoot, "scripts/data/countries.fr.json"), "utf-8"),
   ) as CountryRecord[];
+  const extraCountries = JSON.parse(
+    readFileSync(path.join(repoRoot, "scripts/data/countries.extra.fr.json"), "utf-8"),
+  ) as CountryRecord[];
+  const countries = [...baseCountries, ...extraCountries];
   const byNumeric = new Map(countries.map((c) => [String(Number(c.un_numeric)), c.iso3]));
 
   const topo110 = loadTopology("countries-110m.json");
