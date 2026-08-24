@@ -26,7 +26,11 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 const DEFAULT_MAX_SCALE = 8;
 const TRANSITION_MS = 450;
 const FOCUS_PADDING = 60;
-// Addendum B.3.1 thresholds — editorChrome only, never applied to the in-game map.
+// Addendum B.3.1 thresholds. RESOLUTION_SWAP_SCALE is a rendering-quality fix (blocky borders
+// at high zoom) with no gameplay implication, so it applies everywhere zoom itself is enabled —
+// editor or in-game. LABEL_AUTO_SCALE stays editor-only: auto-revealing a country's name once
+// zoomed in far enough would let a player answering locate_country/capital_of just zoom instead
+// of finding it, so it must never apply while a click-mode question is still interactive.
 const RESOLUTION_SWAP_SCALE = 3;
 const LABEL_AUTO_SCALE = 2.5;
 
@@ -110,26 +114,28 @@ export function GeoMap({
   // has no such defect for any commonly-targeted country, so it stays the ceiling resolution;
   // maxScale is still raised (see GeoForm.tsx) for finer *positioning*, just not finer *shape
   // detail* past this point.
-  const highRes = isSilhouette || Boolean(focusOn) || (editorChrome && scale > RESOLUTION_SWAP_SCALE);
+  const highRes = isSilhouette || Boolean(focusOn) || scale > RESOLUTION_SWAP_SCALE;
   const resolution = highRes ? "50m" : "110m";
 
+  // Coarse-pointer detection feeds the touch tap-to-confirm flow below (usesPendingFlow) — that
+  // flow now applies in-game too, so this can't stay editorChrome-gated.
   useEffect(() => {
-    if (!editorChrome || typeof window === "undefined") return;
+    if (typeof window === "undefined") return;
     const query = window.matchMedia("(pointer: coarse)");
     setIsCoarsePointer(query.matches);
     const listener = (e: MediaQueryListEvent) => setIsCoarsePointer(e.matches);
     query.addEventListener("change", listener);
     return () => query.removeEventListener("change", listener);
-  }, [editorChrome]);
+  }, []);
 
   useEffect(() => {
-    if (!editorChrome) return;
+    if (!fullscreen) return;
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape" && fullscreen) setFullscreen(false);
+      if (e.key === "Escape") setFullscreen(false);
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [editorChrome, fullscreen]);
+  }, [fullscreen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -194,6 +200,13 @@ export function GeoMap({
 
   // --- Pan/zoom: disabled for silhouette (brief §8.2) and non-interactive views. ---
   const zoomEnabled = interactive && !isSilhouette;
+  // Zoom chrome (the on-screen buttons, fullscreen, and the touch tap-to-confirm flow) mirrors
+  // wherever pan/zoom itself is actually usable — the authoring map, or an in-game "pick a
+  // country" surface (locate_country/capital_of) while the question is still answerable.
+  // zoomEnabled already excludes silhouette mode and flips off once a click-mode question is
+  // submitted/locked (interactive turns false), which correctly hides this chrome at that point
+  // too — same reason every other answer surface disables its controls once `disabled` is true.
+  const showZoomChrome = editorChrome || zoomEnabled;
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -419,8 +432,9 @@ export function GeoMap({
 
   // Touch devices and fullscreen keep the old tap-then-confirm flow (the hit target is small
   // relative to a finger, and fullscreen is itself the "I need precision" signal) — a mouse on
-  // a normal desktop view commits on the first click instead, per B.3.3.
-  const usesPendingFlow = editorChrome && (isCoarsePointer || fullscreen);
+  // a normal desktop view commits on the first click instead, per B.3.3. Applies in-game too: a
+  // mis-tap costs a player the whole question, more so than it costs an author a re-do.
+  const usesPendingFlow = showZoomChrome && (isCoarsePointer || fullscreen);
 
   const handleClick = useCallback(
     (event: ReactMouseEvent<SVGGElement>) => {
@@ -540,7 +554,7 @@ export function GeoMap({
         </div>
       )}
 
-      {editorChrome && !isSilhouette && (
+      {showZoomChrome && !isSilhouette && (
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 rounded-md border border-border-hard bg-bg-raised/95 p-1 shadow-[var(--shadow-1)]">
           <button
             type="button"
@@ -611,7 +625,7 @@ export function GeoMap({
     </div>
   );
 
-  if (editorChrome && fullscreen) {
+  if (showZoomChrome && fullscreen) {
     return (
       <div className="fixed inset-0 z-50 bg-bg-void p-4">
         <div className="h-full w-full">{mapBody}</div>

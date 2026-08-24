@@ -127,11 +127,17 @@ request context previously crashed the *entire* production server on its first r
 (not just an MCP route), a real bug documented in DECISIONS.md. Any new function both ingest.ts/
 MCP and the web need must go in `core.ts`, never in a `"use server"` file.
 
-Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates every
-authoring-only behaviour — zoom controls, fullscreen, lazy 50m swap, auto-labels, the
-touch/fullscreen-only pending-tap flow, the hover tooltip. Every in-game call site
-(`GeoAnswerSurface`, `RevealScreen`, `QuestionPreview`, `/dev/map`) passes nothing and is
-unaffected — never set `editorChrome` outside `GeoForm`.
+Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates
+authoring-only behaviour — never set it outside `GeoForm`. As of the map-fixes-in-game pass,
+this is a deliberate two-way split, not a single on/off switch: zoom controls, fullscreen, the
+50m high-res swap at high zoom, and the touch/fullscreen tap-to-confirm flow are *not*
+editorChrome-exclusive any more — they also activate in-game (`GeoAnswerSurface`) whenever a
+click-mode question (locate_country/capital_of) is still interactive, gated by `showZoomChrome`
+(`editorChrome || zoomEnabled`) rather than `editorChrome` alone, since none of them can leak an
+answer. Auto-labels-at-zoom and the hover name tooltip stay strictly `editorChrome`-only,
+on purpose — either one would let a player just zoom or hover to read the answer instead of
+finding it, so never widen those two the same way. `QuestionPreview` and `/dev/map` still pass
+neither prop and are unaffected either way.
 
 MCP authoring server (Addendum C): `POST`/`GET /mcp` is mounted directly on the raw HTTP server
 in `server.ts`, before Next's own handler — never a Next route handler, so the session-cookie
