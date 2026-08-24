@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computePoints,
+  pointsForDifficulty,
   levelFromXp,
   levelProgress,
   xpFromPoints,
@@ -143,5 +144,24 @@ describe("levelProgress", () => {
       expect(p).toBeGreaterThanOrEqual(0);
       expect(p).toBeLessThanOrEqual(1);
     }
+  });
+});
+
+describe("pointsForDifficulty", () => {
+  it("makes difficulty the multiplier: tier 5 is worth 5x tier 1", () => {
+    expect(pointsForDifficulty(5)).toBe(5 * pointsForDifficulty(1));
+    expect(pointsForDifficulty(5) / pointsForDifficulty(2)).toBe(2.5);
+    expect(pointsForDifficulty(4) / pointsForDifficulty(2)).toBe(2);
+  });
+
+  it("keeps tier 5 on the existing 1000-point ceiling, so XP/levels don't rescale", () => {
+    expect(pointsForDifficulty(5)).toBe(1000);
+    expect(pointsForDifficulty(1)).toBe(200);
+  });
+
+  it("clamps out-of-range difficulties instead of returning 0 or a huge value", () => {
+    expect(pointsForDifficulty(0)).toBe(pointsForDifficulty(1));
+    expect(pointsForDifficulty(9)).toBe(pointsForDifficulty(5));
+    expect(pointsForDifficulty(-3)).toBe(pointsForDifficulty(1));
   });
 });

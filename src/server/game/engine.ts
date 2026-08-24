@@ -12,7 +12,7 @@ import {
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
-import { computePoints } from "@/server/game/scoring";
+import { computePoints, pointsForDifficulty } from "@/server/game/scoring";
 import {
   getFullQuestionDetail,
   toSanitised,
@@ -421,7 +421,9 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
         isCorrect: graded.isCorrect,
         msTaken,
         timeLimitMs: frozen.timeLimitS * 1000,
-        pointsBase: detail.pointsBase,
+        // Difficulty is the multiplier — see pointsForDifficulty. Not read off
+        // detail.pointsBase, which is 1000 for every question ever created.
+        pointsBase: pointsForDifficulty(detail.difficulty),
         streak: player.streak,
         scoringMode: room.config.scoringMode,
       });

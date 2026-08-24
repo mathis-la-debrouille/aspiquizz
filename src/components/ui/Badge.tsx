@@ -47,7 +47,9 @@ export function CategoryBadge({
   return <Badge tone={colorToken}>{name}</Badge>;
 }
 
-export const DIFFICULTY_LABELS_FR = ["Facile", "Abordable", "Modérée", "Corsée", "Impitoyable"];
+/** Difficulty tiers 1–5. Deliberately in-group slang, not neutral descriptors —
+ *  this is a private quiz between friends (see DECISIONS.md). */
+export const DIFFICULTY_LABELS_FR = ["Golem", "Macroniste", "Chad", "Aspi", "🙂"];
 
 export function DifficultyBadge({ level }: { level: 1 | 2 | 3 | 4 | 5 }) {
   const tone: BadgeTone = level <= 2 ? "moss" : level === 3 ? "gold" : "clay";

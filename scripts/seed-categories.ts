@@ -19,7 +19,13 @@ const CATEGORY_SEEDS: CategorySeed[] = [
     name: "Géographie",
     slug: "geographie",
     colorToken: "moss",
-    description: "Pays, capitales, drapeaux et reliefs.",
+    description:
+      "Pays, capitales, drapeaux, reliefs. " +
+      "1 Golem : pays et capitales évidents, drapeaux. " +
+      "2 Macroniste : pays et capitales moyens, drapeaux. " +
+      "3 Chad : pays difficiles. " +
+      "4 Aspi : îles, territoires, populations, superficies. " +
+      "5 🙂 : géographie de spécialiste.",
     position: 0,
   },
   {
