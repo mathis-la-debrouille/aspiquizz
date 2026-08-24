@@ -272,11 +272,18 @@ async function main() {
     const canonical = caps.map((c) => c.nameFr);
     const wanted = [...canonical, ...caps.flatMap((c) => c.aliases ?? [])];
     const current = await db
-      .select({ value: questionOpenAnswers.value })
+      .select({ value: questionOpenAnswers.value, isPrimary: questionOpenAnswers.isPrimary })
       .from(questionOpenAnswers)
       .where(eq(questionOpenAnswers.questionId, q.id));
+    // isPrimary is part of the comparison, not just the values. Questions created
+    // before canonical/variant existed were inserted with `isPrimary: i === 0`, so
+    // a country with two canonical capitals and no spelling variants — Palestine —
+    // has exactly the right values with the wrong flags, and a values-only check
+    // skipped it. Its reveal then read "Jérusalem-Est" instead of
+    // "Jérusalem-Est ou Ramallah".
     const same =
-      current.length === wanted.length && current.every((c, i) => c.value === wanted[i]);
+      current.length === wanted.length &&
+      current.every((c, i) => c.value === wanted[i] && c.isPrimary === i < canonical.length);
     if (same) continue;
 
     await db.delete(questionOpenAnswers).where(eq(questionOpenAnswers.questionId, q.id));
