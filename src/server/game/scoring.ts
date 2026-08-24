@@ -22,6 +22,26 @@ export interface ScoringResult {
   streakMultiplier: number;
 }
 
+/**
+ * Points scale with difficulty: a tier-5 question is worth five times a tier-1,
+ * two and a half times a tier-2, and so on — difficulty IS the multiplier.
+ *
+ * Calibrated on 200 rather than 1000 so tier 5 lands on the existing 1000-point
+ * ceiling instead of pushing it to 5000. Inflating the ceiling would inflate
+ * total points, and XP/level are derived from totals (xpFromPoints / levelFromXp),
+ * so every level already earned would silently rescale by about 2.24x.
+ *
+ * Derived at read time rather than stored: questions.points_base holds 1000 for
+ * every existing row, and computing here means retuning the curve later needs no
+ * migration and no backfill.
+ */
+const POINTS_PER_DIFFICULTY = 200;
+
+export function pointsForDifficulty(difficulty: number): number {
+  const tier = Math.max(1, Math.min(5, Math.round(difficulty)));
+  return tier * POINTS_PER_DIFFICULTY;
+}
+
 const STREAK_CAP = 5;
 const STREAK_BONUS_PER_STEP = 0.1;
 

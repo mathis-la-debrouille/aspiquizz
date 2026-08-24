@@ -9,6 +9,7 @@ import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerS
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
+import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import type { GameSocket } from "@/lib/socket/client";
 import type { QuestionShowPayload } from "@/server/socket/events";
 
@@ -70,6 +71,7 @@ export function QuestionScreen({
         <div className="flex items-center gap-3">
           <StreakMeter streak={myStreak} />
           <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
+          <FlagQuestionButton questionId={q.id} roomCode={code} />
         </div>
       </div>
 

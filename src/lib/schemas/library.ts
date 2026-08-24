@@ -29,8 +29,10 @@ export const questionLibraryQuerySchema = z.object({
   q: z.string().trim().max(200).default(""),
   type: z.array(z.enum(QUESTION_TYPES)).default([]),
   cat: z.array(z.string()).default([]),
-  dmin: z.coerce.number().int().min(1).max(5).default(1),
-  dmax: z.coerce.number().int().min(1).max(5).default(5),
+  /** Difficulty tiers to include. Empty means every tier — a multi-select, so
+   *  "Golem and 🙂 but nothing between" is expressible, which the old
+   *  dmin/dmax range could not say. */
+  diff: z.array(z.coerce.number().int().min(1).max(5)).default([]),
   /** A user id, or the sentinel "me" — resolved against the viewer server-side. */
   author: z.string().default(""),
   status: z.enum(LIBRARY_STATUSES).default("published"),
@@ -65,8 +67,7 @@ export function parseLibraryQuery(searchParams: RawSearchParams): QuestionLibrar
     q: toScalar(searchParams["q"]),
     type: toArray(searchParams["type"]),
     cat: toArray(searchParams["cat"]),
-    dmin: toScalar(searchParams["dmin"]),
-    dmax: toScalar(searchParams["dmax"]),
+    diff: toArray(searchParams["diff"]),
     author: toScalar(searchParams["author"]),
     status: toScalar(searchParams["status"]),
     scope: toScalar(searchParams["scope"]),

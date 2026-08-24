@@ -30,7 +30,9 @@ export const categorySchema = z.object({
   description: z
     .string()
     .trim()
-    .max(200, "200 caractères maximum.")
+    // 400, not 200: a category description now carries the difficulty ladder
+    // (what tiers 1-5 mean for that category), which does not fit in 200.
+    .max(400, "400 caractères maximum.")
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
   position: z.coerce.number().int().min(0).max(999),

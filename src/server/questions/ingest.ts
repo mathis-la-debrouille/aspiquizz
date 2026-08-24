@@ -18,6 +18,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionGeo,
+  countryCapitals,
   categories,
   type QuestionSource,
   type QuestionStatus,
@@ -179,6 +180,14 @@ export async function createQuestionFromDraft(
     });
   }
 
+  // Resolved before the transaction opens: for find_capital this reads
+  // country_capitals, and issuing that query inside the tx callback would be a
+  // second connection against a held write transaction.
+  const geoAccepted =
+    data.type === "geo"
+      ? (ctx.manualGeo?.acceptedAnswers ?? (await geoAcceptedAnswers(data.mode, geoCountry!)))
+      : [];
+
   // Insert inside a transaction — a question with no choices/answers/geo row is unplayable and
   // must never be observable half-written.
   const questionId = await db.transaction(async (tx) => {
@@ -225,7 +234,7 @@ export async function createQuestionFromDraft(
       );
     } else if (data.type === "geo") {
       const targetIso3 = ctx.manualGeo?.targetIso3 ?? geoCountry!.iso3;
-      const accepted = ctx.manualGeo?.acceptedAnswers ?? geoAcceptedAnswers(data.mode, geoCountry!);
+      const accepted = geoAccepted;
       await tx.insert(questionGeo).values({
         questionId: newId,
         mode: data.mode,
@@ -312,8 +321,21 @@ export function pickColorToken(name: string): ColorToken {
 // Geo auto-fill — capital/name are always taken from `countries`, never the caller.
 // ---------------------------------------------------------------------------
 
-function geoAcceptedAnswers(mode: string, country: FullCountryRow): string[] {
-  if (mode === "find_capital") return country.capitalFr ? [country.capitalFr] : [];
+async function geoAcceptedAnswers(mode: string, country: FullCountryRow): Promise<string[]> {
+  if (mode === "find_capital") {
+    // EVERY capital counts, not just the canonical one. Bolivia's constitutional
+    // capital is Sucre and its seat of government is La Paz; a player answering
+    // La Paz is not wrong, and marking them wrong is the kind of call that starts
+    // an argument instead of teaching anyone anything. The reveal explains the
+    // distinction — see country_capitals.role.
+    const rows = await db
+      .select({ nameFr: countryCapitals.nameFr })
+      .from(countryCapitals)
+      .where(eq(countryCapitals.countryIso3, country.iso3))
+      .orderBy(countryCapitals.position);
+    if (rows.length > 0) return rows.map((r) => r.nameFr);
+    return country.capitalFr ? [country.capitalFr] : [];
+  }
   if (mode === "name_country" || mode === "name_from_shape") return [country.nameFr];
   return [];
 }

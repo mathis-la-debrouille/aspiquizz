@@ -1128,3 +1128,101 @@ verification pass (scope/admin gating, dedup warning, status-immutability, timin
 the new unit tests (rate-limit boundaries, token format).
 
 <!-- New decisions appended below as phases progress. -->
+
+## 2026-08-24 — Addendum D (geo data, difficulty as a real mechanic, question reports)
+
+- **The country perimeter is now 198, not 193, and this REVERSES the 2026-08-09 "Confirmed via
+  user" convention.** The criterion changed from "UN member states" to "has an official ISO
+  3166-1 alpha-3 code AND a UN M49 numeric code, and is a state rather than a dependency". That
+  adds the Holy See and Palestine (UN observers), Taiwan (ISO 3166-1 TWN / M49 158 since losing
+  its UN seat in 1971), and the Cook Islands and Niue (self-governing states in free association
+  with New Zealand, WHO/UNESCO members, COK/184 and NIU/570).
+  - Kosovo is still excluded, but for a stated reason rather than by category: it has **no**
+    official ISO 3166-1 code and no M49 code. Wikidata calls it `XKS`, the World Bank calls it
+    `XKX`, neither is official — and `countries.un_numeric` is `NOT NULL`, so admitting it would
+    mean either a migration or inventing a code, and inventing reference values is exactly what
+    this addendum exists to stop.
+  - Western Sahara and Gibraltar remain out: no recognised government exercising control, and a
+    British Overseas Territory rather than a state, respectively.
+  - The perimeter lives in `scripts/data/perimeter.json` as an explicit list, deliberately NOT
+    derived from Wikidata's `P31` class hierarchy. That hierarchy is unreliable for this purpose,
+    verified rather than assumed: querying sovereign states with an iso3 returns 198 rows that
+    **include Gibraltar** (not a state) and **omit the Cook Islands and Niue** (states).
+
+- **Reference values now carry their source, because the previous ones were admittedly invented.**
+  The Phase 2 entry above records that `un_numeric` was "filled from memory" and that
+  population/area/centroids were "approximations". For a quiz that grades answers as right or
+  wrong, an approximate population is a wrong answer waiting to happen.
+  `scripts/snapshot-countries.ts` writes `countries.snapshot.json`, where every value carries the
+  publisher Wikidata itself cites, the URL, and the date the value is valid **for** (P585), not
+  the fetch date. Committed, never resolved at runtime — the game does not depend on an external
+  API being up. Re-run monthly.
+  - **Wikidata statement rank is not optional.** A first cut ranked candidates by date alone and
+    returned an area of **10 km² for Bosnia**, because area statements are usually undated and
+    Bosnia carries three (51197 marked `PreferredRank`, plus 10 and 57187). Rank is now read
+    first, `DeprecatedRank` is dropped outright.
+  - **The World Bank is used for population only.** Its `AG.SRF.TOTL.K2` surface-area series
+    reports **15,634,410 km² for Canada** against a real 9,984,670, and is similarly off for
+    France and the UAE. A cross-check has to be more reliable than the thing it checks.
+  - The remaining ~84 population disagreements above 5% are a freshness mismatch, not an error:
+    Wikidata usually carries a census (2023-01-01, sometimes 2017) where the World Bank carries a
+    2025 estimate. The delta is reported per country rather than silently reconciled.
+  - **Known gap:** `countries.area_km2` is an integer, so the Vatican's 0.44 km² stores as **0**.
+    An area question on the Vatican would be graded wrong. Not fixed here — it needs a column
+    type change — but it must not become a quiz target until it is.
+
+- **Several capitals per country, following the rule the country itself states.** `capital_fr` was
+  a single nullable column, and `geoAcceptedAnswers` returned one string, so Bolivia had exactly
+  one right answer. New `country_capitals` table, one row per capital, with `role` and `branch`
+  copied from Wikidata's own qualifiers (P459 de jure/de facto, P518 branch of government) rather
+  than from our judgement. `find_capital` accepts **every** row: answering "La Paz" for Bolivia is
+  not wrong, and marking it wrong starts an argument instead of teaching anyone anything. The
+  distinction is carried in the data for the reveal to explain.
+  - Three filters were each found by reading what Wikidata actually returns, not by assuming:
+    `DeprecatedRank` drops The Hague for the Netherlands and Tel Aviv for Israel (both flagged
+    P2241 wrong-value); an end date (P582) drops **former** capitals, without which Dar es Salaam
+    comes back as valid for Tanzania; and where no role is stated, the preferred statement leads,
+    which is what puts Porto-Novo ahead of Cotonou for Benin.
+  - 8 countries have more than one capital: Benin, Eswatini, South Africa (three co-equal
+    branches, no de jure/de facto split at all), Malaysia, Sri Lanka, Yemen, Bolivia, Palestine.
+
+- **Difficulty stopped being decorative.** `questions.points_base` defaulted to 1000 and
+  `ingest.ts` set it to a constant, so a tier-1 and a tier-5 question were worth exactly the same
+  and the whole 1–5 scale was a badge and a filter. `pointsForDifficulty` makes difficulty the
+  multiplier, calibrated on 200 so tier 5 lands on the existing 1000 ceiling. 1000 was rejected:
+  XP and level are derived from total points, so a 5x ceiling would silently rescale every level
+  already earned by about 2.24x. Derived at read time, not stored — retuning needs no backfill.
+  - Labels are in-group slang by explicit request: Golem, Macroniste, Chad, Aspi, 🙂. Tier 5 is
+    the emoji itself. The category description now carries the ladder, which is why the
+    description cap went from 200 to 400 characters.
+
+- **The difficulty filter is a multi-select, replacing the bounded "Au moins / Au plus" pair.** A
+  range cannot express "Golem and 🙂 but nothing between", and picking two or three specific tiers
+  is the normal way to build a round. `dmin`/`dmax` become a repeated `diff` param; empty means
+  every tier, since an empty `inArray` would match nothing and show an empty library on first load.
+
+- **Question reports (`question_flags`) are a different thing from the review queue.**
+  `review.ts` gates drafts *before* publication; this is the feedback loop on questions already in
+  play, raised by any player from the question screen. Deliberate choices: reporting has **no**
+  effect on the round (no score change, no skip, nothing the room sees), or it becomes a way to
+  signal "this one's hard"; one open report per player per question via a unique index, so a
+  mis-tap or a double click is a no-op rather than an inflated count; rows are stamped on
+  resolution and never deleted, so a question reported again after being resolved as "kept" reads
+  as a recurring pattern instead of looking brand new; and `room_id` is nullable and **not**
+  cascaded, because an empty room is deleted two minutes after it empties and a report must
+  outlive it. `flags.ts` is a plain module and `flag-actions.ts` the `"use server"` wrapper, per
+  the `core.ts`/`actions.ts` split — and the viewer is resolved from the session there, never
+  accepted as an argument, since a `"use server"` export is a client-callable RPC.
+
+- **`onDelete: "cascade"` on the three question child tables — a straightforward bug.**
+  `deleteDraft` deletes only the `questions` row, while `question_choices`, `question_open_answers`
+  and `question_geo` referenced `questions.id` with no cascade, so **every** delete of a question
+  that had choices or answers failed on a FK violation. `supprimer_brouillon` was therefore broken
+  100% of the time, not intermittently.
+
+- **Not in this change, and needing a decision:** a flag (drapeau) question mode. The five geo
+  modes have no flag variant, and `countries.flag_emoji` is authoring chrome, never quiz content.
+  Emoji flags are the wrong vehicle regardless — at badge size 🇹🇩 Chad and 🇷🇴 Romania are
+  near-identical, as are 🇮🇩 Indonesia and 🇲🇨 Monaco — so a real mode needs committed SVG assets,
+  a sixth `GeoMode`, and an answer surface.
+
