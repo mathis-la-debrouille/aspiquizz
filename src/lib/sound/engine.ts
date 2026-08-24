@@ -82,6 +82,14 @@ export const sfx = {
       { freq: 783.99, durationMs: 110 },
       { freq: 1046.5, durationMs: 280 },
     ]),
+  /** SoundToggle — a small confirmation blip played once, right as sound gets turned on. Called
+   *  directly (not via useSfx()) since the enabled state that gate checks is, at that instant,
+   *  still the pre-toggle value. */
+  toggleOn: () =>
+    playSequence([
+      { freq: 660, durationMs: 90 },
+      { freq: 880, durationMs: 110 },
+    ]),
 };
 
 export type SfxKey = keyof typeof sfx;
