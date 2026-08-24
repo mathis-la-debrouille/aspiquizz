@@ -6,6 +6,7 @@ import { LayoutGrid, List, Plus, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Spinner } from "@/components/ui/Spinner";
 import { CategoryBadge } from "@/components/ui/Badge";
 import { FilterRail } from "@/components/library/FilterRail";
 import { LibraryCard } from "@/components/library/LibraryCard";
@@ -52,11 +53,22 @@ export function LibraryClient({
   const [density, setDensity] = useState<"cards" | "table">("cards");
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [filtersPending, setFiltersPending] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(DENSITY_KEY);
     if (stored === "cards" || stored === "table") setDensity(stored);
   }, []);
+
+  // FilterRail's router.push changes searchParams, not pathname — the server page re-runs and
+  // hands this component fresh initialItems/initialHasMore props, but items/hasMore/page above
+  // are local state seeded from those props only on mount, so a plain re-render never picks up
+  // the new results. Re-seed local state every time a fresh fetch actually lands.
+  useEffect(() => {
+    setItems(initialItems);
+    setHasMore(initialHasMore);
+    setPage(0);
+  }, [initialItems, initialHasMore]);
 
   function setAndPersistDensity(next: "cards" | "table") {
     setDensity(next);
@@ -168,10 +180,32 @@ export function LibraryClient({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
         <aside className="lg:sticky lg:top-20 lg:self-start">
-          <FilterRail query={query} categories={categories} authors={authors} facets={facets} />
+          <FilterRail
+            query={query}
+            categories={categories}
+            authors={authors}
+            facets={facets}
+            onPendingChange={setFiltersPending}
+          />
         </aside>
 
-        <div className="flex flex-col gap-4">
+        <div
+          className={cn(
+            "relative flex flex-col gap-4 transition-opacity duration-150",
+            filtersPending && "pointer-events-none opacity-50",
+          )}
+          aria-busy={filtersPending || undefined}
+        >
+          {filtersPending && (
+            <div
+              role="status"
+              aria-label="Filtrage en cours"
+              className="absolute top-0 right-0 left-0 z-10 flex justify-center pt-8"
+            >
+              <Spinner className="h-5 w-5 text-gold" />
+            </div>
+          )}
+
           {items.length === 0 ? (
             <EmptyState
               title={

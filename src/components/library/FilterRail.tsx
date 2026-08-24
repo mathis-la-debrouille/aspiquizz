@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
 import { Toggle } from "@/components/ui/Toggle";
+import { DIFFICULTY_LABELS_FR } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils/cn";
 import { LIBRARY_STATUSES, QUESTION_TYPES, type QuestionLibraryQuery } from "@/lib/schemas/library";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuestionAuthorOption } from "@/server/questions/library";
 import type { LibraryFacets } from "@/server/questions/library";
 import type { QuestionType } from "@/server/db/schema";
+
+const DIFFICULTY_LEVELS = [1, 2, 3, 4, 5] as const;
 
 const TYPE_LABELS: Record<QuestionType, string> = {
   open: "Libre",
@@ -39,24 +42,36 @@ export function FilterRail({
   categories,
   authors,
   facets,
+  onPendingChange,
 }: {
   query: QuestionLibraryQuery;
   categories: CategoryOption[];
   authors: QuestionAuthorOption[];
   facets: LibraryFacets;
+  /** Called with the transition's pending state — lets the results area (a sibling, not a
+   *  descendant of this rail) show its own quick loading indicator while a filter change is
+   *  refetching, without this component needing to know anything about that area. */
+  onPendingChange: (pending: boolean) => void;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [qDraft, setQDraft] = useState(query.q);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => setQDraft(query.q), [query.q]);
+  useEffect(() => onPendingChange(isPending), [isPending, onPendingChange]);
 
   function pushParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
     mutate(params);
-    router.push(`${pathname}?${params.toString()}`);
+    // Wrapped in a transition (not a plain router.push) so isPending above reflects the whole
+    // round trip — URL update, the server re-fetching this route with the new searchParams, and
+    // the RSC payload streaming back — which is what actually takes the visible ~1-2s.
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
   }
 
   function setScalar(key: string, value: string) {
@@ -193,30 +208,38 @@ export function FilterRail({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-14 font-medium text-ink-mid">
-          Difficulté {query.dmin}–{query.dmax}
-        </span>
-        <div className="flex items-center gap-2">
-          <input
-            type="range"
-            min={1}
-            max={5}
+        <span className="text-14 font-medium text-ink-mid">Difficulté</span>
+        {/* Two bounded <select>s, not a dual-thumb range slider — a pair of native range inputs
+         *  side by side rendered as two disjoint tracks with no visual link between them (looked
+         *  like one broken slider with a gap in the middle) and, worse, both spanned the full
+         *  1–5 scale independently so nothing stopped dmin from being dragged past dmax. Each
+         *  select's own option list is bounded by the other's current value instead, so an
+         *  invalid range can't be picked at all. */}
+        <div className="grid grid-cols-2 gap-2">
+          <Select
+            label="Au moins"
             value={query.dmin}
-            onChange={(e) =>
-              setScalar("dmin", Math.min(Number(e.target.value), query.dmax).toString())
-            }
-            className="accent-moss"
-          />
-          <input
-            type="range"
-            min={1}
-            max={5}
+            onChange={(e) => setScalar("dmin", e.target.value)}
+            className="h-9 text-14"
+          >
+            {DIFFICULTY_LEVELS.filter((v) => v <= query.dmax).map((v) => (
+              <option key={v} value={v}>
+                {v} · {DIFFICULTY_LABELS_FR[v - 1]}
+              </option>
+            ))}
+          </Select>
+          <Select
+            label="Au plus"
             value={query.dmax}
-            onChange={(e) =>
-              setScalar("dmax", Math.max(Number(e.target.value), query.dmin).toString())
-            }
-            className="accent-moss"
-          />
+            onChange={(e) => setScalar("dmax", e.target.value)}
+            className="h-9 text-14"
+          >
+            {DIFFICULTY_LEVELS.filter((v) => v >= query.dmin).map((v) => (
+              <option key={v} value={v}>
+                {v} · {DIFFICULTY_LABELS_FR[v - 1]}
+              </option>
+            ))}
+          </Select>
         </div>
       </div>
 

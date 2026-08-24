@@ -15,12 +15,16 @@ const tones: Record<BadgeTone, string> = {
   neutral: "bg-bg-inset text-ink-mid border-border-hard",
 };
 
-/** Small tag — category, difficulty, question type. Never used as a functional button. */
+/** Small tag — category, difficulty, question type. Never used as a functional button.
+ *  `shrink-0 whitespace-nowrap`: a badge sitting in a tight flex row must never squeeze below
+ *  its own content width — that's what wraps a multi-word badge (or a difficulty badge's dots +
+ *  label) onto two lines mid-pill. The row it sits in needs `flex-wrap` so *it* can overflow
+ *  onto a new line instead — see LibraryCard's badge row for the one place that was missing it. */
 export function Badge({ tone = "neutral", className, children, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-12 font-medium",
+        "inline-flex shrink-0 items-center gap-1 rounded-sm border px-2 py-0.5 text-12 font-medium whitespace-nowrap",
         tones[tone],
         className,
       )}
@@ -43,7 +47,7 @@ export function CategoryBadge({
   return <Badge tone={colorToken}>{name}</Badge>;
 }
 
-const DIFFICULTY_LABELS_FR = ["Facile", "Abordable", "Modérée", "Corsée", "Impitoyable"];
+export const DIFFICULTY_LABELS_FR = ["Facile", "Abordable", "Modérée", "Corsée", "Impitoyable"];
 
 export function DifficultyBadge({ level }: { level: 1 | 2 | 3 | 4 | 5 }) {
   const tone: BadgeTone = level <= 2 ? "moss" : level === 3 ? "gold" : "clay";
