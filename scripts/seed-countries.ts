@@ -5,7 +5,7 @@
  */
 import { readFileSync } from "node:fs";
 import { db, client } from "@/server/db";
-import { countries } from "@/server/db/schema";
+import { countries, countryCapitals } from "@/server/db/schema";
 
 interface CountryRecord {
   iso3: string;
@@ -26,6 +26,15 @@ interface CountryRecord {
   centroid_lat: number;
 }
 
+interface SnapshotCapital {
+  name_fr: string;
+  role: string | null;
+  branch: string | null;
+  contested: boolean;
+  source: string;
+  url?: string;
+}
+
 /** Regional indicator symbols — computed, not stored, to avoid 193 hand-typed emoji. */
 function flagEmoji(iso2: string): string {
   const REGIONAL_INDICATOR_OFFSET = 0x1f1e6 - 65; // 'A'.charCodeAt(0)
@@ -38,7 +47,14 @@ function flagEmoji(iso2: string): string {
 
 export async function seedCountries(): Promise<number> {
   const raw = readFileSync(new URL("./data/countries.fr.json", import.meta.url), "utf-8");
-  const records = JSON.parse(raw) as CountryRecord[];
+  // The 193 UN member states, plus the states carrying an official ISO 3166-1 and
+  // UN M49 code that are not UN members — see scripts/data/perimeter.json for the
+  // criterion and why Kosovo and Gibraltar are not among them.
+  const extraRaw = readFileSync(new URL("./data/countries.extra.fr.json", import.meta.url), "utf-8");
+  const records = [
+    ...(JSON.parse(raw) as CountryRecord[]),
+    ...(JSON.parse(extraRaw) as CountryRecord[]),
+  ];
 
   for (const record of records) {
     await db
@@ -89,9 +105,47 @@ export async function seedCountries(): Promise<number> {
   return records.length;
 }
 
+/**
+ * Capitals, from the sourced snapshot. A country can have several: South Africa
+ * has three co-equal seats, and Bolivia splits de jure (Sucre) from de facto
+ * (La Paz). Grading accepts every row, so answering "La Paz" for Bolivia counts.
+ */
+export async function seedCountryCapitals(): Promise<number> {
+  const raw = readFileSync(new URL("./data/countries.snapshot.json", import.meta.url), "utf-8");
+  const snapshot = JSON.parse(raw) as {
+    countries: Array<{ iso3: string; capitals: SnapshotCapital[] }>;
+  };
+
+  // Reference data, rebuilt wholesale — the snapshot is the source of truth, and a
+  // capital removed upstream (a former capital) has to disappear here too.
+  await db.delete(countryCapitals);
+
+  let count = 0;
+  for (const country of snapshot.countries) {
+    for (const [position, capital] of country.capitals.entries()) {
+      await db.insert(countryCapitals).values({
+        countryIso3: country.iso3,
+        nameFr: capital.name_fr,
+        role: capital.role,
+        branch: capital.branch,
+        contested: capital.contested,
+        position,
+        sourceUrl: capital.url ?? null,
+      });
+      count += 1;
+    }
+  }
+  return count;
+}
+
 const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
 if (isMain) {
   seedCountries()
+    .then(async (count) => {
+      const capitals = await seedCountryCapitals();
+      console.log(JSON.stringify({ event: "seed_capitals_complete", count: capitals }));
+      return count;
+    })
     .then((count) => {
       console.log(JSON.stringify({ event: "seed_countries_complete", count }));
       return client.close();

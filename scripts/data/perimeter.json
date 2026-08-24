@@ -1,0 +1,16 @@
+{
+  "_comment": "Explicit country perimeter for ASPI Quiz geo questions. Defined from official ISO 3166-1 / UN M49 code lists, NOT from Wikidata's P31 class hierarchy — that hierarchy is unreliable as a perimeter definition (it classes Gibraltar, a British Overseas Territory, as a sovereign state, while omitting the Cook Islands and Niue, which are states). Every entry must have an official ISO 3166-1 alpha-3 code AND a UN M49 numeric code. See DECISIONS.md.",
+  "_criterion": "official ISO 3166-1 alpha-3 + UN M49 numeric code, and is a state rather than a dependency",
+  "_excluded": {
+    "XKS/XKX": "Kosovo — no official ISO 3166-1 code and no M49 code; Wikidata says XKS, the World Bank says XKX, neither is official",
+    "GIB": "Gibraltar — British Overseas Territory, not a state; also absent from both topology resolutions",
+    "ESH": "Western Sahara — disputed, no recognised government exercising control"
+  },
+  "extra": [
+    { "iso3": "VAT", "status": "un_observer", "note": "Holy See — UN permanent observer state" },
+    { "iso3": "PSE", "status": "un_observer", "note": "State of Palestine — UN permanent observer state" },
+    { "iso3": "TWN", "status": "other", "note": "Taiwan — lost UN seat in 1971; retains ISO 3166-1 TWN and M49 158" },
+    { "iso3": "COK", "status": "associated_state", "note": "Cook Islands — self-governing state in free association with New Zealand; WHO/UNESCO member" },
+    { "iso3": "NIU", "status": "associated_state", "note": "Niue — self-governing state in free association with New Zealand; WHO/UNESCO member" }
+  ]
+}
