@@ -20,5 +20,6 @@ export * from "@/components/ui/Tabs";
 export * from "@/components/ui/Tooltip";
 export * from "@/components/ui/EmptyState";
 export * from "@/components/ui/Skeleton";
+export * from "@/components/ui/Spinner";
 export * from "@/components/ui/Divider";
 export * from "@/components/ui/HandDrawn";
