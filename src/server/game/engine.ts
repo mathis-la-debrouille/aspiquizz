@@ -35,6 +35,9 @@ import type {
 const COUNTDOWN_MS = 3_000;
 const ANSWER_GRACE_MS = 300;
 const SCOREBOARD_HOLD_MS = 3_000;
+/** The between-questions scoreboard interrupts the game's pace — show it every Nth question,
+ *  not after every single one. */
+const SCOREBOARD_INTERVAL = 5;
 /** Addendum B.4 — supersedes brief §11.3's 60s "abandoned after 60s empty" figure. */
 const EMPTY_ROOM_TIMEOUT_MS = 120_000;
 export const SWEEP_INTERVAL_MS = 60_000;
@@ -506,7 +509,11 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     if (room.loopCancelled) return;
 
     const isLast = frozen.position === room.frozenQuestions.length - 1;
-    if (!isLast) {
+    // 1-indexed question number — the scoreboard lands every SCOREBOARD_INTERVAL-th question
+    // (5, 10, 15…), not after each one; the podium at finishGame already covers the last
+    // question regardless of where it falls in that cadence.
+    const questionNumber = frozen.position + 1;
+    if (!isLast && questionNumber % SCOREBOARD_INTERVAL === 0) {
       room.phase = "scoreboard";
       io.to(channel).emit("scoreboard:update", buildScoreboard(room));
       await sleep(SCOREBOARD_HOLD_MS);

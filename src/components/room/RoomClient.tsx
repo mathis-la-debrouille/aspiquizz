@@ -78,6 +78,22 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     const onReveal = (payload: QuestionRevealPayload) => {
       setPhase("reveal");
       setReveal(payload);
+      // Mirrors the room:player_joined/left/host_changed pattern above: state.players' score/
+      // streak otherwise only ever reflect the initial room:state snapshot, so by question 2
+      // they're stale everywhere except RevealScreen (which reads reveal.perPlayer directly).
+      // QuestionScreen's streak-next-to-the-timer display needs this to carry forward once
+      // onQuestionShow nulls `reveal` back out for the next question.
+      setState((prev) => {
+        if (!prev) return prev;
+        const byUserId = new Map(payload.perPlayer.map((p) => [p.userId, p]));
+        return {
+          ...prev,
+          players: prev.players.map((p) => {
+            const update = byUserId.get(p.userId);
+            return update ? { ...p, score: update.newScore, streak: update.streak } : p;
+          }),
+        };
+      });
     };
     const onScoreboard = (entries: ScoreboardEntry[]) => {
       setPhase("scoreboard");
@@ -249,6 +265,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               totalPlayers={state.players.filter((p) => p.connected).length}
               locked={phase === "locked"}
               clockOffset={clockOffset}
+              myStreak={state.players.find((p) => p.userId === currentUserId)?.streak ?? 0}
             />
           ) : viewKey === "reveal" && reveal ? (
             <RevealScreen reveal={reveal} state={state} currentUserId={currentUserId} />

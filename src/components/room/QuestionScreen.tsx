@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { CategoryBadge } from "@/components/ui/Badge";
 import { Timer } from "@/components/ui/Timer";
+import { StreakMeter } from "@/components/ui/StreakMeter";
 import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerSurface";
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
@@ -25,6 +26,7 @@ export function QuestionScreen({
   totalPlayers,
   locked,
   clockOffset,
+  myStreak,
 }: {
   socket: GameSocket;
   code: string;
@@ -33,6 +35,10 @@ export function QuestionScreen({
   totalPlayers: number;
   locked: boolean;
   clockOffset: number;
+  /** Streak going into this question (not yet affected by it) — RoomClient carries this
+   *  forward from the previous question's reveal, since `reveal` itself is nulled out the
+   *  moment the next question starts. */
+  myStreak: number;
 }) {
   const [submitted, setSubmitted] = useState(false);
 
@@ -54,14 +60,17 @@ export function QuestionScreen({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
         <div className="flex items-center gap-2">
           <CategoryBadge name={q.categoryName} colorToken={q.categoryColorToken} />
           <span className="font-numeral text-14 tabular-nums text-ink-faint">
             {active.position + 1} / {active.total}
           </span>
         </div>
-        <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
+        <div className="flex items-center gap-3">
+          <StreakMeter streak={myStreak} />
+          <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
+        </div>
       </div>
 
       <Card className="flex flex-col gap-4 p-6" elevation="lifted">
