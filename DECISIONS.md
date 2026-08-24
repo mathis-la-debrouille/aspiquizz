@@ -1226,3 +1226,30 @@ the new unit tests (rate-limit boundaries, token format).
   near-identical, as are 🇮🇩 Indonesia and 🇲🇨 Monaco — so a real mode needs committed SVG assets,
   a sixth `GeoMode`, and an answer surface.
 
+## 2026-08-24 — Map fixes carried into gameplay; hit-circles dropped there too
+
+- **`GeoMap`'s `editorChrome` flag was gating a mix of authoring convenience and genuine fixes
+  together, so all of it stayed editor-only by accident.** Split it: zoom controls, fullscreen,
+  the 50m high-res swap at high zoom, and the touch tap-to-confirm flow don't reveal anything, so
+  they now also activate in-game (`GeoAnswerSurface`) via a new `showZoomChrome` flag
+  (`editorChrome || zoomEnabled`) whenever a click-mode question (locate_country/capital_of) is
+  still interactive. Auto-labels-at-zoom and the hover name tooltip stay strictly editor-only —
+  either would let a player zoom or hover to read the answer instead of finding it, so widening
+  those the same way would leak the answer during active play. Confirmed with the user before
+  keeping this split rather than porting everything uniformly.
+
+- **`HitCircles`/`FallbackHitCircles` — the invisible click targets for tiny/zero-geometry
+  countries — removed from gameplay entirely, at the user's explicit request, matching their
+  earlier removal from the editor (Addendum B.3.1).** This reverses that earlier decision's own
+  stated rationale: the editor could drop them because `CountrySearchCombobox` is a working
+  fallback there; gameplay has no fallback, so this is a real, acknowledged regression, not a
+  wash. Per the "Small/zero-geometry country fallback" entry above, **27 countries (Singapore,
+  Malta, Monaco, several Caribbean/Pacific micro-states, …) have zero polygon in the 110m
+  topology gameplay renders at world zoom, and Tuvalu has none at any resolution** — any of them,
+  if ever targeted by a `locate_country`/`capital_of` question, is now unclickable with no visible
+  shape on screen at all, not just hard to hit. Nothing in `question-selection.ts` currently
+  excludes these iso3s from being picked for a click-mode question — that's the natural follow-up
+  if this surfaces as a real "unanswerable question" complaint, not yet done here since it wasn't
+  what was asked. `HitCircles.tsx`/`FallbackHitCircles.tsx` and the `.geo-hit-circle` CSS rule
+  were deleted rather than left dark, since nothing references them any more.
+

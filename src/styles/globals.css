@@ -207,18 +207,6 @@
      Labels.tsx) — without it this scales around the SVG's origin, not the label's own point. */
   transform: scale(calc(1 / var(--zoom-k, 1)));
 }
-/* Invisible click targets for small/geometry-less countries — brief §8.2. Not `.geo-country`:
-   that class carries a visible stroke, which would clutter the map with circle outlines. */
-.geo-hit-circle {
-  fill: transparent;
-  stroke: none;
-  pointer-events: all;
-}
-.geo-map[data-interactive="true"] .geo-hit-circle:hover {
-  fill: var(--color-moss-glow);
-  fill-opacity: 0.3;
-  cursor: pointer;
-}
 
 /* Editor-only overrides (Addendum B.3.1) — the geo question editor's map (GeoMap's
    `editorChrome` prop), never the in-game one. Hover and selected must never look similar:

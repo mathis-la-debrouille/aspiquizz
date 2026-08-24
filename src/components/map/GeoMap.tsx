@@ -10,13 +10,10 @@ import { select } from "d3-selection";
 import { interpolate } from "d3-interpolate";
 import type { Geometry } from "geojson";
 import { CountryPaths } from "@/components/map/CountryPaths";
-import { HitCircles } from "@/components/map/HitCircles";
-import { FallbackHitCircles } from "@/components/map/FallbackHitCircles";
 import { Labels } from "@/components/map/Labels";
 import { loadWorldTopology } from "@/components/map/topology";
 import { createWorldProjection, createFocusedProjection } from "@/components/map/projection";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
-import { COUNTRY_CENTROID } from "@/lib/geo/country-centroids";
 import { findPrimaryFeature } from "@/lib/geo/primary-feature";
 import { largestPolygonFeature } from "@/lib/geo/largest-ring";
 import type { CountryFeature, GeoMapProps } from "@/components/map/types";
@@ -189,14 +186,6 @@ export function GeoMap({
     () => (projection ? geoPath(projection) : null),
     [projection],
   );
-
-  // Countries entirely absent from this topology (see FallbackHitCircles) — world view only;
-  // silhouette mode has nothing to fall back to besides the single target feature.
-  const missingIso3 = useMemo(() => {
-    if (!features || isSilhouette) return [];
-    const present = new Set(features.map((f) => f.iso3).filter((iso3): iso3 is string => !!iso3));
-    return Object.keys(COUNTRY_CENTROID).filter((iso3) => !present.has(iso3));
-  }, [features, isSilhouette]);
 
   // --- Pan/zoom: disabled for silhouette (brief §8.2) and non-interactive views. ---
   const zoomEnabled = interactive && !isSilhouette;
@@ -491,13 +480,6 @@ export function GeoMap({
   }, [pendingIso3, onSelect]);
 
   const pendingName = pendingIso3 ? COUNTRY_NAME_FR[pendingIso3] : undefined;
-  // Invisible-until-hover hit targets for tiny/geometry-less countries — kept in-game, where a
-  // player answering locate_country/capital_of has no alternative way to select Monaco/Singapore/
-  // Tuvalu. Dropped entirely in the editor: an author has CountrySearchCombobox right above the
-  // map and can just type the name, and the circles were confusing there (an invisible target
-  // that only reveals itself once your cursor happens to land on it, on top of a country whose
-  // real shape is also clickable, reads as flaky hit-testing rather than a helpful affordance).
-  const showFallbackHitTargets = !editorChrome;
   const effectiveShowLabels = showLabels || (editorChrome && scale > LABEL_AUTO_SCALE);
 
   const mapBody = (
@@ -528,12 +510,6 @@ export function GeoMap({
             onMouseLeave={() => setHoveredIso3(null)}
           >
             <CountryPaths features={renderFeatures} pathGenerator={pathGenerator} />
-            {showFallbackHitTargets && (
-              <HitCircles features={renderFeatures} pathGenerator={pathGenerator} />
-            )}
-            {projection && showFallbackHitTargets && missingIso3.length > 0 && (
-              <FallbackHitCircles missingIso3={missingIso3} projection={projection} />
-            )}
             {effectiveShowLabels && (
               <Labels
                 features={renderFeatures}
