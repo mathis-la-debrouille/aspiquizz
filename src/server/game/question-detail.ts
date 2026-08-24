@@ -37,6 +37,9 @@ export interface FullQuestionDetail {
   strict: boolean;
   choices: { id: string; label: string; isCorrect: boolean }[];
   openAnswers: string[];
+  /** The canonical answers only, without spelling variants — what the reveal shows.
+   *  Grading still uses the full openAnswers list. */
+  primaryAnswers: string[];
   geo: {
     mode: "locate_country" | "name_country" | "find_capital" | "capital_of" | "name_from_shape";
     targetIso3: string;
@@ -92,7 +95,7 @@ export async function getFullQuestionDetail(
       .where(eq(questionChoices.questionId, questionId))
       .orderBy(asc(questionChoices.position)),
     db
-      .select({ value: questionOpenAnswers.value })
+      .select({ value: questionOpenAnswers.value, isPrimary: questionOpenAnswers.isPrimary })
       .from(questionOpenAnswers)
       .where(eq(questionOpenAnswers.questionId, questionId)),
     db.select().from(questionGeo).where(eq(questionGeo.questionId, questionId)).limit(1),
@@ -104,6 +107,7 @@ export async function getFullQuestionDetail(
     ...row,
     choices,
     openAnswers: openAnswers.map((a) => a.value),
+    primaryAnswers: openAnswers.filter((a) => a.isPrimary).map((a) => a.value),
     geo: geoRow
       ? {
           mode: geoRow.mode,

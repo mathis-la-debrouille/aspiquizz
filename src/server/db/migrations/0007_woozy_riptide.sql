@@ -1,0 +1,1 @@
+ALTER TABLE `country_capitals` ADD `aliases` text DEFAULT '[]' NOT NULL;

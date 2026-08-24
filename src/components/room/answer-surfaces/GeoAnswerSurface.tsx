@@ -8,7 +8,9 @@ import type { SanitisedQuestion } from "@/server/game/sanitize";
 const GeoMap = dynamic(() => import("@/components/map").then((m) => m.GeoMap), {
   ssr: false,
   loading: () => (
-    <div className="flex h-72 items-center justify-center text-14 text-ink-faint">Carte…</div>
+    <div className="flex h-[58vh] min-h-72 items-center justify-center bg-geo-sea text-14 text-ink-high">
+      Carte…
+    </div>
   ),
 });
 
@@ -29,7 +31,10 @@ export function GeoAnswerSurface({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="h-72 rounded-md border border-border-soft bg-bg-inset">
+      {/* Viewport-relative, not a fixed h-72 (288px): on a laptop that left the map
+       *  a small panel in the middle of an empty screen, and small countries were
+       *  a few pixels wide. The map IS the question here, so it gets the room. */}
+      <div className="h-[58vh] min-h-72 overflow-hidden rounded-md border border-border-soft bg-geo-sea">
         <GeoMap
           mode={isSilhouette ? "silhouette" : isClickMode ? "pick" : "display"}
           interactive={isClickMode && !disabled}

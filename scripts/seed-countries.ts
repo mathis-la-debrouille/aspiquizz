@@ -28,6 +28,7 @@ interface CountryRecord {
 
 interface SnapshotCapital {
   name_fr: string;
+  aliases?: string[];
   role: string | null;
   branch: string | null;
   contested: boolean;
@@ -129,6 +130,7 @@ export async function seedCountryCapitals(): Promise<number> {
         role: capital.role,
         branch: capital.branch,
         contested: capital.contested,
+        aliases: capital.aliases ?? [],
         position,
         sourceUrl: capital.url ?? null,
       });

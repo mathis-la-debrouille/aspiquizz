@@ -30,6 +30,12 @@
   --color-plum: var(--plum);
   --color-plum-deep: var(--plum-deep);
 
+  /* Geo map — its own scale, see tokens.css for why it isn't the surface tokens. */
+  --color-geo-sea: var(--geo-sea);
+  --color-geo-land: var(--geo-land);
+  --color-geo-land-border: var(--geo-land-border);
+  --color-geo-land-inert: var(--geo-land-inert);
+
   --color-correct: var(--correct);
   --color-wrong: var(--wrong);
   --color-warn: var(--warn);
@@ -151,9 +157,12 @@
 
 /* Map — see src/components/map/GeoMap.tsx. Selection/hover state applied via
    data-attributes rather than per-path React re-renders, brief §8.2. */
+.geo-map {
+  background: var(--color-geo-sea);
+}
 .geo-country {
-  fill: var(--color-bg-raised);
-  stroke: var(--color-border-hard);
+  fill: var(--color-geo-land);
+  stroke: var(--color-geo-land-border);
   stroke-width: 0.75px;
   /* Keeps the border a constant on-screen width regardless of the ancestor <g>'s zoom
      transform — without this, stroke-width scales linearly with zoom (same coordinate space
@@ -165,7 +174,7 @@
     opacity 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .geo-country--inert {
-  fill: var(--color-bg-inset);
+  fill: var(--color-geo-land-inert);
   pointer-events: none;
 }
 .geo-map[data-interactive="true"] .geo-country:not(.geo-country--inert):hover {
@@ -191,9 +200,11 @@
   opacity: 0.35;
 }
 .geo-label {
-  fill: var(--color-ink-high);
+  /* Dark ink with a pale halo — the reverse of the page's text treatment, because
+     labels now sit on pale land rather than on a dark surface. */
+  fill: #1c2420;
   paint-order: stroke;
-  stroke: var(--color-bg-base);
+  stroke: var(--color-geo-land);
   stroke-width: 3px;
   font-family: var(--font-body);
   font-size: 10px;

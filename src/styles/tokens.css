@@ -12,6 +12,16 @@
   --border-soft: #253128;
   --border-hard: #334437;
 
+  /* Geo map — deliberately NOT the Forest Night surface tokens. Rendering land in
+     --bg-raised on a dark page made the map unreadable: countries and ocean were
+     both near-black, and a small country was invisible. An atlas reads as pale
+     land on blue water, so the map gets its own three tokens. Muted, not primary
+     blue/white, so it still sits inside the palette rather than on top of it. */
+  --geo-sea: #1b3a52;
+  --geo-land: #e8e3d4;
+  --geo-land-border: #7d8a80;
+  --geo-land-inert: #b9b3a4;
+
   /* Ink — warm off-whites, never pure white */
   --ink-high: #efeadb;
   --ink-mid: #b5c0b4;

@@ -183,10 +183,15 @@ export async function createQuestionFromDraft(
   // Resolved before the transaction opens: for find_capital this reads
   // country_capitals, and issuing that query inside the tx callback would be a
   // second connection against a held write transaction.
-  const geoAccepted =
+  const geoAccepted: GeoAccepted =
     data.type === "geo"
-      ? (ctx.manualGeo?.acceptedAnswers ?? (await geoAcceptedAnswers(data.mode, geoCountry!)))
-      : [];
+      ? ctx.manualGeo?.acceptedAnswers
+        ? {
+            all: ctx.manualGeo.acceptedAnswers,
+            canonicalCount: ctx.manualGeo.acceptedAnswers.length,
+          }
+        : await geoAcceptedAnswers(data.mode, geoCountry!)
+      : { all: [], canonicalCount: 0 };
 
   // Insert inside a transaction — a question with no choices/answers/geo row is unplayable and
   // must never be observable half-written.
@@ -234,7 +239,7 @@ export async function createQuestionFromDraft(
       );
     } else if (data.type === "geo") {
       const targetIso3 = ctx.manualGeo?.targetIso3 ?? geoCountry!.iso3;
-      const accepted = geoAccepted;
+      const accepted = geoAccepted.all;
       await tx.insert(questionGeo).values({
         questionId: newId,
         mode: data.mode,
@@ -246,7 +251,14 @@ export async function createQuestionFromDraft(
       });
       if (accepted.length > 0) {
         await tx.insert(questionOpenAnswers).values(
-          accepted.map((value, i) => ({ questionId: newId, value, isPrimary: i === 0 })),
+          // isPrimary marks the CANONICAL answers, not just the first one: the
+          // reveal prints only these, so a Bolivia reveal reads "Sucre ou La Paz"
+          // and not "… ou The Illustrious and Heroic Sucre".
+          accepted.map((value, i) => ({
+            questionId: newId,
+            value,
+            isPrimary: i < geoAccepted.canonicalCount,
+          })),
         );
       }
     }
@@ -321,7 +333,14 @@ export function pickColorToken(name: string): ColorToken {
 // Geo auto-fill — capital/name are always taken from `countries`, never the caller.
 // ---------------------------------------------------------------------------
 
-async function geoAcceptedAnswers(mode: string, country: FullCountryRow): Promise<string[]> {
+interface GeoAccepted {
+  /** Everything that grades as correct: canonical names then spelling variants. */
+  all: string[];
+  /** How many leading entries of `all` are canonical — the rest are variants. */
+  canonicalCount: number;
+}
+
+async function geoAcceptedAnswers(mode: string, country: FullCountryRow): Promise<GeoAccepted> {
   if (mode === "find_capital") {
     // EVERY capital counts, not just the canonical one. Bolivia's constitutional
     // capital is Sucre and its seat of government is La Paz; a player answering
@@ -329,15 +348,22 @@ async function geoAcceptedAnswers(mode: string, country: FullCountryRow): Promis
     // an argument instead of teaching anyone anything. The reveal explains the
     // distinction — see country_capitals.role.
     const rows = await db
-      .select({ nameFr: countryCapitals.nameFr })
+      .select({ nameFr: countryCapitals.nameFr, aliases: countryCapitals.aliases })
       .from(countryCapitals)
       .where(eq(countryCapitals.countryIso3, country.iso3))
       .orderBy(countryCapitals.position);
-    if (rows.length > 0) return rows.map((r) => r.nameFr);
-    return country.capitalFr ? [country.capitalFr] : [];
+    if (rows.length > 0) {
+      const canonical = rows.map((r) => r.nameFr);
+      const variants = rows.flatMap((r) => r.aliases ?? []);
+      return { all: [...canonical, ...variants], canonicalCount: canonical.length };
+    }
+    const single = country.capitalFr ? [country.capitalFr] : [];
+    return { all: single, canonicalCount: single.length };
   }
-  if (mode === "name_country" || mode === "name_from_shape") return [country.nameFr];
-  return [];
+  if (mode === "name_country" || mode === "name_from_shape") {
+    return { all: [country.nameFr], canonicalCount: 1 };
+  }
+  return { all: [], canonicalCount: 0 };
 }
 
 // ---------------------------------------------------------------------------

@@ -25,11 +25,18 @@ export interface FullCountryRow {
 
 let cachedCountries: FullCountryRow[] | null = null;
 
-/** The 193-country table is small and effectively static (seeded once, never edited at runtime)
+/** The country table is small and effectively static (seeded once, never edited at runtime)
  *  — cached in-process after the first read rather than re-queried on every MCP call, mirroring
- *  the existing "hand the client the whole small list" precedent in server/geo/actions.ts. */
+ *  the existing "hand the client the whole small list" precedent in server/geo/actions.ts.
+ *
+ *  An EMPTY result is deliberately not cached. `[]` is truthy, so the original
+ *  `if (cachedCountries)` pinned an empty list for the lifetime of the process — and
+ *  the normal order of operations guarantees that happens: server.ts runs migrations
+ *  at boot but never seeds, so a fresh deployment serves an unseeded table, caches
+ *  nothing-at-all, and then keeps answering "Pays introuvable : « France »" even after
+ *  db:seed has run. This bit exactly once, on production. */
 async function loadCountries(): Promise<FullCountryRow[]> {
-  if (cachedCountries) return cachedCountries;
+  if (cachedCountries && cachedCountries.length > 0) return cachedCountries;
   const rows = await db
     .select({
       iso3: countries.iso3,
