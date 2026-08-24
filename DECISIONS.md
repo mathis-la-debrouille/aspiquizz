@@ -1281,3 +1281,14 @@ generator was never updated for its own new data file
   topology features, 7 exclusions (Western Sahara, Antarctica, and the 5 name-keyed disputed
   territories — N. Cyprus, Somaliland, Kosovo, Indian Ocean Ter., Siachen Glacier).
 
+## 2026-08-24 — Podium's per-question "who answered what" detail
+
+- Once the between-questions scoreboard stopped showing after every question (previous entry
+  above), there was no longer any single place a player could see the full per-question record —
+  each `question:reveal` is real-time and gone once the next question starts. Added a table to
+  the final `Podium` screen: rows are every question the room played, columns are every
+  non-spectator player, each cell a ✓/✗ plus points. Built from `answers`/`room_questions` at
+  `finishGame`, not accumulated during the game loop — the durable DB rows are already the exact
+  shape needed and this only ever runs once, at game end. New `RoomFinishedPayload` fields
+  (`questionHistory`, `answerLog`); no schema change.
+

@@ -96,10 +96,30 @@ export interface PodiumEntry {
   rank: number;
 }
 
+export interface QuestionHistoryEntry {
+  position: number;
+  prompt: string;
+}
+
+export interface AnswerLogEntry {
+  position: number;
+  userId: string;
+  isCorrect: boolean;
+  pointsAwarded: number;
+  msTaken: number;
+}
+
 export interface RoomFinishedPayload {
   podium: PodiumEntry[];
   fullScoreboard: ScoreboardEntry[];
   highlights: string[];
+  /** Every question the room actually played, in order — the final screen's "who answered
+   *  what" breakdown. Populated from `answers`/`room_questions` at finishGame, not accumulated
+   *  during the loop, since the between-questions scoreboard no longer shows after every
+   *  question (every SCOREBOARD_INTERVAL-th one) and this is the one place a player can still
+   *  see the full per-question record. */
+  questionHistory: QuestionHistoryEntry[];
+  answerLog: AnswerLogEntry[];
 }
 
 export interface ChatMessagePayload {

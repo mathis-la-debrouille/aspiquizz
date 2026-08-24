@@ -8,6 +8,7 @@ import {
   answers,
   userCategoryStats,
   questionStats,
+  questions as questionsTable,
 } from "@/server/db/schema";
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
@@ -30,6 +31,8 @@ import type {
   RoomPhase,
   ScoreboardEntry,
   PodiumEntry,
+  QuestionHistoryEntry,
+  AnswerLogEntry,
 } from "@/server/socket/events";
 
 const COUNTDOWN_MS = 3_000;
@@ -624,10 +627,36 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
   );
 
   const displayNameByUserId = new Map(sorted.map((p) => [p.userId, p.displayName]));
+
+  // The final screen's "who answered what" breakdown — built here from the durable `answers`/
+  // `room_questions` rows rather than accumulated during the loop, since the between-questions
+  // scoreboard no longer shows after every question. `room.id` is still valid at this point:
+  // a `finished` room's DB rows are never touched by the empty-room deletion sweep (Addendum
+  // B.4), only a still-`lobby`/`running` room's are.
+  const questionHistory: QuestionHistoryEntry[] = await db
+    .select({ position: roomQuestions.position, prompt: questionsTable.prompt })
+    .from(roomQuestions)
+    .innerJoin(questionsTable, eq(roomQuestions.questionId, questionsTable.id))
+    .where(eq(roomQuestions.roomId, room.id))
+    .orderBy(roomQuestions.position);
+
+  const answerLog: AnswerLogEntry[] = await db
+    .select({
+      position: answers.position,
+      userId: answers.userId,
+      isCorrect: answers.isCorrect,
+      pointsAwarded: answers.pointsAwarded,
+      msTaken: answers.msTaken,
+    })
+    .from(answers)
+    .where(eq(answers.roomId, room.id));
+
   io.to(roomChannel(room.code)).emit("room:finished", {
     podium,
     fullScoreboard: buildScoreboard(room),
     highlights: highlights.map((h) => `${displayNameByUserId.get(h.userId) ?? "?"} — ${h.label}`),
+    questionHistory,
+    answerLog,
   });
 }
 
