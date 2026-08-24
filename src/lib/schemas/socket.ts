@@ -64,7 +64,9 @@ export const correctionSetSchema = z.object({
   code: roomCodeSchema,
   position: z.number().int().min(0),
   userId: z.string().min(1),
-  verdict: z.boolean(),
+  /** Upper bound is the question's difficulty tier; clamped server-side against the
+   *  real question, since a client could otherwise claim any number here. */
+  awarded: z.number().int().min(0).max(5),
 });
 export const correctionNextSchema = z.object({ code: roomCodeSchema });
 

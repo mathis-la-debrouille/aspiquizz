@@ -120,17 +120,17 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     const onCorrectionVerdict = ({
       position,
       userId,
-      verdict,
+      awarded,
     }: {
       position: number;
       userId: string;
-      verdict: boolean;
+      awarded: number;
     }) => {
       setCorrection((prev) =>
         prev && prev.position === position
           ? {
               ...prev,
-              answers: prev.answers.map((a) => (a.userId === userId ? { ...a, verdict } : a)),
+              answers: prev.answers.map((a) => (a.userId === userId ? { ...a, awarded } : a)),
             }
           : prev,
       );

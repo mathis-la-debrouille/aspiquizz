@@ -13,7 +13,7 @@ import {
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
-import { computePoints, pointsForDifficulty } from "@/server/game/scoring";
+import { computePoints, pointsForDifficulty, maxPointsFor } from "@/server/game/scoring";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import {
   getFullQuestionDetail,
@@ -106,9 +106,10 @@ export interface RoomState {
 export interface CorrectionEntry {
   payload: AnswerPayloadInput;
   msTaken: number;
-  /** What the grader concluded — a pre-fill for the host, never the verdict. */
-  suggested: boolean;
-  verdict: boolean;
+  /** Full marks if the grader accepted the answer, 0 if not — a pre-fill only. */
+  suggested: number;
+  /** Points the host has awarded, 0..the question's difficulty tier. */
+  awarded: number;
 }
 
 export interface CorrectionState {
@@ -439,10 +440,13 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
       if (player.isSpectator) continue;
       const pending = room.pendingAnswers.get(player.userId);
       const msTaken = pending ? pending.submittedAt - startedAt : frozen.timeLimitS * 1000;
-      const suggested = pending ? gradeAnswer(gradable, pending.payload).isCorrect : false;
+      const accepted = pending ? gradeAnswer(gradable, pending.payload).isCorrect : false;
+      // The grader can only say yes or no, so its suggestion is all-or-nothing.
+      // Partial marks are a human judgement, which is the point of the slider.
+      const suggested = accepted ? maxPointsFor(detail.difficulty) : 0;
       const payload = pending?.payload ?? { text: "" };
 
-      ledger.set(player.userId, { payload, msTaken, suggested, verdict: suggested });
+      ledger.set(player.userId, { payload, msTaken, suggested, awarded: suggested });
       player.questionsSeen += 1;
 
       // Persisted now, with isCorrect/pointsAwarded provisional: an answer typed
@@ -559,7 +563,7 @@ export function buildCorrectionPayload(
       text: payload.text ?? "",
       iso3: payload.iso3,
       suggested: entry.suggested,
-      verdict: entry.verdict,
+      awarded: entry.awarded,
       msTaken: entry.msTaken,
     };
   });
@@ -570,6 +574,7 @@ export function buildCorrectionPayload(
     correct: describeCorrectAnswer(detail),
     explanation: detail.explanation,
     difficulty: detail.difficulty,
+    maxPoints: maxPointsFor(detail.difficulty),
     answers: answersView,
   };
 }
@@ -581,19 +586,30 @@ async function applyCorrectionForQuestion(
   detail: FullQuestionDetail,
   ledger: Map<string, CorrectionEntry>,
 ): Promise<void> {
+  const maxPoints = maxPointsFor(detail.difficulty);
+
   for (const [userId, entry] of ledger) {
     const player = room.players.get(userId);
     if (!player) continue;
 
-    player.streak = entry.verdict ? player.streak + 1 : 0;
+    // Any credit at all counts as "got it" for streaks, the correct-count and the
+    // per-category/per-question stats. A half-right answer earning 1 of 3 shouldn't
+    // break a streak the way a blank would — the host gave it something.
+    const scored = entry.awarded > 0;
+    player.streak = scored ? player.streak + 1 : 0;
     player.bestStreak = Math.max(player.bestStreak, player.streak);
-    if (entry.verdict) player.correctCount += 1;
+    if (scored) player.correctCount += 1;
 
     const { points } = computePoints({
-      isCorrect: entry.verdict,
+      isCorrect: scored,
       msTaken: entry.msTaken,
       timeLimitMs: frozen.timeLimitS * 1000,
-      pointsBase: pointsForDifficulty(detail.difficulty),
+      // The awarded fraction scales the tier's base points, so the host thinks in
+      // "2 out of 5" while the score keeps the calibration the speed and streak
+      // multipliers were tuned against.
+      pointsBase: Math.round(
+        pointsForDifficulty(detail.difficulty) * (entry.awarded / Math.max(1, maxPoints)),
+      ),
       streak: player.streak,
       scoringMode: room.config.scoringMode,
     });
@@ -601,7 +617,7 @@ async function applyCorrectionForQuestion(
 
     await db
       .update(answers)
-      .set({ isCorrect: entry.verdict, pointsAwarded: points })
+      .set({ isCorrect: scored, pointsAwarded: points })
       .where(
         and(
           eq(answers.roomId, room.id),
@@ -620,13 +636,13 @@ async function applyCorrectionForQuestion(
         userId,
         categoryId: detail.categoryId,
         answered: 1,
-        correct: entry.verdict ? 1 : 0,
+        correct: scored ? 1 : 0,
       })
       .onConflictDoUpdate({
         target: [userCategoryStats.userId, userCategoryStats.categoryId],
         set: {
           answered: sql`${userCategoryStats.answered} + 1`,
-          correct: sql`${userCategoryStats.correct} + ${entry.verdict ? 1 : 0}`,
+          correct: sql`${userCategoryStats.correct} + ${scored ? 1 : 0}`,
         },
       });
 
@@ -635,14 +651,14 @@ async function applyCorrectionForQuestion(
       .values({
         questionId: frozen.questionId,
         timesAsked: 1,
-        timesCorrect: entry.verdict ? 1 : 0,
+        timesCorrect: scored ? 1 : 0,
         totalMs: entry.msTaken,
       })
       .onConflictDoUpdate({
         target: questionStats.questionId,
         set: {
           timesAsked: sql`${questionStats.timesAsked} + 1`,
-          timesCorrect: sql`${questionStats.timesCorrect} + ${entry.verdict ? 1 : 0}`,
+          timesCorrect: sql`${questionStats.timesCorrect} + ${scored ? 1 : 0}`,
           totalMs: sql`${questionStats.totalMs} + ${entry.msTaken}`,
           updatedAt: new Date(),
         },
@@ -650,19 +666,35 @@ async function applyCorrectionForQuestion(
   }
 }
 
-/** Host flips one ruling. Returns false when the room is not in correction. */
-export function setCorrectionVerdict(
+/**
+ * Host awards points to one answer. Returns the clamped value actually stored, or
+ * null when the room isn't correcting or the target doesn't exist.
+ *
+ * The clamp is here rather than only in the zod schema because the real ceiling is
+ * the question's own difficulty tier: a client could otherwise send 5 on a tier-1
+ * question and quietly award five times what it's worth.
+ */
+export function setCorrectionAward(
   room: RoomState,
   position: number,
   userId: string,
-  verdict: boolean,
-): boolean {
-  if (room.phase !== "correction" || !room.correction) return false;
+  awarded: number,
+): number | null {
+  if (room.phase !== "correction" || !room.correction) return null;
+  // Only the question currently on screen can be ruled on. The ceiling comes from
+  // that question's own difficulty, and `currentDetail` is the only thing that
+  // reliably holds it — accepting a stale position would clamp against the wrong
+  // tier and could award five points on a one-point question.
+  if (room.correction.index !== position) return null;
+  const difficulty = room.currentDetail?.difficulty;
+  if (difficulty === undefined) return null;
   const entry = room.correction.entries.get(position)?.get(userId);
-  if (!entry) return false;
-  entry.verdict = verdict;
-  return true;
+  if (!entry) return null;
+  const clamped = Math.max(0, Math.min(maxPointsFor(difficulty), Math.round(awarded)));
+  entry.awarded = clamped;
+  return clamped;
 }
+
 
 /** Host commits the current question and moves on. */
 export function advanceCorrection(room: RoomState): boolean {

@@ -33,7 +33,7 @@ import {
   toLobbySummary,
   toRoomStateView,
   cancelLoop,
-  setCorrectionVerdict,
+  setCorrectionAward,
   advanceCorrection,
   type RoomState,
 } from "@/server/game/engine";
@@ -333,11 +333,18 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     // a player who could flip their own verdict could award themselves the game.
     if (room.hostId !== user.id)
       return emitError(socket, "forbidden", "Seul l'hôte corrige.");
-    const { position, userId, verdict } = parsed.data;
-    if (!setCorrectionVerdict(room, position, userId, verdict)) return;
+    const { position, userId, awarded } = parsed.data;
+    // Broadcast the CLAMPED value, not what the client sent — the ceiling is the
+    // question's own tier, so this is what actually got stored.
+    const stored = setCorrectionAward(room, position, userId, awarded);
+    if (stored === null) return;
     // Broadcast, not acked: the whole room watches the correction, so everyone sees
-    // the toggle flip, not just the host who clicked it.
-    io.to(roomChannel(room.code)).emit("correction:verdict", { position, userId, verdict });
+    // the ruling land, not just the host who clicked it.
+    io.to(roomChannel(room.code)).emit("correction:verdict", {
+      position,
+      userId,
+      awarded: stored,
+    });
   });
 
   socket.on("correction:next", (payload) => {

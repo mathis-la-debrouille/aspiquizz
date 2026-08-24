@@ -139,12 +139,13 @@ export interface CorrectionAnswer {
   text: string;
   /** iso3 for click-to-answer geo modes, where there is no text to show. */
   iso3?: string;
-  /** What the grader concluded, used to pre-fill the host's toggles. A suggestion,
+  /** What the grader concluded, used to pre-fill the host's ruling. A suggestion,
    *  never the verdict: 40 questions times six players is too many decisions to
-   *  make from scratch, and the machine is right most of the time. */
-  suggested: boolean;
-  /** The host's ruling. Starts equal to `suggested`. */
-  verdict: boolean;
+   *  make from scratch, and the machine is right most of the time. Full marks when
+   *  the grader accepts the answer, zero when it doesn't. */
+  suggested: number;
+  /** Points the host has awarded, 0..maxPoints. Starts equal to `suggested`. */
+  awarded: number;
   msTaken: number;
 }
 
@@ -156,6 +157,9 @@ export interface CorrectionShowPayload {
   correct: string;
   explanation: string | null;
   difficulty: number;
+  /** What this question is worth at full marks — its difficulty tier, 1 to 5.
+   *  Shown to the room and the upper bound of the host's slider. */
+  maxPoints: number;
   answers: CorrectionAnswer[];
 }
 
@@ -191,8 +195,8 @@ export interface ServerToClientEvents {
   "question:lock": (payload: { position: number }) => void;
   "question:reveal": (payload: QuestionRevealPayload) => void;
   "correction:show": (payload: CorrectionShowPayload) => void;
-  /** Broadcast so every player sees the host flip a verdict live, not just the host. */
-  "correction:verdict": (payload: { position: number; userId: string; verdict: boolean }) => void;
+  /** Broadcast so every player sees the host's ruling land live, not just the host. */
+  "correction:verdict": (payload: { position: number; userId: string; awarded: number }) => void;
   "scoreboard:update": (entries: ScoreboardEntry[]) => void;
   "room:finished": (payload: RoomFinishedPayload) => void;
   "chat:message": (payload: ChatMessagePayload) => void;
@@ -228,12 +232,13 @@ export interface ClientToServerEvents {
   }) => void;
   "host:skip": (payload: { code: string }) => void;
   "host:next": (payload: { code: string }) => void;
-  /** Host flips one player's verdict during the correction phase. */
+  /** Host awards points to one player during the correction phase — 0..maxPoints,
+   *  so a half-right answer can score 1 of 3 rather than all or nothing. */
   "correction:set": (payload: {
     code: string;
     position: number;
     userId: string;
-    verdict: boolean;
+    awarded: number;
   }) => void;
   /** Host commits the current question's verdicts and moves to the next one. */
   "correction:next": (payload: { code: string }) => void;
