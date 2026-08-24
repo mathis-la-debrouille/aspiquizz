@@ -360,7 +360,7 @@ async function geoAcceptedAnswers(mode: string, country: FullCountryRow): Promis
     const single = country.capitalFr ? [country.capitalFr] : [];
     return { all: single, canonicalCount: single.length };
   }
-  if (mode === "name_country" || mode === "name_from_shape") {
+  if (mode === "name_country" || mode === "name_from_shape" || mode === "name_from_flag") {
     return { all: [country.nameFr], canonicalCount: 1 };
   }
   return { all: [], canonicalCount: 0 };

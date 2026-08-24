@@ -6,7 +6,12 @@
  */
 
 export type GeoMode =
-  "locate_country" | "name_country" | "find_capital" | "capital_of" | "name_from_shape";
+  | "locate_country"
+  | "name_country"
+  | "find_capital"
+  | "capital_of"
+  | "name_from_shape"
+  | "name_from_flag";
 
 export interface GradableOpenQuestion {
   type: "open";
@@ -32,7 +37,7 @@ export interface GradableGeoQuestion {
   geoMode: GeoMode;
   strict: boolean;
   targetIso3: string;
-  /** Accepted text for name_country / name_from_shape / find_capital. */
+  /** Accepted text for name_country / name_from_shape / name_from_flag / find_capital. */
   acceptedAnswers?: string[];
 }
 
@@ -198,6 +203,7 @@ export function gradeAnswer(question: GradableQuestion, payload: AnswerPayload):
           return { isCorrect: geoPayload.iso3 === question.targetIso3 };
         case "name_country":
         case "name_from_shape":
+        case "name_from_flag":
         case "find_capital":
           return matchesAnyVariant(
             geoPayload.text ?? "",

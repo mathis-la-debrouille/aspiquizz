@@ -84,6 +84,7 @@ export const geoModeSchema = z.enum([
   "find_capital",
   "capital_of",
   "name_from_shape",
+  "name_from_flag",
 ]);
 
 export const geoQuestionSchema = questionSharedSchema.extend({

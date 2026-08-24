@@ -183,7 +183,7 @@ async function main() {
   const specs: Array<{
     iso3: string;
     tier: 1 | 2 | 3;
-    mode: "locate_country" | "find_capital";
+    mode: "locate_country" | "find_capital" | "name_from_flag";
     enonce: string;
     pays: string;
   }> = [];
@@ -214,6 +214,22 @@ async function main() {
         tier,
         mode: "find_capital",
         enonce: `Quelle est la capitale ${ofCountry(article, name)} ?`,
+        pays: c.iso3,
+      });
+    }
+
+    // Flags only for tiers 1-2, per the difficulty ladder in the category
+    // description. Every country has a flag asset, but a flag question for a
+    // tier-3 country is a different kind of hard than the ladder describes.
+    if (tier <= 2) {
+      specs.push({
+        iso3: c.iso3,
+        tier,
+        mode: "name_from_flag",
+        // Prompts are identical across flag questions by necessity — naming the
+        // country would answer it. The flag itself distinguishes them, and the
+        // library shows the target country alongside the prompt.
+        enonce: "À quel pays appartient ce drapeau ?",
         pays: c.iso3,
       });
     }

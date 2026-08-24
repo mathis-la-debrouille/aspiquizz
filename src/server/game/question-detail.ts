@@ -41,7 +41,13 @@ export interface FullQuestionDetail {
    *  Grading still uses the full openAnswers list. */
   primaryAnswers: string[];
   geo: {
-    mode: "locate_country" | "name_country" | "find_capital" | "capital_of" | "name_from_shape";
+    mode:
+      | "locate_country"
+      | "name_country"
+      | "find_capital"
+      | "capital_of"
+      | "name_from_shape"
+      | "name_from_flag";
     targetIso3: string;
     showLabels: boolean;
     showNeighbours: boolean;

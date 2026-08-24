@@ -253,7 +253,13 @@ export const questionOpenAnswers = sqliteTable(
 );
 
 export type GeoMode =
-  "locate_country" | "name_country" | "find_capital" | "capital_of" | "name_from_shape";
+  | "locate_country"
+  | "name_country"
+  | "find_capital"
+  | "capital_of"
+  | "name_from_shape"
+  /** Show only the country's flag; the player types the country. */
+  | "name_from_flag";
 
 /** [west, south, east, north] in degrees — camera framing for the geo reveal/preview. */
 export type ViewBbox = [number, number, number, number];
