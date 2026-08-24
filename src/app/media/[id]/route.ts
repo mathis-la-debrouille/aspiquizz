@@ -27,7 +27,18 @@ export async function GET(
     return NextResponse.json({ error: "Introuvable." }, { status: 404 });
   }
 
-  const buffer = await readUpload(row.filename);
+  let buffer: Buffer;
+  try {
+    buffer = await readUpload(row.filename);
+  } catch (err) {
+    // ENOENT here means the DB row survived (e.g. local.db carried over separately from
+    // .uploads/, which is gitignored and never travels with it) but the file itself didn't —
+    // a 404 with a clear message beats letting readFile's rejection bubble into a bare 500.
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+      return NextResponse.json({ error: "Fichier introuvable sur le disque." }, { status: 404 });
+    }
+    throw err;
+  }
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": row.mime,

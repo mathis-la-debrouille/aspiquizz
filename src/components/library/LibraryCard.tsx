@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Eye, Pencil, Copy, Archive, ArchiveRestore } from "lucide-react";
+import { Eye, Pencil, Copy, Archive, ArchiveRestore, ImageOff } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -53,6 +53,7 @@ export function LibraryCard({
   onChanged: () => void;
 }) {
   const [pending, setPending] = useState(false);
+  const [imageBroken, setImageBroken] = useState(false);
   const canEdit = isAdmin || q.authorId === viewerId;
   const successPct = q.timesAsked > 0 ? Math.round((q.timesCorrect / q.timesAsked) * 100) : null;
 
@@ -105,11 +106,18 @@ export function LibraryCard({
         <SourceBadge source={q.source} />
       </div>
 
-      {q.type === "image" && q.mediaId && (
+      {q.type === "image" && q.mediaId && imageBroken && (
+        <div className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-border-soft bg-bg-inset text-ink-faint">
+          <ImageOff className="h-5 w-5" strokeWidth={1.5} />
+          <span className="text-12">Image manquante</span>
+        </div>
+      )}
+      {q.type === "image" && q.mediaId && !imageBroken && (
         // eslint-disable-next-line @next/next/no-img-element -- authenticated /media/[id] route, not an optimizable static asset
         <img
           src={`/media/${q.mediaId}`}
           alt=""
+          onError={() => setImageBroken(true)}
           className="h-24 w-full rounded-sm border border-border-soft object-cover"
         />
       )}
