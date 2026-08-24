@@ -72,6 +72,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.23",
     "eslint-config-prettier": "^10.1.8",
+    "flag-icons": "^7.5.0",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",

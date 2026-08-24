@@ -45,6 +45,7 @@ const GEO_MODE_LABELS: Record<GeoMode, string> = {
   find_capital: "Trouver une capitale",
   capital_of: "Capitale de quel pays",
   name_from_shape: "Deviner depuis la silhouette",
+  name_from_flag: "Deviner depuis le drapeau",
 };
 
 /**

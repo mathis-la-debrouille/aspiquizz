@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerSurface";
+import { FlagAnswerSurface } from "@/components/room/answer-surfaces/FlagAnswerSurface";
 import type { AnswerPayload } from "@/components/room/QuestionScreen";
 import type { SanitisedQuestion } from "@/server/game/sanitize";
 
@@ -28,6 +29,14 @@ export function GeoAnswerSurface({
   const mode = question.geoMode!;
   const isClickMode = CLICK_MODES.has(mode);
   const isSilhouette = mode === "name_from_shape";
+
+  // The flag mode has no map at all — rendering one would show the country's
+  // outline next to its flag and answer the question for the player.
+  if (mode === "name_from_flag") {
+    return (
+      <FlagAnswerSurface iso3={question.revealIso3} disabled={disabled} onSubmit={onSubmit} />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

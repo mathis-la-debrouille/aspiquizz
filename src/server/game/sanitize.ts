@@ -10,7 +10,8 @@ import type { AnswerMode, ColorToken, GeoMode, QuestionType } from "@/server/db/
  * tests/unit/sanitize.test.ts.
  *
  * Geo is the one type with a real subtlety: for the three "visual
- * identification" modes (name_country, find_capital, name_from_shape) the
+ * identification" modes (name_country, find_capital, name_from_shape,
+ * name_from_flag) the
  * map has to *show* the target country to pose the question at all — a
  * highlighted shape or silhouette is the puzzle, not a leaked answer. Only
  * the two "click to answer" modes (locate_country, capital_of) must hide
@@ -22,6 +23,9 @@ const GEO_MODES_REVEALING_TARGET: readonly GeoMode[] = [
   "name_country",
   "find_capital",
   "name_from_shape",
+  // Same reasoning as name_from_shape: the client cannot render the flag without
+  // knowing which country's flag it is. The flag IS the puzzle.
+  "name_from_flag",
 ];
 
 export interface RawChoice {

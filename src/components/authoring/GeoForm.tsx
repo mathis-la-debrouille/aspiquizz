@@ -41,6 +41,7 @@ const GEO_MODES: { value: GeoMode; label: string; description: string }[] = [
   { value: "find_capital", label: "Trouver une capitale", description: "Le joueur tape la capitale d'un pays surligné." },
   { value: "capital_of", label: "Capitale de quel pays", description: "Le joueur clique le pays dont on donne la capitale." },
   { value: "name_from_shape", label: "Deviner depuis la silhouette", description: "Seule la silhouette est visible ; le joueur tape le nom." },
+  { value: "name_from_flag", label: "Deviner depuis le drapeau", description: "Seul le drapeau est affiché ; le joueur tape le nom du pays." },
 ];
 
 const CLICK_MODES: GeoMode[] = ["locate_country", "capital_of"];
@@ -58,6 +59,8 @@ function suggestPrompt(mode: GeoMode, country: CountryOption | undefined): strin
       return `${country.capitalFr ?? "?"} est la capitale de quel pays ?`;
     case "name_from_shape":
       return "Quel est ce pays, d'après sa silhouette ?";
+    case "name_from_flag":
+      return "À quel pays appartient ce drapeau ?";
   }
 }
 
@@ -68,7 +71,9 @@ function prepositionOf(name: string): string {
 function suggestAnswers(mode: GeoMode, country: CountryOption | undefined): string[] {
   if (!country) return [];
   if (mode === "find_capital") return country.capitalFr ? [country.capitalFr] : [];
-  if (mode === "name_country" || mode === "name_from_shape") return [country.nameFr];
+  if (mode === "name_country" || mode === "name_from_shape" || mode === "name_from_flag") {
+    return [country.nameFr];
+  }
   return [];
 }
 
@@ -168,7 +173,10 @@ export function GeoForm({
   }, [isClickMode]);
 
   const needsTextAnswers =
-    geoMode === "name_country" || geoMode === "name_from_shape" || geoMode === "find_capital";
+    geoMode === "name_country" ||
+    geoMode === "name_from_shape" ||
+    geoMode === "name_from_flag" ||
+    geoMode === "find_capital";
   const canSubmit =
     prompt && shared.categoryId && targetIso3 && (!needsTextAnswers || acceptedAnswers.length > 0);
 
