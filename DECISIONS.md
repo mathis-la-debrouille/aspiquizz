@@ -1292,3 +1292,35 @@ generator was never updated for its own new data file
   shape needed and this only ever runs once, at game end. New `RoomFinishedPayload` fields
   (`questionHistory`, `answerLog`); no schema change.
 
+## 2026-08-25 — "Zoom system no longer working": fullscreen remount + a clsx class conflict
+
+- **Reported as "zoom broken"; the actual bug only showed up on entering fullscreen**, not on
+  the zoom buttons themselves (verified those work in every context — `/dev/map`, the editor's
+  own picker map, all fine, including under repeated programmatic clicks). Two distinct causes,
+  both in `GeoMap.tsx`'s fullscreen branch:
+  1. Entering/leaving fullscreen used to wrap the whole map subtree in **new** parent `<div>`s
+     (`{fullscreen && <div className="fixed inset-0..."><div className="h-full w-full">{mapBody}
+     </div></div>}`). Since the div carrying `ref={containerRef}` moved to a different depth in
+     the returned tree, React couldn't match it to the previous render and unmounted + remounted
+     the entire `<svg>`/`<g>` — which recreates the d3-zoom behavior from scratch, silently
+     resetting whatever zoom/pan transform the player had built up back to identity. Fixed by
+     toggling classes on the *same* node instead of wrapping it, so the node — and the d3-zoom
+     behavior, and the ResizeObserver — persist across the toggle.
+  2. Once that stopped remounting, the fullscreen box still didn't visually fill the viewport.
+     Root cause: `cn()` is a thin `clsx` wrapper *by design* (see its own doc comment — no
+     tailwind-merge, since this design system's closed token set rarely produces conflicting
+     utilities) — but this was exactly the rare case: the div carried both `relative` (this
+     file's own unconditional base class) and, once fullscreen, `fixed` (added for the overlay).
+     clsx doesn't dedupe conflicting utilities for the same CSS property, and Tailwind's
+     generated stylesheet defines `.relative` after `.fixed`, so `.relative` silently won —
+     `position: fixed; inset: 0` was present in the class list but never actually applied.
+     Fixed by making `relative` fullscreen-conditional too (mutually exclusive with `fixed`,
+     never both), rather than reaching for tailwind-merge for one call site.
+  - Verified via direct DOM/ResizeObserver inspection, not just a screenshot: the zoom
+    transform is now provably identical before and after toggling fullscreen, and the container
+    genuinely resizes to the viewport once the fix lands (confirmed the *box* was already
+    correct via `getBoundingClientRect`, and that the derived `<svg>` width/height eventually
+    catches up — the several-second lag seen during testing was this specific browser-automation
+    tab being backgrounded, `document.hidden === true`, which defers `ResizeObserver`
+    notifications; a real, foregrounded tab updates within a frame).
+

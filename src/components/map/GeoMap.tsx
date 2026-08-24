@@ -482,11 +482,32 @@ export function GeoMap({
   const pendingName = pendingIso3 ? COUNTRY_NAME_FR[pendingIso3] : undefined;
   const effectiveShowLabels = showLabels || (editorChrome && scale > LABEL_AUTO_SCALE);
 
-  const mapBody = (
+  const fullscreenActive = showZoomChrome && fullscreen;
+
+  return (
     <div
       ref={containerRef}
       className={cn(
-        "geo-map relative h-full w-full min-h-[280px]",
+        "geo-map min-h-[280px]",
+        // Fullscreen toggles classes on this SAME node — never wraps it in new parent divs.
+        // An earlier version did exactly that (a `fixed inset-0` wrapper around this whole
+        // subtree), which forced React to unmount and remount the <svg>/<g> every time
+        // fullscreen flipped, since the div carrying `ref={containerRef}` moved to a new depth
+        // in the tree. That silently dropped the zoom transform back to identity (the d3-zoom
+        // behavior itself, and its ResizeObserver, are recreated from scratch on remount) and
+        // produced a one-frame flash at the pre-fullscreen size before the fresh
+        // ResizeObserver's first callback caught up — "zoom resets/breaks in fullscreen",
+        // reported after this file's own fix for a related but different fullscreen bug.
+        //
+        // `relative` must NOT be unconditional here: `cn` is plain clsx (see cn.ts), not
+        // tailwind-merge, so it does no conflict resolution — an element carrying both
+        // `.relative` and `.fixed` silently keeps whichever one Tailwind's generated
+        // stylesheet happens to define later (`.relative`, in practice), so `fixed inset-0`
+        // was being completely defeated: the "fullscreen" box just stayed sized by its normal
+        // flow parent. `fixed` already establishes its own positioning context for the
+        // absolutely-positioned children below, same as `relative` does, so it's a full
+        // substitute here, not an addition.
+        fullscreenActive ? "fixed inset-0 z-50 bg-bg-void p-4" : "relative h-full w-full",
         editorChrome && "geo-map--editor",
         className,
       )}
@@ -600,14 +621,4 @@ export function GeoMap({
       )}
     </div>
   );
-
-  if (showZoomChrome && fullscreen) {
-    return (
-      <div className="fixed inset-0 z-50 bg-bg-void p-4">
-        <div className="h-full w-full">{mapBody}</div>
-      </div>
-    );
-  }
-
-  return mapBody;
 }
