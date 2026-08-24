@@ -56,6 +56,39 @@ const DISPLAY_NAME: Record<string, string> = {
   PSE: "Palestine",
 };
 
+/**
+ * iso3s that have a polygon in the 110m topology gameplay renders at world zoom.
+ * Read from the topology rather than hardcoded, so it stays true if the map data
+ * changes.
+ *
+ * This matters because HitCircles/FallbackHitCircles were removed from gameplay
+ * (see DECISIONS.md, 2026-08-24): a country with no world-zoom polygon has no
+ * shape on screen and nothing to click, so `locate_country` is unanswerable for
+ * it. `find_capital` still works — the question text names the country, and the
+ * answer is typed, not clicked — so those countries keep their capital question
+ * and lose only the "find it on the map" one.
+ */
+function isoWithWorldZoomGeometry(): Set<string> {
+  const topo = JSON.parse(
+    readFileSync(new URL("../public/geo/countries-110m.json", import.meta.url), "utf-8"),
+  ) as { objects: { countries: { geometries: Array<{ id?: string | number }> } } };
+  const lookupSrc = readFileSync(
+    new URL("../src/lib/geo/iso-lookup.ts", import.meta.url),
+    "utf-8",
+  );
+  const numericToIso = new Map<string, string>();
+  for (const m of lookupSrc.matchAll(/"(\d+)":\s*"([A-Z]{3})"/g)) {
+    numericToIso.set(String(Number(m[1])), m[2]!);
+  }
+  const out = new Set<string>();
+  for (const g of topo.objects.countries.geometries) {
+    if (g.id === undefined) continue;
+    const iso3 = numericToIso.get(String(Number(g.id)));
+    if (iso3) out.add(iso3);
+  }
+  return out;
+}
+
 const TIER_1_MAX_RANK = 55;
 const TIER_2_MAX_RANK = 120;
 
@@ -147,19 +180,26 @@ async function main() {
     pays: string;
   }> = [];
 
+  const clickable = isoWithWorldZoomGeometry();
+  const unclickable: string[] = [];
+
   for (const c of snapshot.countries) {
     const name = DISPLAY_NAME[c.iso3] ?? c.name_fr.value;
     const article = articleFor(c.iso3, articles);
     const tier = tierFor(c.iso3);
-    specs.push({
-      iso3: c.iso3,
-      tier,
-      mode: "locate_country",
-      enonce: locatePrompt(article, name),
-      // iso3, not the display name: resolveCountryName matches iso3 in its first
-      // exact tier, so prompt wording can never break resolution.
-      pays: c.iso3,
-    });
+    if (clickable.has(c.iso3)) {
+      specs.push({
+        iso3: c.iso3,
+        tier,
+        mode: "locate_country",
+        enonce: locatePrompt(article, name),
+        // iso3, not the display name: resolveCountryName matches iso3 in its first
+        // exact tier, so prompt wording can never break resolution.
+        pays: c.iso3,
+      });
+    } else {
+      unclickable.push(c.iso3);
+    }
     if (c.capitals.length > 0) {
       specs.push({
         iso3: c.iso3,
@@ -170,6 +210,11 @@ async function main() {
       });
     }
   }
+
+  console.log(
+    `[info] ${unclickable.length} countries have no world-zoom polygon — no "locate" question ` +
+      `for them (capital question kept): ${unclickable.join(", ")}`,
+  );
 
   const dist = specs.reduce<Record<number, number>>((acc, s) => {
     acc[s.tier] = (acc[s.tier] ?? 0) + 1;
@@ -245,6 +290,18 @@ async function main() {
     answersFixed += 1;
   }
   console.log(`[info] rewrote accepted answers on ${answersFixed} existing capital questions`);
+
+  // Anything already created for an unclickable country gets archived, not deleted:
+  // CLAUDE.md's rule is archive/publish only, and a played question has answers
+  // rows keyed on it that are worth keeping.
+  let archived = 0;
+  for (const q of existingGeo) {
+    if (q.mode !== "locate_country") continue;
+    if (clickable.has(q.iso3)) continue;
+    await db.update(questions).set({ status: "archived" }).where(eq(questions.id, q.id));
+    archived += 1;
+  }
+  console.log(`[info] archived ${archived} unanswerable "locate" questions`);
 
   const existingPrompts = new Set(existingGeo.map((q) => q.prompt));
   let created = 0;
