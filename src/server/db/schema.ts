@@ -228,7 +228,9 @@ export const questionChoices = sqliteTable(
     id: id(),
     questionId: text("question_id")
       .notNull()
-      .references(() => questions.id),
+      // Cascade: deleteDraft() deletes only the `questions` row, so without this
+      // every delete of a question that has choices failed on a FK violation.
+      .references(() => questions.id, { onDelete: "cascade" }),
     label: text("label").notNull(),
     isCorrect: integer("is_correct", { mode: "boolean" }).notNull().default(false),
     position: integer("position").notNull().default(0),
@@ -242,7 +244,8 @@ export const questionOpenAnswers = sqliteTable(
     id: id(),
     questionId: text("question_id")
       .notNull()
-      .references(() => questions.id),
+      // Cascade — same FK-violation bug as question_choices.
+      .references(() => questions.id, { onDelete: "cascade" }),
     value: text("value").notNull(),
     isPrimary: integer("is_primary", { mode: "boolean" }).notNull().default(false),
   },
@@ -258,7 +261,8 @@ export type ViewBbox = [number, number, number, number];
 export const questionGeo = sqliteTable("question_geo", {
   questionId: text("question_id")
     .primaryKey()
-    .references(() => questions.id),
+    // Cascade — same FK-violation bug as question_choices.
+    .references(() => questions.id, { onDelete: "cascade" }),
   mode: text("mode").$type<GeoMode>().notNull(),
   targetIso3: text("target_iso3").notNull(),
   extraIso3: text("extra_iso3", { mode: "json" }).$type<string[]>().notNull().default([]),
@@ -292,6 +296,78 @@ export const countries = sqliteTable("countries", {
   flagEmoji: text("flag_emoji").notNull(),
   isSovereign: integer("is_sovereign", { mode: "boolean" }).notNull().default(true),
 });
+
+/**
+ * Capitals, one row per capital — a country can have several. South Africa has
+ * three co-equal seats (executive/legislative/judicial), and Bolivia's split is
+ * de jure (Sucre) versus de facto (La Paz). `countries.capitalFr` is kept as the
+ * single canonical name for display; grading accepts EVERY row here, so a player
+ * answering "La Paz" for Bolivia is not marked wrong.
+ *
+ * `role` and `branch` are copied from Wikidata's own qualifiers (P459 / P518) by
+ * scripts/snapshot-countries.ts — never our own editorial judgement.
+ */
+export const countryCapitals = sqliteTable(
+  "country_capitals",
+  {
+    id: id(),
+    countryIso3: text("country_iso3")
+      .notNull()
+      .references(() => countries.iso3, { onDelete: "cascade" }),
+    nameFr: text("name_fr").notNull(),
+    /** "de jure" | "de facto" | null when the country states one plainly. */
+    role: text("role"),
+    /** Branch of government seated here, e.g. "pouvoir exécutif". */
+    branch: text("branch"),
+    /** Wikidata flags the statement itself as contested (P1480). */
+    contested: integer("contested", { mode: "boolean" }).notNull().default(false),
+    /** Leads the list: de jure first, else Wikidata's preferred statement. */
+    position: integer("position").notNull().default(0),
+    sourceUrl: text("source_url"),
+  },
+  (t) => [index("country_capitals_country_iso3_idx").on(t.countryIso3)],
+);
+
+export type FlagResolution = "fixed" | "removed" | "kept";
+
+/**
+ * Player-raised reports on a question: "this is wrong" or "I dispute the answer",
+ * raised in-game or from the end-of-game recap. Distinct from the review queue in
+ * server/questions/review.ts, which gates drafts BEFORE publication — this is the
+ * feedback loop on questions already in play.
+ *
+ * Rows are never deleted on resolution, only stamped, so a question that keeps
+ * getting reported stays visible as a pattern rather than vanishing one fix at a
+ * time. `roomId` is nullable and deliberately not cascaded: an empty room is
+ * deleted after two minutes (see engine.ts) and a report must outlive it.
+ */
+export const questionFlags = sqliteTable(
+  "question_flags",
+  {
+    id: id(),
+    questionId: text("question_id")
+      .notNull()
+      .references(() => questions.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    roomId: text("room_id"),
+    reason: text("reason"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    resolution: text("resolution").$type<FlagResolution>(),
+    resolvedAt: integer("resolved_at", { mode: "timestamp" }),
+    resolvedBy: text("resolved_by").references(() => users.id),
+  },
+  (t) => [
+    index("question_flags_question_id_idx").on(t.questionId),
+    index("question_flags_resolution_idx").on(t.resolution),
+    // One open report per player per question — re-reporting is a no-op, not a
+    // way for one annoyed player to inflate a question's report count.
+    uniqueIndex("question_flags_user_question_uq").on(t.userId, t.questionId),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // Quizzes

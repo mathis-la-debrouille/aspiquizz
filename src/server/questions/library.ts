@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, exists, gte, inArray, isNull, like, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, exists, inArray, isNull, like, or, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import {
   questions,
@@ -84,8 +84,9 @@ export async function listLibraryQuestions(
     : or(sql`${questions.status} != 'draft'`, eq(questions.authorId, viewer.id));
 
   const baseConditions = [
-    gte(questions.difficulty, query.dmin),
-    lte(questions.difficulty, query.dmax),
+    // Empty selection means "every tier", not "no tiers" — an empty inArray
+    // would match nothing and show an empty library on first load.
+    query.diff.length > 0 ? inArray(questions.difficulty, query.diff) : undefined,
   ];
   if (visibility) baseConditions.push(visibility);
 

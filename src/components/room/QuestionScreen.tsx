@@ -8,6 +8,7 @@ import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerS
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
+import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import type { GameSocket } from "@/lib/socket/client";
 import type { QuestionShowPayload } from "@/server/socket/events";
 
@@ -61,7 +62,10 @@ export function QuestionScreen({
             {active.position + 1} / {active.total}
           </span>
         </div>
-        <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
+        <div className="flex items-center gap-2">
+          <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
+          <FlagQuestionButton questionId={q.id} roomCode={code} />
+        </div>
       </div>
 
       <Card className="flex flex-col gap-4 p-6" elevation="lifted">

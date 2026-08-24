@@ -115,15 +115,14 @@ export function FilterRail({
       clear: () => toggleArrayValue("cat", c),
     });
   }
-  if (query.dmin > 1 || query.dmax < 5) {
+  if (query.diff.length > 0) {
     activeChips.push({
       key: "difficulty",
-      label: `Difficulté ${query.dmin}–${query.dmax}`,
-      clear: () =>
-        pushParams((params) => {
-          params.delete("dmin");
-          params.delete("dmax");
-        }),
+      label: `Difficulté ${[...query.diff]
+        .sort((a, b) => a - b)
+        .map((v) => DIFFICULTY_LABELS_FR[v - 1])
+        .join(", ")}`,
+      clear: () => pushParams((params) => params.delete("diff")),
     });
   }
   if (query.author) {
@@ -209,37 +208,31 @@ export function FilterRail({
 
       <div className="flex flex-col gap-1.5">
         <span className="text-14 font-medium text-ink-mid">Difficulté</span>
-        {/* Two bounded <select>s, not a dual-thumb range slider — a pair of native range inputs
-         *  side by side rendered as two disjoint tracks with no visual link between them (looked
-         *  like one broken slider with a gap in the middle) and, worse, both spanned the full
-         *  1–5 scale independently so nothing stopped dmin from being dragged past dmax. Each
-         *  select's own option list is bounded by the other's current value instead, so an
-         *  invalid range can't be picked at all. */}
-        <div className="grid grid-cols-2 gap-2">
-          <Select
-            label="Au moins"
-            value={query.dmin}
-            onChange={(e) => setScalar("dmin", e.target.value)}
-            className="h-9 text-14"
-          >
-            {DIFFICULTY_LEVELS.filter((v) => v <= query.dmax).map((v) => (
-              <option key={v} value={v}>
+        {/* Five independent chips, not the bounded "Au moins / Au plus" pair this
+         *  replaced: a range cannot express "Golem and 🙂 but nothing between", and
+         *  picking two or three specific tiers is the normal way to build a round.
+         *  Same chip treatment as Statut below, so the rail reads as one control set.
+         *  No selection means every tier — see schemas/library.ts. */}
+        <div className="flex flex-wrap gap-1.5">
+          {DIFFICULTY_LEVELS.map((v) => {
+            const active = query.diff.includes(v);
+            return (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={active}
+                onClick={() => toggleArrayValue("diff", String(v))}
+                className={cn(
+                  "rounded-sm border px-2.5 py-1 text-12 font-medium transition-colors duration-150",
+                  active
+                    ? "border-moss-deep bg-moss text-bg-void"
+                    : "border-border-hard bg-bg-inset text-ink-mid hover:bg-bg-surface",
+                )}
+              >
                 {v} · {DIFFICULTY_LABELS_FR[v - 1]}
-              </option>
-            ))}
-          </Select>
-          <Select
-            label="Au plus"
-            value={query.dmax}
-            onChange={(e) => setScalar("dmax", e.target.value)}
-            className="h-9 text-14"
-          >
-            {DIFFICULTY_LEVELS.filter((v) => v >= query.dmin).map((v) => (
-              <option key={v} value={v}>
-                {v} · {DIFFICULTY_LABELS_FR[v - 1]}
-              </option>
-            ))}
-          </Select>
+              </button>
+            );
+          })}
         </div>
       </div>
 

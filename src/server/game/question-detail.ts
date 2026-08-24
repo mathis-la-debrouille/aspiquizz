@@ -13,6 +13,7 @@ import {
   type QuestionStatus,
 } from "@/server/db/schema";
 import { toSanitisedQuestion, type SanitisedQuestion } from "@/server/game/sanitize";
+import { pointsForDifficulty } from "@/server/game/scoring";
 import type { GradableQuestion } from "@/server/game/grading";
 
 export interface FullQuestionDetail {
@@ -127,7 +128,10 @@ export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): San
     categoryColorToken: detail.categoryColorToken,
     difficulty: detail.difficulty,
     timeLimitS,
-    pointsBase: detail.pointsBase,
+    // Difficulty drives the points, not the stored questions.points_base column
+    // (1000 on every row, so the whole 1-5 scale used to be decorative). Derived
+    // in one place so both the client display and engine.ts's scoring agree.
+    pointsBase: pointsForDifficulty(detail.difficulty),
     authorUsername: detail.authorUsername,
     authorDisplayName: detail.authorDisplayName,
     authorAvatarSeed: detail.authorAvatarSeed,
