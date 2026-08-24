@@ -54,6 +54,14 @@ const TIER_OVERRIDE: Record<string, 1 | 2 | 3> = {
 const DISPLAY_NAME: Record<string, string> = {
   NLD: "Pays-Bas",
   PSE: "Palestine",
+  // Wikidata's French label is "Birmanie". Both names are current, but the app
+  // already had a "Myanmar" question, and two prompts for the same country under
+  // two names is a duplicate, not variety.
+  MMR: "Myanmar",
+  // Two labels arrive lowercased and in full official form. « Où se trouve la
+  // république populaire de Chine ? » is not how anyone asks this.
+  CHN: "Chine",
+  COD: "République démocratique du Congo",
 };
 
 /**
@@ -310,13 +318,36 @@ async function main() {
   }
   console.log(`[info] archived ${archived} unanswerable "locate" questions`);
 
-  const existingPrompts = new Set(existingGeo.map((q) => q.prompt));
+  // Keyed on (iso3, mode) rather than on the prompt string. Prompt wording is not
+  // stable — fixing an article rewrites it — and a prompt-keyed lookup treats the
+  // corrected wording as a brand-new question, which is how "Quelle est la capitale
+  // du Birmanie ?" ended up alongside "… du Myanmar ?" for the same country.
+  const byKey = new Map<string, { id: string; prompt: string }>();
+  for (const q of existingGeo) {
+    const key = `${q.iso3}|${q.mode}`;
+    const prev = byKey.get(key);
+    if (prev) {
+      // Same country, same mode, twice — one is a leftover from an earlier wording.
+      await db.update(questions).set({ status: "archived" }).where(eq(questions.id, q.id));
+      console.log(`[info] archived duplicate: ${q.prompt}`);
+      continue;
+    }
+    byKey.set(key, { id: q.id, prompt: q.prompt });
+  }
+
   let created = 0;
   let skipped = 0;
+  let reworded = 0;
   const failures: string[] = [];
 
   for (const spec of specs) {
-    if (existingPrompts.has(spec.enonce)) {
+    const existing = byKey.get(`${spec.iso3}|${spec.mode}`);
+    if (existing) {
+      if (existing.prompt !== spec.enonce) {
+        await db.update(questions).set({ prompt: spec.enonce }).where(eq(questions.id, existing.id));
+        console.log(`[info] reworded: « ${existing.prompt} » -> « ${spec.enonce} »`);
+        reworded += 1;
+      }
       skipped += 1;
       continue;
     }
@@ -337,7 +368,13 @@ async function main() {
   }
 
   console.log(
-    JSON.stringify({ event: "seed_geo_full_complete", created, skipped, failed: failures.length }),
+    JSON.stringify({
+      event: "seed_geo_full_complete",
+      created,
+      skipped,
+      reworded,
+      failed: failures.length,
+    }),
   );
   for (const f of failures.slice(0, 20)) console.log(`  FAIL ${f}`);
   client.close();
