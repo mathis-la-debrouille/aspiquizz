@@ -46,6 +46,20 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
   const [banner, setBanner] = useState<string | null>(null);
 
+  // Warms GeoMap's dynamic chunk (isolated from the main bundle per CLAUDE.md — never a static
+  // import here) and its 110m topology fetch during idle lobby/countdown time. Without this,
+  // the first geo question in a room pays for both a chunk load and a topology fetch with no
+  // head start, right as the question needs to render — the ~2s gap before a find_capital/
+  // name_country question's highlighted country shows up. Fire-and-forget: both are already
+  // deduped/cached at the module level (topology.ts's own cache, next/dynamic itself), so this
+  // is safe to fire on every room mount, geo questions or not.
+  useEffect(() => {
+    void import("@/components/map").catch(() => {});
+    void import("@/components/map/topology")
+      .then((m) => m.loadWorldTopology("110m"))
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (!connected) return;
 
