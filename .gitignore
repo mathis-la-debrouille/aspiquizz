@@ -39,3 +39,10 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Open Trivia DB staging dump — regenerate with scripts/fetch-opentdb.ts.
+# Deliberately NOT committed: ~500 kB of raw English trivia, roughly 125 000 tokens,
+# that nobody reviews and no build reads. It is the intermediate between fetching and
+# translating, and leaving it in the repo means every clone — and every coding agent
+# that reads the tree — pays for it. The reviewed French output IS committed.
+scripts/data/opentdb-raw.json

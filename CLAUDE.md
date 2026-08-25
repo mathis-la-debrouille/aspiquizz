@@ -238,6 +238,26 @@ brief (§5, §6, §10.1, §11.3), the addendum wins — see `DECISIONS.md` entri
 Phase 12 hardening one. Known gap carried forward from Addendum A: geo question editing still
 isn't wired into `/creer/question/[id]` (open/mcq/image are); see that entry for why.
 
+## Data files under `scripts/data/`
+
+These are **seed-time inputs**, not application code. Nothing under `src/` imports any
+of them, so none are bundled and none are read while a game is running — the engine
+reads `questions`/`question_choices`/`countries` from the DB. `server.ts` runs
+migrations at boot and **never** a seed.
+
+They are also large, and a coding agent that reads the tree wholesale pays for them in
+context — roughly 70k tokens for `countries.snapshot.json` and 20k for
+`imported-questions.fr.json`. **Don't read them end to end.** Query the DB, or read a
+slice with `python3 -c` / `jq`, or read the script that consumes the file.
+
+Both are written one record per line on purpose (`scripts/format-questions.ts` does
+this for the questions). Pretty-printing them made a 200-question addition a
++5 597/-242 diff, most of it re-serialised lines that hadn't changed.
+
+`scripts/data/opentdb-raw.json` is **gitignored** — a ~500 kB dump of raw English
+trivia, regenerable with `scripts/fetch-opentdb.ts`, that nobody reviews and no build
+reads. The reviewed French output is what gets committed.
+
 ## Do not
 
 - Add a sign-up route, OAuth, or "forgot password" flow — accounts are admin-created only, by
