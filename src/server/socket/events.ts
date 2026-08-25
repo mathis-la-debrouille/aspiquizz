@@ -139,6 +139,9 @@ export interface CorrectionAnswer {
   text: string;
   /** iso3 for click-to-answer geo modes, where there is no text to show. */
   iso3?: string;
+  /** sort only — the player's submitted order, already resolved from item ids to labels
+   *  server-side, so the correction UI needs no separate item lookup. */
+  orderedLabels?: string[];
   /** What the grader concluded, used to pre-fill the host's ruling. A suggestion,
    *  never the verdict: 40 questions times six players is too many decisions to
    *  make from scratch, and the machine is right most of the time. Full marks when

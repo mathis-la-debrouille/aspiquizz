@@ -138,8 +138,31 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     },
   );
 
+  it("sort: items are forwarded (labels are the puzzle, not a secret) but never in stored order", () => {
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "sort",
+      sortItems: [
+        { id: "a", label: "Le Parrain", mediaId: null },
+        { id: "b", label: "Titanic", mediaId: null },
+        { id: "c", label: "Avatar", mediaId: null },
+        { id: "d", label: "Avengers: Endgame", mediaId: null },
+      ],
+    };
+    const sanitised = toSanitisedQuestion(input);
+    // Same set of items, id-for-id — nothing dropped, nothing invented.
+    expect(sanitised.sortItems).toHaveLength(4);
+    expect(new Set(sanitised.sortItems?.map((i) => i.id))).toEqual(new Set(["a", "b", "c", "d"]));
+    // No field on a sanitised item could tell a client where it belongs — the only place that
+    // information exists is question-detail.ts's array order, which is exactly what got shuffled.
+    for (const item of sanitised.sortItems ?? []) {
+      expect(item).not.toHaveProperty("position");
+      expect(item).not.toHaveProperty("correctPosition");
+    }
+  });
+
   it("preserves author credit and shared metadata for every type", () => {
-    for (const type of ["open", "mcq", "image", "geo"] as const) {
+    for (const type of ["open", "mcq", "image", "geo", "sort"] as const) {
       const input: QuestionForSanitizing = {
         ...baseFields,
         type,
@@ -149,6 +172,7 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
           type === "geo"
             ? { mode: "name_country", targetIso3: "XXX", showLabels: true, showNeighbours: true }
             : undefined,
+        sortItems: type === "sort" ? [{ id: "a", label: "Un", mediaId: null }] : undefined,
       };
       const sanitised = toSanitisedQuestion(input);
       expect(sanitised.authorUsername).toBe("auteur");

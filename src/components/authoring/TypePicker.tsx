@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Sparkles, ListChecks, Image as ImageIcon, MapPinned } from "lucide-react";
+import { Sparkles, ListChecks, Image as ImageIcon, MapPinned, ArrowDownUp } from "lucide-react";
 import { RadioCard } from "@/components/ui/RadioCard";
 import type { QuestionType } from "@/server/db/schema";
 
@@ -34,6 +34,12 @@ const TYPES: {
     label: "Géographie",
     description: "Carte vectorielle, cinq sous-modes.",
     icon: <MapPinned className="h-5 w-5" strokeWidth={1.5} />,
+  },
+  {
+    value: "sort",
+    label: "Tri",
+    description: "3 à 6 éléments (texte ou image) à remettre dans l'ordre.",
+    icon: <ArrowDownUp className="h-5 w-5" strokeWidth={1.5} />,
   },
 ];
 

@@ -137,6 +137,7 @@ export function LibraryCard({
             : `${q.openAnswerCount} réponse${q.openAnswerCount > 1 ? "s" : ""} acceptée${q.openAnswerCount > 1 ? "s" : ""}`)}
         {q.type === "open" &&
           `${q.openAnswerCount} réponse${q.openAnswerCount > 1 ? "s" : ""} acceptée${q.openAnswerCount > 1 ? "s" : ""}`}
+        {q.type === "sort" && `${q.sortItemCount} éléments à trier`}
       </p>
 
       <div className="flex items-center justify-between gap-2">

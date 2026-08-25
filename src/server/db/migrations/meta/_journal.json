@@ -57,6 +57,13 @@
       "when": 1787582969022,
       "tag": "0007_woozy_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787696562971,
+      "tag": "0008_confused_moon_knight",
+      "breakpoints": true
     }
   ]
 }

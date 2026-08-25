@@ -11,6 +11,7 @@ import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerS
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
+import { SortAnswerSurface } from "@/components/room/answer-surfaces/SortAnswerSurface";
 import { toSanitisedQuestion } from "@/server/game/sanitize";
 import {
   getPreviewData,
@@ -194,6 +195,7 @@ function PreviewContent({
     answerMode: detail.answerMode ?? undefined,
     choices: detail.choices,
     geo: detail.geo ?? undefined,
+    sortItems: detail.type === "sort" ? detail.sortItems : undefined,
   });
 
   return (
@@ -238,6 +240,15 @@ function PreviewContent({
             onDraft={noop}
           />
         )}
+        {detail.type === "sort" && (
+          <SortAnswerSurface
+            question={sanitised}
+            disabled
+            committed={false}
+            onSubmit={noop}
+            onDraft={noop}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-2 border-t border-border-soft pt-4">
@@ -267,6 +278,15 @@ function PreviewContent({
             {geoCountry.capitalFr && ` · ${geoCountry.capitalFr}`}
             {geoCountry.population && ` · ${(geoCountry.population / 1_000_000).toFixed(1)} M hab.`}
           </p>
+        )}
+        {detail.type === "sort" && (
+          <ol className="flex flex-col gap-1">
+            {detail.sortItems.map((item, i) => (
+              <li key={item.id} className="text-16 text-moss-glow">
+                {i + 1}. {item.label}
+              </li>
+            ))}
+          </ol>
         )}
         {detail.explanation && <p className="text-14 text-ink-mid">{detail.explanation}</p>}
       </div>
@@ -310,7 +330,8 @@ function PreviewContent({
 
       {canEdit && (
         <div className="flex flex-wrap gap-2 border-t border-border-soft pt-4">
-          {detail.type !== "geo" && (
+          {/* Edit mode isn't wired for geo or sort yet — see CLAUDE.md's known-gap note. */}
+          {detail.type !== "geo" && detail.type !== "sort" && (
             <a href={`/creer/question/${detail.id}`}>
               <Button
                 variant="secondary"

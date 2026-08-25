@@ -19,6 +19,7 @@ const timeLimitByTypeSchema = z
     mcq: z.number().int().min(5).max(120),
     image: z.number().int().min(5).max(120),
     geo: z.number().int().min(5).max(120),
+    sort: z.number().int().min(5).max(120),
   })
   .partial()
   .optional();
@@ -76,6 +77,8 @@ const answerPayloadSchema = z.object({
   text: z.string().max(200).optional(),
   choiceIds: z.array(z.string()).max(6).optional(),
   iso3: z.string().length(3).optional(),
+  /** sort — item ids in the order the player currently has them, top to bottom. */
+  order: z.array(z.string()).max(6).optional(),
 });
 
 export const answerSubmitSchema = z.object({

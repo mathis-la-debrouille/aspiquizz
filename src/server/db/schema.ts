@@ -170,7 +170,7 @@ export const media = sqliteTable(
 // Questions
 // ---------------------------------------------------------------------------
 
-export type QuestionType = "open" | "mcq" | "image" | "geo";
+export type QuestionType = "open" | "mcq" | "image" | "geo" | "sort";
 export type QuestionStatus = "draft" | "published" | "archived";
 export type AnswerMode = "mcq" | "open";
 /** Addendum C.1 — 'manual' is the web form, 'import' is reserved for a future bulk-JSON path
@@ -277,6 +277,35 @@ export const questionGeo = sqliteTable("question_geo", {
   showNeighbours: integer("show_neighbours", { mode: "boolean" }).notNull().default(true),
   toleranceKm: integer("tolerance_km"),
 });
+
+/**
+ * `sort` question type — the player drag-drop-orders `label`+`mediaId` items into the sequence
+ * the prompt asks for (e.g. "du moins au plus rentable"). `label` is always required, even in
+ * image mode: it's what the correction phase and the reveal show when there's no per-item
+ * lookup table to resolve an opaque id against (unlike geo's iso3 -> COUNTRY_NAME_FR), and it's
+ * the *only* content in text-only mode — `mediaId` null there, same "no image variant" shape as
+ * the rest of this table would need if it had one. `position` is stored as the CORRECT order,
+ * never displayed as-is: sanitize.ts always shuffles before sending to a client that hasn't
+ * reached reveal yet, or position itself would leak the answer.
+ */
+export const questionSortItems = sqliteTable(
+  "question_sort_items",
+  {
+    id: id(),
+    questionId: text("question_id")
+      .notNull()
+      // Cascade — same FK-violation bug as question_choices.
+      .references(() => questions.id, { onDelete: "cascade" }),
+    label: text("label").notNull(),
+    mediaId: text("media_id").references(() => media.id),
+    /** 0-indexed correct rank — "sort from least to most X" reads top-to-bottom as position 0..n. */
+    position: integer("position").notNull(),
+  },
+  (t) => [
+    index("question_sort_items_question_id_idx").on(t.questionId),
+    index("question_sort_items_media_id_idx").on(t.mediaId),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // Reference data — seeded, see scripts/seed-countries.ts

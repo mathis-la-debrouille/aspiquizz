@@ -61,6 +61,9 @@ export interface QuestionForSanitizing {
     showLabels: boolean;
     showNeighbours: boolean;
   };
+  /** sort only — always in the CORRECT order here; toSanitisedQuestion shuffles before this
+   *  reaches SanitisedQuestion, since the array's own order would otherwise just be the answer. */
+  sortItems?: { id: string; label: string; mediaId: string | null }[];
 }
 
 export interface SanitisedChoice {
@@ -92,6 +95,14 @@ export interface SanitisedQuestion {
   revealIso3?: string;
   showLabels?: boolean;
   showNeighbours?: boolean;
+  /** sort only — shuffled here, never the stored (correct) order. */
+  sortItems?: SanitisedSortItem[];
+}
+
+export interface SanitisedSortItem {
+  id: string;
+  label: string;
+  mediaId: string | null;
 }
 
 function stripChoice(choice: RawChoice): SanitisedChoice {
@@ -100,6 +111,19 @@ function stripChoice(choice: RawChoice): SanitisedChoice {
 
 function isMultiSelect(choices: RawChoice[]): boolean {
   return choices.filter((c) => c.isCorrect).length > 1;
+}
+
+/** Fisher-Yates — unbiased, and the only shuffle worth using here: `.sort(() => Math.random() -
+ *  0.5)` is the common broken alternative, not a uniform permutation. Never mutates its input;
+ *  the caller (question-detail.ts) hands over the correct-order array, so a caller that also
+ *  held a reference to it must not see it silently reordered underneath it. */
+function shuffled<T>(items: readonly T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j]!, copy[i]!];
+  }
+  return copy;
 }
 
 export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion {
@@ -152,5 +176,10 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
         showNeighbours: q.geo?.showNeighbours,
       };
     }
+
+    case "sort":
+      // The one place the shuffle happens — every caller downstream (the client, the
+      // correction-phase item lookup) only ever sees this scrambled order, never the stored one.
+      return { ...base, sortItems: shuffled(q.sortItems ?? []) };
   }
 }

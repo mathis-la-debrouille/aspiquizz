@@ -43,6 +43,7 @@ export interface IngestWarning {
 export interface IngestError {
   code:
     | "image_not_supported"
+    | "sort_not_supported"
     | "validation"
     | "unknown_category"
     | "category_create_failed"
@@ -115,6 +116,21 @@ export async function createQuestionFromDraft(
           code: "image_not_supported",
           message:
             "Les questions de type image ne peuvent pas être créées par ce canal — une image doit être choisie et téléversée par un humain. Utilisez le formulaire web.",
+        },
+      ],
+    };
+  }
+  // sort: same reasoning as image, and not narrowed to "only when an item has an image" —
+  // one insert path per type (createSortQuestion), not a text-only fork of it reachable from
+  // here and an image-carrying fork reachable only from the web form.
+  if (isRecord(draft) && draft["type"] === "sort") {
+    return {
+      ok: false,
+      errors: [
+        {
+          code: "sort_not_supported",
+          message:
+            "Les questions de type tri ne peuvent pas être créées par ce canal pour l'instant. Utilisez le formulaire web.",
         },
       ],
     };

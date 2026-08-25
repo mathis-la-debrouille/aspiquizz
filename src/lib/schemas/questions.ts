@@ -99,11 +99,38 @@ export const geoQuestionSchema = questionSharedSchema.extend({
   viewBbox: z.tuple([z.number(), z.number(), z.number(), z.number()]).nullable().default(null),
 });
 
+/** `label` is required on every item, even in image mode — see question_sort_items' own doc
+ *  comment in schema.ts for why. `mediaId` null means a text-only item. */
+const sortItemSchema = z.object({
+  label: z.string().trim().min(1, "Un élément ne peut pas être vide.").max(120),
+  mediaId: z.string().min(1).nullable(),
+});
+
+export const sortQuestionSchema = questionSharedSchema
+  .extend({
+    type: z.literal("sort"),
+    prompt: z.string().trim().min(3, "La question est trop courte.").max(300),
+    // Stored/submitted top-to-bottom in the CORRECT order — position is each item's index here,
+    // never a separate field the author sets directly (nothing to get out of sync).
+    items: z
+      .array(sortItemSchema)
+      .min(3, "Trois éléments minimum.")
+      .max(6, "Six éléments maximum."),
+  })
+  .refine(
+    (data) => {
+      const labels = data.items.map((i) => i.label.trim().toLowerCase());
+      return new Set(labels).size === labels.length;
+    },
+    { message: "Les éléments doivent être uniques.", path: ["items"] },
+  );
+
 export const questionFormSchema = z.discriminatedUnion("type", [
   openQuestionSchema,
   mcqQuestionSchema,
   imageQuestionSchema,
   geoQuestionSchema,
+  sortQuestionSchema,
 ]);
 
 export type QuestionFormInput = z.infer<typeof questionFormSchema>;
@@ -111,6 +138,7 @@ export type OpenQuestionInput = z.infer<typeof openQuestionSchema>;
 export type McqQuestionInput = z.infer<typeof mcqQuestionSchema>;
 export type ImageQuestionInput = z.infer<typeof imageQuestionSchema>;
 export type GeoQuestionInput = z.infer<typeof geoQuestionSchema>;
+export type SortQuestionInput = z.infer<typeof sortQuestionSchema>;
 
 // ---------------------------------------------------------------------------
 // Quiz builder

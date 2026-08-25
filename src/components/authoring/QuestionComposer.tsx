@@ -9,18 +9,21 @@ import { OpenForm, type OpenFormInitial } from "@/components/authoring/OpenForm"
 import { McqForm, type McqFormInitial } from "@/components/authoring/McqForm";
 import { ImageForm, type ImageFormInitial } from "@/components/authoring/ImageForm";
 import { GeoForm } from "@/components/authoring/GeoForm";
+import { SortForm, type SortFormInitial } from "@/components/authoring/SortForm";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuestionType } from "@/server/db/schema";
 
 /** Present only in edit mode (/creer/question/[id]) — geo isn't supported here yet, its editor
  *  is being rebuilt from the ground up (Addendum B.3) and gains edit support as part of that,
- *  rather than wiring it twice against a form about to be replaced. */
+ *  rather than wiring it twice against a form about to be replaced. sort has the same gap,
+ *  new rather than rebuilt: /creer/question/[id] isn't wired for it yet either. */
 export interface EditingQuestion {
   id: string;
   type: QuestionType;
   open?: OpenFormInitial;
   mcq?: McqFormInitial;
   image?: ImageFormInitial;
+  sort?: SortFormInitial;
 }
 
 export function QuestionComposer({
@@ -109,6 +112,14 @@ export function QuestionComposer({
       )}
       {type === "geo" && (
         <GeoForm categories={categories} onCategoriesChange={setCategories} onCreated={setCreatedId} />
+      )}
+      {type === "sort" && (
+        <SortForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+          initial={editing?.sort}
+        />
       )}
     </div>
   );

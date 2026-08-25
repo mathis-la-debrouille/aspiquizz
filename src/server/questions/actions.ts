@@ -7,6 +7,7 @@ import {
   questions,
   questionChoices,
   questionOpenAnswers,
+  questionSortItems,
   quizzes,
   quizQuestions,
 } from "@/server/db/schema";
@@ -16,11 +17,13 @@ import {
   mcqQuestionSchema,
   imageQuestionSchema,
   geoQuestionSchema,
+  sortQuestionSchema,
   quizFormSchema,
   type OpenQuestionInput,
   type McqQuestionInput,
   type ImageQuestionInput,
   type GeoQuestionInput,
+  type SortQuestionInput,
   type QuizFormInput,
 } from "@/lib/schemas/questions";
 import { createQuestionFromDraft } from "@/server/questions/ingest";
@@ -328,6 +331,86 @@ export async function createGeoQuestion(input: GeoQuestionInput): Promise<Action
 
   revalidatePath("/creer");
   return { ok: true, id: result.questionId };
+}
+
+// sort is a direct insert, same reason image is: an item can carry an uploaded mediaId, and
+// ingest.ts's single-insert-path (Addendum C.1) has no image variant to route that through —
+// see its own module doc comment. MCP/import creation isn't wired for this type at all yet
+// (matching image's own gap), even for the text-only case, to keep this one path per type.
+export async function createSortQuestion(input: SortQuestionInput): Promise<ActionResult> {
+  const user = await requireUser();
+  const parsed = sortQuestionSchema.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
+  const data = parsed.data;
+
+  const [row] = await db
+    .insert(questions)
+    .values({
+      type: "sort",
+      prompt: data.prompt,
+      hint: data.hint || null,
+      explanation: data.explanation || null,
+      categoryId: data.categoryId,
+      authorId: user.id,
+      difficulty: data.difficulty,
+      status: data.status,
+    })
+    .returning({ id: questions.id });
+  const questionId = row!.id;
+
+  // data.items is already the correct order — position is just each item's index in it.
+  await db.insert(questionSortItems).values(
+    data.items.map((item, position) => ({
+      questionId,
+      label: item.label,
+      mediaId: item.mediaId,
+      position,
+    })),
+  );
+
+  revalidatePath("/creer");
+  return { ok: true, id: questionId };
+}
+
+export async function updateSortQuestion(
+  questionId: string,
+  input: SortQuestionInput,
+): Promise<ActionResult> {
+  const user = await requireUser();
+  const denied = await requireEditAccess(questionId, user);
+  if (denied) return denied;
+  const parsed = sortQuestionSchema.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
+  const data = parsed.data;
+
+  await db
+    .update(questions)
+    .set({
+      prompt: data.prompt,
+      hint: data.hint || null,
+      explanation: data.explanation || null,
+      categoryId: data.categoryId,
+      difficulty: data.difficulty,
+      status: data.status,
+      updatedAt: new Date(),
+    })
+    .where(eq(questions.id, questionId));
+
+  await db.delete(questionSortItems).where(eq(questionSortItems.questionId, questionId));
+  await db.insert(questionSortItems).values(
+    data.items.map((item, position) => ({
+      questionId,
+      label: item.label,
+      mediaId: item.mediaId,
+      position,
+    })),
+  );
+
+  revalidatePath("/creer");
+  revalidatePath(`/creer/question/${questionId}`);
+  return { ok: true, id: questionId };
 }
 
 export async function createQuiz(input: QuizFormInput): Promise<ActionResult> {

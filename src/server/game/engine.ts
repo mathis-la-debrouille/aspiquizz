@@ -562,14 +562,24 @@ export function buildCorrectionPayload(
   detail: FullQuestionDetail,
   ledger: Map<string, CorrectionEntry>,
 ): CorrectionShowPayload {
+  // sort only — id -> label, so a submitted `order` (item ids) resolves to something the room
+  // can actually read without also shipping the whole item list down this payload.
+  const sortLabelById = new Map(detail.sortItems.map((i) => [i.id, i.label]));
+
   const answersView = [...ledger.entries()].map(([userId, entry]) => {
     const player = room.players.get(userId);
-    const payload = entry.payload as { text?: string; iso3?: string; choiceIds?: string[] };
+    const payload = entry.payload as {
+      text?: string;
+      iso3?: string;
+      choiceIds?: string[];
+      order?: string[];
+    };
     return {
       userId,
       displayName: player?.displayName ?? userId,
       text: payload.text ?? "",
       iso3: payload.iso3,
+      orderedLabels: payload.order?.map((id) => sortLabelById.get(id) ?? "?"),
       suggested: entry.suggested,
       awarded: entry.awarded,
       msTaken: entry.msTaken,
@@ -742,6 +752,9 @@ function describeCorrectAnswer(detail: FullQuestionDetail): string {
       const iso3 = detail.geo?.targetIso3 ?? "";
       return COUNTRY_NAME_FR[iso3] ?? iso3;
     }
+    case "sort":
+      // detail.sortItems is already position-asc, i.e. already the correct order.
+      return detail.sortItems.map((item, i) => `${i + 1}. ${item.label}`).join(" → ");
   }
 }
 

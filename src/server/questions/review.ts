@@ -60,6 +60,7 @@ export async function listReviewQueue(): Promise<LibraryQuestionItem[]> {
       correctChoiceCount: sql<number>`(SELECT COUNT(*) FROM question_choices WHERE question_id = questions.id AND is_correct = 1)`,
       openAnswerCount: sql<number>`(SELECT COUNT(*) FROM question_open_answers WHERE question_id = questions.id)`,
       geoTargetIso3: questionGeo.targetIso3,
+      sortItemCount: sql<number>`(SELECT COUNT(*) FROM question_sort_items WHERE question_id = questions.id)`,
     })
     .from(questions)
     .innerJoin(categories, eq(questions.categoryId, categories.id))
@@ -75,6 +76,7 @@ export async function listReviewQueue(): Promise<LibraryQuestionItem[]> {
     choiceCount: Number(r.choiceCount),
     multiSelect: Number(r.correctChoiceCount) > 1,
     openAnswerCount: Number(r.openAnswerCount),
+    sortItemCount: Number(r.sortItemCount),
   }));
 }
 

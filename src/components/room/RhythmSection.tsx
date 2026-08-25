@@ -21,6 +21,7 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   mcq: "QCM",
   image: "Image",
   geo: "Géographie",
+  sort: "Tri",
 };
 
 /**

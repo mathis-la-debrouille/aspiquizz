@@ -37,6 +37,14 @@ export type PreviewData =
       showLabels?: boolean;
       /** The editor's saved "cadrage" — see GeoMap's `frameOn` prop. */
       viewBbox?: [number, number, number, number] | null;
+    }
+  | {
+      type: "sort";
+      prompt: string;
+      /** Author's own preview — shown in the actual correct order, unlike the shuffled order a
+       *  player gets (sanitize.ts). Confirming the order is right is the point of this preview. */
+      items: { label: string; imageUrl: string | null }[];
+      hint?: string;
     };
 
 const GEO_MODE_LABELS: Record<GeoMode, string> = {
@@ -101,7 +109,36 @@ export function QuestionPreview({
       )}
 
       {data.type === "geo" && <GeoPreviewMap data={data} />}
+
+      {data.type === "sort" && <SortPreviewList items={data.items} />}
     </Card>
+  );
+}
+
+function SortPreviewList({ items }: { items: { label: string; imageUrl: string | null }[] }) {
+  if (items.length === 0) {
+    return <p className="text-14 text-ink-faint">Ajoutez des éléments…</p>;
+  }
+  return (
+    <ol className="flex flex-col gap-2">
+      {items.map((item, i) => (
+        <li
+          key={i}
+          className="flex items-center gap-3 rounded-md border border-border-hard bg-bg-inset px-3 py-2"
+        >
+          <span className="font-numeral text-14 text-ink-faint">{i + 1}</span>
+          {item.imageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element -- preview of a client-side object URL / /media/[id], not an optimizable static asset
+            <img
+              src={item.imageUrl}
+              alt=""
+              className="h-10 w-10 shrink-0 rounded-sm object-cover"
+            />
+          )}
+          <span className="text-14 text-ink-high">{item.label || `Élément ${i + 1}`}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -170,6 +207,8 @@ function typeLabel(type: PreviewData["type"]): string {
       return "Image";
     case "geo":
       return "Géographie";
+    case "sort":
+      return "Tri";
   }
 }
 

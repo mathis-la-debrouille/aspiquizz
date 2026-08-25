@@ -66,6 +66,7 @@ const QUESTION_TYPE_LABELS_FR = {
   mcq: "QCM",
   image: "Image",
   geo: "Géographie",
+  sort: "Tri",
 } as const;
 
 export function QuestionTypeBadge({ type }: { type: keyof typeof QUESTION_TYPE_LABELS_FR }) {

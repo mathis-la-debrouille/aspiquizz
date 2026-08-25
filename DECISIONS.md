@@ -1324,3 +1324,56 @@ generator was never updated for its own new data file
     tab being backgrounded, `document.hidden === true`, which defers `ResizeObserver`
     notifications; a real, foregrounded tab updates within a frame).
 
+## 2026-08-26 — New question type: `sort` (drag-drop-order 3-6 items)
+
+- **New table, not a repurposed one.** `question_sort_items` (id, questionId, label, mediaId
+  nullable, position) mirrors `question_choices`'s own shape closely on purpose — `label` is
+  required on every row, even in image mode, since it's what the correction phase and the
+  reveal show when there's no per-item lookup table to resolve an opaque id against (geo has
+  `COUNTRY_NAME_FR`; a custom sort question has nothing equivalent). `position` is always
+  stored as the CORRECT order — `sanitize.ts` is the one place that ever shuffles it before a
+  client sees it, same discipline as `revealIso3`'s reveal-gating for geo.
+- **Grading is all-or-nothing**, same as every other type's auto-grader: exact order match or
+  nothing, no partial credit for "3 of 4 in the right spot." That's deliberate, not a
+  limitation — the correction phase (Addendum, 2026-08-25) already exists specifically to let
+  the host award partial credit by hand, on every type, so a bespoke partial-credit formula
+  here would be a second, inconsistent mechanism for something the room already has a better
+  answer to.
+- **Direct insert, not routed through `ingest.ts`** — same reason `image` isn't: an item can
+  carry an uploaded `mediaId`, and the single-insert-path module (Addendum C.1) has no image
+  variant to route that through. Unlike `image`, this isn't narrowed to "only when an item
+  actually has an image" — even a text-only sort question goes through
+  `createSortQuestion`/`updateSortQuestion` (`server/questions/actions.ts`), so there's one
+  insert path per type, not a text-only fork reachable from MCP and an image-carrying fork
+  reachable only from the web form. `ingest.ts` gets an early `sort_not_supported` guard
+  (mirroring `image_not_supported`) so an MCP caller gets a clear, actionable error instead of a
+  generic "invalid discriminator value" from the schema parse. MCP/import creation for this
+  type isn't wired at all yet — same gap `image` already has.
+- **Hand-rolled drag-to-reorder (`src/components/ui/DragSortList.tsx`), not a DnD library.**
+  This project already rejected adding one for a much smaller need (admin category reordering,
+  up/down buttons only — see the 2026-08-10 Addendum A/B entries). Pointer Events, not the
+  native HTML5 `draggable` attribute: that API has poor/inconsistent touch support, and this
+  has to work on a phone mid-game as much as a mouse. The algorithm is insert-based, not a
+  continuous "make room" reflow: every other row's original vertical center is captured once at
+  drag-start and used as a fixed frame of reference for "which slot is the pointer over now" for
+  the rest of the gesture, so an earlier crossing reordering the array doesn't itself perturb
+  the comparison the next crossing is judged against. Up/down buttons sit next to the drag
+  handle on every row as a non-pointer-drag fallback, so this is never drag-only. The same
+  component is shared by the authoring form (author sets the correct order) and the live answer
+  surface (player sets their guess) — one implementation, two call sites, not a second one
+  duplicated for gameplay.
+- **Same "what's on screen when time runs out is the answer" philosophy as every other type**
+  (Addendum, 2026-08-25's uninterrupted-run/correction redesign): every reorder sends a draft
+  (`onDraft({ order })`), not just the final "Valider" — a player who never clicks Valider but
+  has the items in the right order when the clock hits zero still gets it right.
+- **Known gap, carried forward deliberately, not an oversight:** `/creer/question/[id]` isn't
+  wired for `sort` yet, same as `geo` (see the Addendum A entry above and CLAUDE.md's note) —
+  editing an existing sort question isn't possible from the web UI yet, only create/duplicate/
+  archive. `duplicateQuestion` (`library-actions.ts`) *is* wired, since library actions are a
+  different, already-generic code path that would otherwise silently drop every duplicated sort
+  question's items.
+- **Verification**: `pnpm typecheck`/`lint`/`test` (141 tests, +5 new) and a real `pnpm build`
+  all pass; confirmed via the build output and a chunk grep that this doesn't affect the
+  d3-isolation invariant (SortAnswerSurface never imports GeoMap). Did not run a live end-to-end
+  drag-drop game session — the user asked not to.
+

@@ -8,6 +8,7 @@ import {
   type GradableImageQuestion,
   type GradableMcqQuestion,
   type GradableOpenQuestion,
+  type GradableSortQuestion,
 } from "@/server/game/grading";
 
 // ---------------------------------------------------------------------------
@@ -379,5 +380,29 @@ describe("gradeAnswer — geo: name_country / name_from_shape / find_capital (te
     const strictGeo: GradableGeoQuestion = { ...findCapital, strict: true };
     expect(gradeAnswer(strictGeo, { text: "Nairoby" }).isCorrect).toBe(false);
     expect(gradeAnswer(strictGeo, { text: "Nairobi" }).isCorrect).toBe(true);
+  });
+});
+
+describe("gradeAnswer — sort", () => {
+  const question: GradableSortQuestion = {
+    type: "sort",
+    correctOrder: ["a", "b", "c", "d"],
+  };
+
+  it("correct only on an exact match, in order", () => {
+    expect(gradeAnswer(question, { order: ["a", "b", "c", "d"] }).isCorrect).toBe(true);
+  });
+
+  it("wrong on a single adjacent swap — all-or-nothing, same as every other type's grader", () => {
+    expect(gradeAnswer(question, { order: ["b", "a", "c", "d"] }).isCorrect).toBe(false);
+  });
+
+  it("wrong on a shorter or longer submission (never throws)", () => {
+    expect(gradeAnswer(question, { order: ["a", "b", "c"] }).isCorrect).toBe(false);
+    expect(gradeAnswer(question, { order: ["a", "b", "c", "d", "e"] }).isCorrect).toBe(false);
+  });
+
+  it("wrong, not a crash, on no answer at all", () => {
+    expect(gradeAnswer(question, {}).isCorrect).toBe(false);
   });
 });

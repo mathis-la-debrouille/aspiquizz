@@ -41,8 +41,18 @@ export interface GradableGeoQuestion {
   acceptedAnswers?: string[];
 }
 
+export interface GradableSortQuestion {
+  type: "sort";
+  /** Item ids, top to bottom, in the CORRECT order. */
+  correctOrder: string[];
+}
+
 export type GradableQuestion =
-  GradableOpenQuestion | GradableMcqQuestion | GradableImageQuestion | GradableGeoQuestion;
+  | GradableOpenQuestion
+  | GradableMcqQuestion
+  | GradableImageQuestion
+  | GradableGeoQuestion
+  | GradableSortQuestion;
 
 export interface OpenAnswerPayload {
   text: string;
@@ -54,7 +64,11 @@ export interface GeoAnswerPayload {
   iso3?: string;
   text?: string;
 }
-export type AnswerPayload = OpenAnswerPayload | McqAnswerPayload | GeoAnswerPayload;
+export interface SortAnswerPayload {
+  order: string[];
+}
+export type AnswerPayload =
+  OpenAnswerPayload | McqAnswerPayload | GeoAnswerPayload | SortAnswerPayload;
 
 export interface GradeResult {
   isCorrect: boolean;
@@ -211,6 +225,17 @@ export function gradeAnswer(question: GradableQuestion, payload: AnswerPayload):
             question.strict,
           );
       }
+    }
+
+    case "sort": {
+      const order = "order" in payload ? (payload.order ?? []) : [];
+      // All-or-nothing, same as every other type's auto-grader — a swapped adjacent pair is
+      // still "wrong" here, exactly like a one-letter typo is still "wrong" for exact-match MCQ.
+      // The correction phase's slider is where "3 of 4 in the right spot" earns partial credit.
+      const isCorrect =
+        order.length === question.correctOrder.length &&
+        order.every((id, i) => id === question.correctOrder[i]);
+      return { isCorrect };
     }
   }
 }

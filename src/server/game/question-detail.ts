@@ -5,6 +5,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionGeo,
+  questionSortItems,
   categories,
   users,
   type AnswerMode,
@@ -52,6 +53,9 @@ export interface FullQuestionDetail {
     showLabels: boolean;
     showNeighbours: boolean;
   } | null;
+  /** sort only — stored/returned in the CORRECT order (position asc). Never handed to a client
+   *  that hasn't reached reveal: toSanitised shuffles before it leaves this module. */
+  sortItems: { id: string; label: string; mediaId: string | null }[];
 }
 
 /** Also the read side of edit mode (Addendum A.1's /creer/question/[id]) — one query, not a
@@ -90,7 +94,7 @@ export async function getFullQuestionDetail(
   const row = rows[0];
   if (!row) return null;
 
-  const [choices, openAnswers, geoRows] = await Promise.all([
+  const [choices, openAnswers, geoRows, sortItems] = await Promise.all([
     db
       .select({
         id: questionChoices.id,
@@ -105,6 +109,15 @@ export async function getFullQuestionDetail(
       .from(questionOpenAnswers)
       .where(eq(questionOpenAnswers.questionId, questionId)),
     db.select().from(questionGeo).where(eq(questionGeo.questionId, questionId)).limit(1),
+    db
+      .select({
+        id: questionSortItems.id,
+        label: questionSortItems.label,
+        mediaId: questionSortItems.mediaId,
+      })
+      .from(questionSortItems)
+      .where(eq(questionSortItems.questionId, questionId))
+      .orderBy(asc(questionSortItems.position)),
   ]);
 
   const geoRow = geoRows[0];
@@ -122,6 +135,7 @@ export async function getFullQuestionDetail(
           showNeighbours: geoRow.showNeighbours,
         }
       : null,
+    sortItems,
   };
 }
 
@@ -149,6 +163,7 @@ export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): San
     answerMode: detail.answerMode ?? undefined,
     choices: detail.choices,
     geo: detail.geo ?? undefined,
+    sortItems: detail.type === "sort" ? detail.sortItems : undefined,
   });
 }
 
@@ -184,5 +199,9 @@ export function toGradable(detail: FullQuestionDetail): GradableQuestion {
         targetIso3: detail.geo.targetIso3,
         acceptedAnswers: detail.openAnswers,
       };
+    case "sort":
+      // sortItems is already ordered by position asc (the query orderBy), i.e. already the
+      // correct order — mapping straight to ids is all this needs.
+      return { type: "sort", correctOrder: detail.sortItems.map((i) => i.id) };
   }
 }

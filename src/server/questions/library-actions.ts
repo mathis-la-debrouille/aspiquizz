@@ -8,6 +8,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionGeo,
+  questionSortItems,
   questionStats,
   answers,
   countries,
@@ -194,6 +195,17 @@ export async function duplicateQuestion(questionId: string): Promise<DuplicateRe
       showLabels: detail.geo.showLabels,
       showNeighbours: detail.geo.showNeighbours,
     });
+  }
+  if (detail.sortItems.length > 0) {
+    // Already position-asc (the query orderBy) — position here is just each item's index in it.
+    await db.insert(questionSortItems).values(
+      detail.sortItems.map((item, position) => ({
+        questionId: newId,
+        label: item.label,
+        mediaId: item.mediaId,
+        position,
+      })),
+    );
   }
 
   revalidatePath("/creer");

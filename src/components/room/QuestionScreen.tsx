@@ -9,6 +9,7 @@ import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerS
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
+import { SortAnswerSurface } from "@/components/room/answer-surfaces/SortAnswerSurface";
 import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import type { GameSocket } from "@/lib/socket/client";
 import type { QuestionShowPayload } from "@/server/socket/events";
@@ -17,6 +18,8 @@ export interface AnswerPayload {
   text?: string;
   choiceIds?: string[];
   iso3?: string;
+  /** sort — item ids, top to bottom, in the order the player currently has them. */
+  order?: string[];
 }
 
 export function QuestionScreen({
@@ -118,6 +121,15 @@ export function QuestionScreen({
         )}
         {q.type === "geo" && (
           <GeoAnswerSurface
+            question={q}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
+        )}
+        {q.type === "sort" && (
+          <SortAnswerSurface
             question={q}
             disabled={locked}
             committed={submitted}

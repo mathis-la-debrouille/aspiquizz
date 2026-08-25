@@ -47,6 +47,8 @@ export interface LibraryQuestionItem {
   openAnswerCount: number;
   /** geo only — the tiny inline silhouette thumbnail needs a target to render. */
   geoTargetIso3: string | null;
+  /** sort only — drives "N éléments à trier". */
+  sortItemCount: number;
 }
 
 export interface LibraryFacets {
@@ -187,6 +189,7 @@ export async function listLibraryQuestions(
         correctChoiceCount: sql<number>`(SELECT COUNT(*) FROM question_choices WHERE question_id = questions.id AND is_correct = 1)`,
         openAnswerCount: sql<number>`(SELECT COUNT(*) FROM question_open_answers WHERE question_id = questions.id)`,
         geoTargetIso3: questionGeo.targetIso3,
+        sortItemCount: sql<number>`(SELECT COUNT(*) FROM question_sort_items WHERE question_id = questions.id)`,
       })
       .from(questions)
       .innerJoin(categories, eq(questions.categoryId, categories.id))
@@ -219,6 +222,7 @@ export async function listLibraryQuestions(
     choiceCount: Number(r.choiceCount),
     multiSelect: Number(r.correctChoiceCount) > 1,
     openAnswerCount: Number(r.openAnswerCount),
+    sortItemCount: Number(r.sortItemCount),
   }));
 
   const byType: Partial<Record<QuestionType, number>> = {};

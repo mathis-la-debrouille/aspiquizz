@@ -22,6 +22,7 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   mcq: "QCM",
   image: "Image",
   geo: "Géographie",
+  sort: "Tri",
 };
 
 const STATUS_LABELS: Record<(typeof LIBRARY_STATUSES)[number], string> = {
