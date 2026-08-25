@@ -1,0 +1,999 @@
+{
+  "_comment": "Number of Wikipedia language editions with an article on each country and its best-known capital. An objective notability signal, used to tier question difficulty instead of guessing what a given group of players knows. Regenerate with scripts/fetch-notability.ts.",
+  "_source": "Wikidata, wikibase:sitelinks",
+  "_retrieved_at": "2026-08-25",
+  "countries": {
+    "CHE": 387,
+    "BGR": 361,
+    "BEL": 382,
+    "ARE": 317,
+    "AUT": 371,
+    "BOL": 312,
+    "BGD": 346,
+    "ARG": 371,
+    "AND": 333,
+    "CHN": 399,
+    "CAN": 396,
+    "ARM": 352,
+    "BHS": 278,
+    "COL": 366,
+    "BFA": 308,
+    "BHR": 305,
+    "BLZ": 279,
+    "BLR": 359,
+    "BRA": 387,
+    "BEN": 307,
+    "AUS": 399,
+    "CHL": 380,
+    "CMR": 313,
+    "AGO": 322,
+    "CIV": 311,
+    "BTN": 303,
+    "CAF": 300,
+    "COD": 333,
+    "ATG": 266,
+    "COM": 283,
+    "BRB": 275,
+    "BRN": 298,
+    "BIH": 342,
+    "COG": 300,
+    "BDI": 302,
+    "BWA": 313,
+    "COK": 187,
+    "ALB": 386,
+    "AFG": 362,
+    "AZE": 360,
+    "DEU": 405,
+    "GBR": 396,
+    "EGY": 389,
+    "GRC": 378,
+    "DNK": 369,
+    "CZE": 355,
+    "HRV": 355,
+    "GTM": 280,
+    "CUB": 311,
+    "FRA": 428,
+    "CRI": 301,
+    "ERI": 308,
+    "DZA": 373,
+    "HUN": 357,
+    "FIN": 402,
+    "GMB": 300,
+    "ESP": 396,
+    "IRL": 342,
+    "GIN": 301,
+    "DJI": 300,
+    "EST": 354,
+    "IND": 403,
+    "GNB": 298,
+    "ETH": 347,
+    "GAB": 295,
+    "CYP": 324,
+    "ECU": 314,
+    "HTI": 290,
+    "IDN": 365,
+    "CPV": 290,
+    "GHA": 324,
+    "GEO": 347,
+    "HND": 296,
+    "GRD": 249,
+    "GUY": 285,
+    "DOM": 280,
+    "FSM": 222,
+    "DMA": 263,
+    "GNQ": 284,
+    "FJI": 280,
+    "LTU": 352,
+    "MCO": 321,
+    "ITA": 408,
+    "MEX": 400,
+    "ISR": 378,
+    "MKD": 326,
+    "IRQ": 350,
+    "LVA": 336,
+    "ISL": 355,
+    "JPN": 419,
+    "KAZ": 349,
+    "LUX": 335,
+    "JOR": 314,
+    "LIE": 316,
+    "LBR": 292,
+    "MDG": 319,
+    "KHM": 330,
+    "MHL": 236,
+    "LSO": 280,
+    "MNE": 323,
+    "MDA": 330,
+    "KOR": 353,
+    "KWT": 305,
+    "LBN": 328,
+    "MAR": 334,
+    "MNG": 320,
+    "LBY": 333,
+    "LAO": 314,
+    "KEN": 336,
+    "MDV": 288,
+    "IRN": 376,
+    "KNA": 238,
+    "MLT": 327,
+    "KGZ": 317,
+    "MLI": 312,
+    "JAM": 281,
+    "LCA": 234,
+    "LKA": 308,
+    "KIR": 248,
+    "MMR": 317,
+    "NOR": 393,
+    "POL": 390,
+    "SGP": 333,
+    "RUS": 421,
+    "MYS": 339,
+    "SDN": 334,
+    "PRT": 371,
+    "PRY": 310,
+    "PAN": 300,
+    "SOM": 324,
+    "NPL": 321,
+    "NER": 302,
+    "NLD": 107,
+    "PER": 332,
+    "SAU": 349,
+    "MRT": 304,
+    "SLV": 287,
+    "PAK": 355,
+    "NIC": 280,
+    "NZL": 349,
+    "PHL": 333,
+    "QAT": 288,
+    "PSE": 225,
+    "PLW": 257,
+    "SEN": 308,
+    "ROU": 347,
+    "MWI": 296,
+    "SMR": 314,
+    "SLE": 294,
+    "NIU": 178,
+    "MOZ": 301,
+    "NGA": 350,
+    "NRU": 265,
+    "MUS": 283,
+    "PNG": 285,
+    "OMN": 296,
+    "PRK": 310,
+    "RWA": 303,
+    "SLB": 244,
+    "NAM": 315,
+    "USA": 426,
+    "VAT": 342,
+    "SVN": 331,
+    "VNM": 369,
+    "UZB": 308,
+    "URY": 323,
+    "SWE": 370,
+    "UKR": 389,
+    "VEN": 344,
+    "THA": 354,
+    "TWN": 314,
+    "SVK": 341,
+    "SSD": 280,
+    "UGA": 312,
+    "YEM": 315,
+    "SUR": 287,
+    "SRB": 352,
+    "SWZ": 286,
+    "TCD": 316,
+    "TKM": 298,
+    "ZAF": 368,
+    "TUN": 328,
+    "ZWE": 320,
+    "TUV": 253,
+    "TUR": 425,
+    "SYR": 335,
+    "STP": 273,
+    "WSM": 261,
+    "SYC": 278,
+    "TGO": 302,
+    "TON": 260,
+    "TZA": 320,
+    "VUT": 264,
+    "TTO": 250,
+    "ZMB": 310,
+    "VCT": 237,
+    "TLS": 290,
+    "TJK": 306
+  },
+  "capitals": {
+    "CHE": {
+      "name": "Berne",
+      "links": 207
+    },
+    "BGR": {
+      "name": "Sofia",
+      "links": 227
+    },
+    "BEL": {
+      "name": "Bruxelles",
+      "links": 240
+    },
+    "ARE": {
+      "name": "Abou Dabi",
+      "links": 184
+    },
+    "AUT": {
+      "name": "Vienne",
+      "links": 293
+    },
+    "BOL": {
+      "name": "La Paz",
+      "links": 157
+    },
+    "BGD": {
+      "name": "Dacca",
+      "links": 222
+    },
+    "ARG": {
+      "name": "Buenos Aires",
+      "links": 276
+    },
+    "AND": {
+      "name": "Andorre-la-Vieille",
+      "links": 193
+    },
+    "CHN": {
+      "name": "Pékin",
+      "links": 305
+    },
+    "CAN": {
+      "name": "Ottawa",
+      "links": 230
+    },
+    "ARM": {
+      "name": "Erevan",
+      "links": 211
+    },
+    "BHS": {
+      "name": "Nassau",
+      "links": 143
+    },
+    "COL": {
+      "name": "Bogota",
+      "links": 279
+    },
+    "BFA": {
+      "name": "Ouagadougou",
+      "links": 169
+    },
+    "BHR": {
+      "name": "Manama",
+      "links": 168
+    },
+    "BLZ": {
+      "name": "Belmopan",
+      "links": 147
+    },
+    "BLR": {
+      "name": "Minsk",
+      "links": 232
+    },
+    "BRA": {
+      "name": "Brasilia",
+      "links": 226
+    },
+    "BEN": {
+      "name": "Porto-Novo",
+      "links": 159
+    },
+    "AUS": {
+      "name": "Canberra",
+      "links": 213
+    },
+    "CHL": {
+      "name": "Santiago",
+      "links": 273
+    },
+    "CMR": {
+      "name": "Yaoundé",
+      "links": 166
+    },
+    "AGO": {
+      "name": "Luanda",
+      "links": 185
+    },
+    "CIV": {
+      "name": "Yamoussoukro",
+      "links": 156
+    },
+    "BTN": {
+      "name": "Thimphou",
+      "links": 170
+    },
+    "CAF": {
+      "name": "Bangui",
+      "links": 158
+    },
+    "COD": {
+      "name": "Kinshasa",
+      "links": 207
+    },
+    "ATG": {
+      "name": "Saint John's",
+      "links": 136
+    },
+    "COM": {
+      "name": "Moroni",
+      "links": 142
+    },
+    "BRB": {
+      "name": "Bridgetown",
+      "links": 145
+    },
+    "BRN": {
+      "name": "Bandar Seri Begawan",
+      "links": 162
+    },
+    "BIH": {
+      "name": "Sarajevo",
+      "links": 218
+    },
+    "COG": {
+      "name": "Brazzaville",
+      "links": 173
+    },
+    "BDI": {
+      "name": "Gitega",
+      "links": 97
+    },
+    "BWA": {
+      "name": "Gaborone",
+      "links": 163
+    },
+    "COK": {
+      "name": "Avarua",
+      "links": 81
+    },
+    "ALB": {
+      "name": "Tirana",
+      "links": 280
+    },
+    "AFG": {
+      "name": "Kaboul",
+      "links": 220
+    },
+    "AZE": {
+      "name": "Bakou",
+      "links": 248
+    },
+    "DEU": {
+      "name": "Berlin",
+      "links": 334
+    },
+    "GBR": {
+      "name": "Londres",
+      "links": 356
+    },
+    "EGY": {
+      "name": "Le Caire",
+      "links": 261
+    },
+    "GRC": {
+      "name": "Athènes",
+      "links": 288
+    },
+    "DNK": {
+      "name": "Copenhague",
+      "links": 246
+    },
+    "CZE": {
+      "name": "Prague",
+      "links": 267
+    },
+    "HRV": {
+      "name": "Zagreb",
+      "links": 218
+    },
+    "GTM": {
+      "name": "Guatemala",
+      "links": 155
+    },
+    "CUB": {
+      "name": "La Havane",
+      "links": 198
+    },
+    "FRA": {
+      "name": "Paris",
+      "links": 366
+    },
+    "CRI": {
+      "name": "San José",
+      "links": 150
+    },
+    "ERI": {
+      "name": "Asmara",
+      "links": 164
+    },
+    "DZA": {
+      "name": "Alger",
+      "links": 213
+    },
+    "HUN": {
+      "name": "Budapest",
+      "links": 259
+    },
+    "FIN": {
+      "name": "Helsinki",
+      "links": 292
+    },
+    "GMB": {
+      "name": "Banjul",
+      "links": 162
+    },
+    "ESP": {
+      "name": "Madrid",
+      "links": 305
+    },
+    "IRL": {
+      "name": "Dublin",
+      "links": 237
+    },
+    "GIN": {
+      "name": "Conakry",
+      "links": 163
+    },
+    "DJI": {
+      "name": "Djibouti",
+      "links": 148
+    },
+    "EST": {
+      "name": "Tallinn",
+      "links": 230
+    },
+    "IND": {
+      "name": "New Delhi",
+      "links": 221
+    },
+    "GNB": {
+      "name": "Bissau",
+      "links": 168
+    },
+    "ETH": {
+      "name": "Addis-Abeba",
+      "links": 200
+    },
+    "GAB": {
+      "name": "Libreville",
+      "links": 160
+    },
+    "CYP": {
+      "name": "Nicosie",
+      "links": 204
+    },
+    "ECU": {
+      "name": "Quito",
+      "links": 180
+    },
+    "HTI": {
+      "name": "Port-au-Prince",
+      "links": 157
+    },
+    "IDN": {
+      "name": "Jakarta",
+      "links": 251
+    },
+    "CPV": {
+      "name": "Praia",
+      "links": 157
+    },
+    "GHA": {
+      "name": "Accra",
+      "links": 198
+    },
+    "GEO": {
+      "name": "Tbilissi",
+      "links": 227
+    },
+    "HND": {
+      "name": "Tegucigalpa",
+      "links": 158
+    },
+    "GRD": {
+      "name": "Saint-Georges",
+      "links": 130
+    },
+    "GUY": {
+      "name": "Georgetown",
+      "links": 144
+    },
+    "DOM": {
+      "name": "Saint-Domingue",
+      "links": 152
+    },
+    "FSM": {
+      "name": "Palikir",
+      "links": 120
+    },
+    "DMA": {
+      "name": "Roseau",
+      "links": 125
+    },
+    "GNQ": {
+      "name": "Ciudad de la Paz",
+      "links": 67
+    },
+    "FJI": {
+      "name": "Suva",
+      "links": 139
+    },
+    "LTU": {
+      "name": "Vilnius",
+      "links": 229
+    },
+    "MCO": {
+      "name": "Monaco",
+      "links": 321
+    },
+    "ITA": {
+      "name": "Rome",
+      "links": 343
+    },
+    "MEX": {
+      "name": "Mexico",
+      "links": 259
+    },
+    "ISR": {
+      "name": "Jérusalem",
+      "links": 298
+    },
+    "MKD": {
+      "name": "Skopje",
+      "links": 196
+    },
+    "IRQ": {
+      "name": "Bagdad",
+      "links": 250
+    },
+    "LVA": {
+      "name": "Riga",
+      "links": 225
+    },
+    "ISL": {
+      "name": "Reykjavik",
+      "links": 216
+    },
+    "JPN": {
+      "name": "Tokyo",
+      "links": 301
+    },
+    "KAZ": {
+      "name": "Astana",
+      "links": 214
+    },
+    "LUX": {
+      "name": "Luxembourg",
+      "links": 175
+    },
+    "JOR": {
+      "name": "Amman",
+      "links": 194
+    },
+    "LIE": {
+      "name": "Vaduz",
+      "links": 187
+    },
+    "LBR": {
+      "name": "Monrovia",
+      "links": 162
+    },
+    "MDG": {
+      "name": "Antananarivo",
+      "links": 163
+    },
+    "KHM": {
+      "name": "Phnom Penh",
+      "links": 180
+    },
+    "MHL": {
+      "name": "Majuro",
+      "links": 123
+    },
+    "LSO": {
+      "name": "Maseru",
+      "links": 151
+    },
+    "MNE": {
+      "name": "Podgorica",
+      "links": 191
+    },
+    "MDA": {
+      "name": "Chișinău",
+      "links": 194
+    },
+    "KOR": {
+      "name": "Séoul",
+      "links": 257
+    },
+    "KWT": {
+      "name": "Koweït",
+      "links": 169
+    },
+    "LBN": {
+      "name": "Beyrouth",
+      "links": 213
+    },
+    "MAR": {
+      "name": "Rabat",
+      "links": 187
+    },
+    "MNG": {
+      "name": "Oulan-Bator",
+      "links": 190
+    },
+    "LBY": {
+      "name": "Tripoli",
+      "links": 187
+    },
+    "LAO": {
+      "name": "Vientiane",
+      "links": 175
+    },
+    "KEN": {
+      "name": "Nairobi",
+      "links": 237
+    },
+    "MDV": {
+      "name": "Malé",
+      "links": 155
+    },
+    "IRN": {
+      "name": "Téhéran",
+      "links": 240
+    },
+    "KNA": {
+      "name": "Basseterre",
+      "links": 123
+    },
+    "MLT": {
+      "name": "La Valette",
+      "links": 181
+    },
+    "KGZ": {
+      "name": "Bichkek",
+      "links": 185
+    },
+    "MLI": {
+      "name": "Bamako",
+      "links": 177
+    },
+    "JAM": {
+      "name": "Kingston",
+      "links": 159
+    },
+    "LCA": {
+      "name": "Castries",
+      "links": 131
+    },
+    "LKA": {
+      "name": "Colombo",
+      "links": 152
+    },
+    "KIR": {
+      "name": "Tarawa-Sud",
+      "links": 97
+    },
+    "MMR": {
+      "name": "Naypyidaw",
+      "links": 157
+    },
+    "NOR": {
+      "name": "Oslo",
+      "links": 244
+    },
+    "POL": {
+      "name": "Varsovie",
+      "links": 288
+    },
+    "SGP": {
+      "name": "Singapour",
+      "links": 333
+    },
+    "RUS": {
+      "name": "Moscou",
+      "links": 337
+    },
+    "MYS": {
+      "name": "Kuala Lumpur",
+      "links": 213
+    },
+    "SDN": {
+      "name": "Khartoum",
+      "links": 183
+    },
+    "PRT": {
+      "name": "Lisbonne",
+      "links": 267
+    },
+    "PRY": {
+      "name": "Asuncion",
+      "links": 177
+    },
+    "PAN": {
+      "name": "Panama",
+      "links": 159
+    },
+    "SOM": {
+      "name": "Mogadiscio",
+      "links": 170
+    },
+    "NPL": {
+      "name": "Katmandou",
+      "links": 196
+    },
+    "NER": {
+      "name": "Niamey",
+      "links": 162
+    },
+    "NLD": {
+      "name": "Amsterdam",
+      "links": 282
+    },
+    "PER": {
+      "name": "Lima",
+      "links": 219
+    },
+    "SAU": {
+      "name": "Riyad",
+      "links": 194
+    },
+    "MRT": {
+      "name": "Nouakchott",
+      "links": 154
+    },
+    "SLV": {
+      "name": "San Salvador",
+      "links": 149
+    },
+    "PAK": {
+      "name": "Islamabad",
+      "links": 194
+    },
+    "NIC": {
+      "name": "Managua",
+      "links": 157
+    },
+    "NZL": {
+      "name": "Wellington",
+      "links": 186
+    },
+    "PHL": {
+      "name": "Manille",
+      "links": 206
+    },
+    "QAT": {
+      "name": "Doha",
+      "links": 187
+    },
+    "PSE": {
+      "name": "Ramallah",
+      "links": 129
+    },
+    "PLW": {
+      "name": "Ngerulmud",
+      "links": 88
+    },
+    "SEN": {
+      "name": "Dakar",
+      "links": 177
+    },
+    "ROU": {
+      "name": "Bucarest",
+      "links": 236
+    },
+    "MWI": {
+      "name": "Lilongwe",
+      "links": 155
+    },
+    "SMR": {
+      "name": "Saint-Marin",
+      "links": 143
+    },
+    "SLE": {
+      "name": "Freetown",
+      "links": 156
+    },
+    "NIU": {
+      "name": "Alofi",
+      "links": 96
+    },
+    "MOZ": {
+      "name": "Maputo",
+      "links": 164
+    },
+    "NGA": {
+      "name": "Abuja",
+      "links": 199
+    },
+    "NRU": {
+      "name": "Yaren",
+      "links": 114
+    },
+    "MUS": {
+      "name": "Port-Louis",
+      "links": 153
+    },
+    "PNG": {
+      "name": "Port Moresby",
+      "links": 153
+    },
+    "OMN": {
+      "name": "Mascate",
+      "links": 159
+    },
+    "PRK": {
+      "name": "Pyongyang",
+      "links": 200
+    },
+    "RWA": {
+      "name": "Kigali",
+      "links": 164
+    },
+    "SLB": {
+      "name": "Honiara",
+      "links": 127
+    },
+    "NAM": {
+      "name": "Windhoek",
+      "links": 174
+    },
+    "USA": {
+      "name": "Washington",
+      "links": 298
+    },
+    "VAT": {
+      "name": "Vatican",
+      "links": 342
+    },
+    "SVN": {
+      "name": "Ljubljana",
+      "links": 206
+    },
+    "VNM": {
+      "name": "Hanoï",
+      "links": 201
+    },
+    "UZB": {
+      "name": "Tachkent",
+      "links": 194
+    },
+    "URY": {
+      "name": "Montevideo",
+      "links": 205
+    },
+    "SWE": {
+      "name": "Stockholm",
+      "links": 278
+    },
+    "UKR": {
+      "name": "Kiev",
+      "links": 277
+    },
+    "VEN": {
+      "name": "Caracas",
+      "links": 216
+    },
+    "THA": {
+      "name": "Bangkok",
+      "links": 260
+    },
+    "TWN": {
+      "name": "Taipei",
+      "links": 195
+    },
+    "SVK": {
+      "name": "Bratislava",
+      "links": 225
+    },
+    "SSD": {
+      "name": "Djouba",
+      "links": 148
+    },
+    "UGA": {
+      "name": "Kampala",
+      "links": 183
+    },
+    "YEM": {
+      "name": "Sanaa",
+      "links": 172
+    },
+    "SUR": {
+      "name": "Paramaribo",
+      "links": 161
+    },
+    "SRB": {
+      "name": "Belgrade",
+      "links": 230
+    },
+    "SWZ": {
+      "name": "Mbabane",
+      "links": 142
+    },
+    "TCD": {
+      "name": "N'Djaména",
+      "links": 162
+    },
+    "TKM": {
+      "name": "Achgabat",
+      "links": 186
+    },
+    "ZAF": {
+      "name": "Le Cap",
+      "links": 217
+    },
+    "TUN": {
+      "name": "Tunis",
+      "links": 182
+    },
+    "ZWE": {
+      "name": "Harare",
+      "links": 174
+    },
+    "TUV": {
+      "name": "Funafuti",
+      "links": 122
+    },
+    "TUR": {
+      "name": "Ankara",
+      "links": 240
+    },
+    "SYR": {
+      "name": "Damas",
+      "links": 242
+    },
+    "STP": {
+      "name": "São Tomé",
+      "links": 140
+    },
+    "WSM": {
+      "name": "Apia",
+      "links": 141
+    },
+    "SYC": {
+      "name": "Victoria",
+      "links": 146
+    },
+    "TGO": {
+      "name": "Lomé",
+      "links": 162
+    },
+    "TON": {
+      "name": "Nukuʻalofa",
+      "links": 123
+    },
+    "TZA": {
+      "name": "Dodoma",
+      "links": 159
+    },
+    "VUT": {
+      "name": "Port-Vila",
+      "links": 134
+    },
+    "TTO": {
+      "name": "Port-d'Espagne",
+      "links": 140
+    },
+    "ZMB": {
+      "name": "Lusaka",
+      "links": 164
+    },
+    "VCT": {
+      "name": "Kingstown",
+      "links": 118
+    },
+    "TLS": {
+      "name": "Dili",
+      "links": 159
+    },
+    "TJK": {
+      "name": "Douchanbé",
+      "links": 179
+    }
+  }
+}
