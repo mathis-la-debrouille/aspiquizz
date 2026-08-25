@@ -91,6 +91,15 @@ export default async function EditQuestionPage({
             shared,
           }
         : undefined,
+    sort:
+      detail.type === "sort"
+        ? {
+            id: detail.id,
+            prompt: detail.prompt,
+            items: detail.sortItems.map((i) => ({ label: i.label, mediaId: i.mediaId })),
+            shared,
+          }
+        : undefined,
   };
 
   return (

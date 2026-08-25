@@ -161,8 +161,8 @@ with `room_id` set to `null`, never cascade-deleted.
 Question library (Addendum A): `/creer` is the library (browse/filter/preview), not the
 creation form — that moved to `/creer/question` (create) and `/creer/question/[id]` (edit,
 same `QuestionComposer`/per-type form components, just prefilled — geo editing isn't wired yet,
-see Addendum B.3, and neither is `sort` (new type, same gap from day one — see the sort
-question type's own DECISIONS.md entry). `library.ts` (plain reads, takes `viewer` as an explicit argument — never
+see Addendum B.3 (`sort` briefly had the same gap on introduction; it's since been wired, see
+that type's own DECISIONS.md entry). `library.ts` (plain reads, takes `viewer` as an explicit argument — never
 call it from a client component) is deliberately separate from `library-actions.ts` ("use
 server", resolves the viewer from the session itself) — the split exists so a "use server"
 file's exports, which become client-callable RPCs, never accept a caller-supplied identity.
@@ -237,8 +237,7 @@ already-complete build, and are themselves complete (all six chunks — B.2, A, 
 and a final verification pass — committed). Where they supersede a decision from the original
 brief (§5, §6, §10.1, §11.3), the addendum wins — see `DECISIONS.md` entries dated after the
 Phase 12 hardening one. Known gap carried forward from Addendum A: geo question editing still
-isn't wired into `/creer/question/[id]` (open/mcq/image are); see that entry for why. The `sort`
-question type has the same gap from day one — see its own DECISIONS.md entry.
+isn't wired into `/creer/question/[id]` (open/mcq/image/sort are); see that entry for why.
 
 ## Data files under `scripts/data/`
 

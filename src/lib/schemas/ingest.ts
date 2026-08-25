@@ -48,13 +48,27 @@ export const geoDraftSchema = questionDraftCommonSchema.extend({
   afficherVoisins: z.boolean().optional(),
 });
 
+export const sortDraftSchema = questionDraftCommonSchema.extend({
+  type: z.literal("sort"),
+  /** Text only, top to bottom in the CORRECT order — MCP has no image upload path (same reason
+   *  the `image` type itself is entirely absent from this union), so every MCP-created sort
+   *  question is the text-only variant; the web form is still the only way to attach images to
+   *  items, and still the only way to edit an MCP-created one into having them. */
+  elements: z
+    .array(z.string().trim().min(1).max(120))
+    .min(3, "Trois éléments minimum.")
+    .max(6, "Six éléments maximum."),
+});
+
 export const questionDraftSchema = z.discriminatedUnion("type", [
   openDraftSchema,
   mcqDraftSchema,
   geoDraftSchema,
+  sortDraftSchema,
 ]);
 
 export type QuestionDraft = z.infer<typeof questionDraftSchema>;
 export type OpenQuestionDraft = z.infer<typeof openDraftSchema>;
 export type McqQuestionDraft = z.infer<typeof mcqDraftSchema>;
 export type GeoQuestionDraft = z.infer<typeof geoDraftSchema>;
+export type SortQuestionDraft = z.infer<typeof sortDraftSchema>;

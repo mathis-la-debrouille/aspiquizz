@@ -9,7 +9,10 @@
  * image type is out of scope here entirely (C.6: no upload channel exists off the web form) —
  * server/questions/actions.ts's createImageQuestion remains the only path for that type and is
  * deliberately NOT rewired through this module, since ingest.ts's QuestionDraft schema has no
- * image variant to route it through.
+ * image variant to route it through. sort is *partially* in scope: MCP/import can create the
+ * text-only variant here (no mediaId field exists on sortDraftSchema's items at all — same
+ * reason image is fully excluded, just narrower), but createSortQuestion/updateSortQuestion in
+ * actions.ts remain the only path for a sort question whose items carry uploaded images.
  */
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
@@ -18,6 +21,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionGeo,
+  questionSortItems,
   countryCapitals,
   categories,
   type QuestionSource,
@@ -43,13 +47,13 @@ export interface IngestWarning {
 export interface IngestError {
   code:
     | "image_not_supported"
-    | "sort_not_supported"
     | "validation"
     | "unknown_category"
     | "category_create_failed"
     | "unknown_country"
     | "duplicate_choices"
-    | "no_correct_choice";
+    | "no_correct_choice"
+    | "duplicate_items";
   message: string;
   /** Populated for unknown_country — up to 3 nearest countries by name, so the caller can retry. */
   suggestions?: string[];
@@ -120,22 +124,6 @@ export async function createQuestionFromDraft(
       ],
     };
   }
-  // sort: same reasoning as image, and not narrowed to "only when an item has an image" —
-  // one insert path per type (createSortQuestion), not a text-only fork of it reachable from
-  // here and an image-carrying fork reachable only from the web form.
-  if (isRecord(draft) && draft["type"] === "sort") {
-    return {
-      ok: false,
-      errors: [
-        {
-          code: "sort_not_supported",
-          message:
-            "Les questions de type tri ne peuvent pas être créées par ce canal pour l'instant. Utilisez le formulaire web.",
-        },
-      ],
-    };
-  }
-
   const parsed = questionDraftSchema.safeParse(draft);
   if (!parsed.success) {
     return {
@@ -181,6 +169,16 @@ export async function createQuestionFromDraft(
       return {
         ok: false,
         errors: [{ code: "no_correct_choice", message: "Au moins une option doit être correcte." }],
+      };
+    }
+  }
+
+  if (data.type === "sort") {
+    const labels = data.elements.map((e) => e.trim().toLowerCase());
+    if (new Set(labels).size !== labels.length) {
+      return {
+        ok: false,
+        errors: [{ code: "duplicate_items", message: "Les éléments doivent être uniques." }],
       };
     }
   }
@@ -277,6 +275,18 @@ export async function createQuestionFromDraft(
           })),
         );
       }
+    } else if (data.type === "sort") {
+      // data.elements is already top-to-bottom in the CORRECT order — position is just each
+      // element's index in it. mediaId is always null here: sortDraftSchema has no field for
+      // one at all, MCP having no image upload path (see this module's own doc comment).
+      await tx.insert(questionSortItems).values(
+        data.elements.map((label, position) => ({
+          questionId: newId,
+          label,
+          mediaId: null,
+          position,
+        })),
+      );
     }
 
     return newId;

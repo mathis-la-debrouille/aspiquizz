@@ -1366,14 +1366,27 @@ generator was never updated for its own new data file
   (Addendum, 2026-08-25's uninterrupted-run/correction redesign): every reorder sends a draft
   (`onDraft({ order })`), not just the final "Valider" — a player who never clicks Valider but
   has the items in the right order when the clock hits zero still gets it right.
-- **Known gap, carried forward deliberately, not an oversight:** `/creer/question/[id]` isn't
-  wired for `sort` yet, same as `geo` (see the Addendum A entry above and CLAUDE.md's note) —
-  editing an existing sort question isn't possible from the web UI yet, only create/duplicate/
-  archive. `duplicateQuestion` (`library-actions.ts`) *is* wired, since library actions are a
-  different, already-generic code path that would otherwise silently drop every duplicated sort
-  question's items.
-- **Verification**: `pnpm typecheck`/`lint`/`test` (141 tests, +5 new) and a real `pnpm build`
-  all pass; confirmed via the build output and a chunk grep that this doesn't affect the
-  d3-isolation invariant (SortAnswerSurface never imports GeoMap). Did not run a live end-to-end
-  drag-drop game session — the user asked not to.
+- **Both gaps below this line closed the same day, on request.**
+
+- ~~Known gap: `/creer/question/[id]` isn't wired for `sort` yet~~ — fixed: the edit page now
+  builds a `sort:` branch of `EditingQuestion` the same way `image`'s already does (map
+  `detail.sortItems` straight to `SortFormInitial.items`), and `SortForm` already accepted an
+  `initial` prop from the start (`updateSortQuestion` was always there — only the page wiring
+  was missing). `geo` keeps its own, unrelated gap (its editor is a materially different UI, per
+  Addendum B.3) — this was never the same problem, just the same *symptom*.
+- ~~Known gap: no MCP/import path, even text-only~~ — fixed, text-only. `sortDraftSchema`
+  joined `questionDraftSchema`'s discriminated union in `lib/schemas/ingest.ts` (French field
+  `elements: string[]`, 3-6, order = correct order, no `mediaId` field *at all* — not optional-
+  and-rejected, structurally absent, same as `image` never appearing in this union in the first
+  place). Because `creer_question`/`creer_questions_en_lot` both take `questionDraftSchema`
+  directly as their input schema, this needed zero changes in `register.ts` beyond the
+  human-facing description strings — MCP support was really a one-file change
+  (`ingest.ts`: drop the blanket `sort_not_supported` guard, add a duplicate-items check
+  mirroring mcq's duplicate-choices one, add the `question_sort_items` insert branch to the
+  transaction). Image-carrying sort questions still only come from the web form
+  (`createSortQuestion`) — MCP has no upload path, same reason `image` itself is excluded
+  entirely, just narrower here: the *type* is reachable, one *variant* of it isn't.
+- **Verification**: `pnpm typecheck`/`lint`/`test` (141 tests) and a real `pnpm build` all pass
+  after both fixes. Did not run a live end-to-end drag-drop game session or a real MCP tool
+  call — the user asked not to run end-to-end tests earlier in this same day's work.
 
