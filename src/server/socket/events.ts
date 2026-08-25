@@ -229,6 +229,8 @@ export interface ClientToServerEvents {
     code: string;
     position: number;
     payload: { text?: string; choiceIds?: string[]; iso3?: string };
+    /** Omit or set true to commit; false sends a draft that keeps updating. */
+    final?: boolean;
   }) => void;
   "host:skip": (payload: { code: string }) => void;
   "host:next": (payload: { code: string }) => void;

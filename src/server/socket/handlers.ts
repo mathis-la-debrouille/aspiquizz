@@ -309,8 +309,11 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!parsed.success) return;
     const room = getRoom(parsed.data.code);
     if (!room || room.currentIndex !== parsed.data.position) return;
-    const accepted = recordAnswer(room, user.id, parsed.data.payload);
-    if (accepted) {
+    const accepted = recordAnswer(room, user.id, parsed.data.payload, parsed.data.final);
+    // Only a commit is announced. Broadcasting on every keystroke would light up the
+    // "n/m ont répondu" counter the moment someone starts typing, which tells the
+    // room nothing and leaks who is still thinking.
+    if (accepted && parsed.data.final) {
       io.to(roomChannel(room.code)).emit("question:answered", { userId: user.id });
     }
   });

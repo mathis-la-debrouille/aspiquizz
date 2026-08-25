@@ -71,6 +71,10 @@ interface FrozenQuestion {
 interface PendingAnswer {
   payload: AnswerPayloadInput;
   submittedAt: number;
+  /** True once the player commits (Valider / Enter / a map click). Until then this
+   *  is a draft that keeps updating as they type, and it is what gets graded if the
+   *  timer runs out — pressing a button should not be what makes an answer count. */
+  locked: boolean;
 }
 
 export interface RoomState {
@@ -485,9 +489,13 @@ async function waitForAnswersOrDeadline(room: RoomState, deadlineMs: number): Pr
   while (elapsed < totalMs) {
     if (room.loopCancelled) return;
     const activePlayers = [...room.players.values()].filter((p) => !p.isSpectator);
-    const allAnswered =
-      activePlayers.length > 0 && activePlayers.every((p) => room.pendingAnswers.has(p.userId));
-    if (allAnswered) return;
+    // Only a COMMITTED answer counts toward ending the question early. Keying off
+    // mere presence would end it on the first keystroke, now that typing alone
+    // registers a draft.
+    const allCommitted =
+      activePlayers.length > 0 &&
+      activePlayers.every((p) => room.pendingAnswers.get(p.userId)?.locked === true);
+    if (allCommitted) return;
     const step = Math.min(pollMs, totalMs - elapsed);
     await sleep(step);
     elapsed += step;
@@ -828,14 +836,27 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
   });
 }
 
+/**
+ * Records or updates a player's answer for the question in flight.
+ *
+ * Drafts overwrite freely: what a player has typed when time runs out is their
+ * answer, so nothing is lost by not pressing a button. `submittedAt` moves with
+ * each edit on purpose — speed should measure when someone settled on an answer,
+ * not when they typed their first letter and then spent nine seconds hesitating.
+ *
+ * Committing (`final`) locks the row: further keystrokes are ignored, which is
+ * what makes an early advance safe.
+ */
 export function recordAnswer(
   room: RoomState,
   userId: string,
   payload: AnswerPayloadInput,
+  final: boolean,
 ): boolean {
   if (room.phase !== "question") return false;
-  if (room.pendingAnswers.has(userId)) return false;
-  room.pendingAnswers.set(userId, { payload, submittedAt: Date.now() });
+  const existing = room.pendingAnswers.get(userId);
+  if (existing?.locked) return false;
+  room.pendingAnswers.set(userId, { payload, submittedAt: Date.now(), locked: final });
   return true;
 }
 

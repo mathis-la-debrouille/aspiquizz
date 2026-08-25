@@ -82,6 +82,10 @@ export const answerSubmitSchema = z.object({
   code: roomCodeSchema,
   position: z.number().int().min(0),
   payload: answerPayloadSchema,
+  /** False for a keystroke-by-keystroke draft, true when the player commits.
+   *  Defaults to true so an older client, or any caller that omits it, keeps the
+   *  previous commit-on-submit behaviour rather than silently sending drafts. */
+  final: z.boolean().optional().default(true),
 });
 
 export const chatSendSchema = z.object({
