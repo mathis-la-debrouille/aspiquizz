@@ -124,9 +124,9 @@ export interface RoomFinishedPayload {
   highlights: string[];
   /** Every question the room actually played, in order — the final screen's "who answered
    *  what" breakdown. Populated from `answers`/`room_questions` at finishGame, not accumulated
-   *  during the loop, since the between-questions scoreboard no longer shows after every
-   *  question (every SCOREBOARD_INTERVAL-th one) and this is the one place a player can still
-   *  see the full per-question record. */
+   *  during the loop. Predates the run/correction redesign (see engine.ts's runGameLoop doc
+   *  comment) but is still the one place this persists: correction:show is per-question and
+   *  gone once the host advances, and the run itself shows nothing between questions at all. */
   questionHistory: QuestionHistoryEntry[];
   answerLog: AnswerLogEntry[];
 }

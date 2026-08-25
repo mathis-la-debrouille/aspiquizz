@@ -805,10 +805,11 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
   const displayNameByUserId = new Map(sorted.map((p) => [p.userId, p.displayName]));
 
   // The final screen's "who answered what" breakdown — built here from the durable `answers`/
-  // `room_questions` rows rather than accumulated during the loop, since the between-questions
-  // scoreboard no longer shows after every question. `room.id` is still valid at this point:
-  // a `finished` room's DB rows are never touched by the empty-room deletion sweep (Addendum
-  // B.4), only a still-`lobby`/`running` room's are.
+  // `room_questions` rows rather than accumulated during the loop. Still the one persistent
+  // per-question record: correction:show is transient (gone once the host advances past that
+  // question) and the run itself shows nothing between questions at all. `room.id` is still
+  // valid at this point: a `finished` room's DB rows are never touched by the empty-room
+  // deletion sweep (Addendum B.4), only a still-`lobby`/`running` room's are.
   const questionHistory: QuestionHistoryEntry[] = await db
     .select({ position: roomQuestions.position, prompt: questionsTable.prompt })
     .from(roomQuestions)
