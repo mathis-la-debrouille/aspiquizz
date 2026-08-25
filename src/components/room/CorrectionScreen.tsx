@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { DifficultyBadge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils/cn";
 import type { GameSocket } from "@/lib/socket/client";
+import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import type { CorrectionShowPayload } from "@/server/socket/events";
 
 /**
@@ -89,7 +90,15 @@ export function CorrectionScreen({
                     {a.displayName}
                   </span>
                   <span className="flex-1 text-16 text-ink-mid">
-                    {a.text ? `« ${a.text} »` : a.iso3 ? `carte : ${a.iso3}` : "— pas de réponse"}
+                    {/* A map click has no text, only an iso3. Printing the code would
+                     *  leave the room correcting "BLZ" against "Belize", which is the
+                     *  same unreadable mistake the reveal used to make — resolve it to
+                     *  the French name it was asked about. */}
+                    {a.text
+                      ? `« ${a.text} »`
+                      : a.iso3
+                        ? `a cliqué ${COUNTRY_NAME_FR[a.iso3] ?? a.iso3}`
+                        : "— pas de réponse"}
                   </span>
                   <span className="font-numeral text-12 tabular-nums text-ink-faint">
                     {(a.msTaken / 1000).toFixed(1)}s

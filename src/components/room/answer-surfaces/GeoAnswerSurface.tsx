@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { Button } from "@/components/ui/Button";
 import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerSurface";
 import { FlagAnswerSurface } from "@/components/room/answer-surfaces/FlagAnswerSurface";
 import type { AnswerPayload } from "@/components/room/QuestionScreen";
@@ -34,6 +36,15 @@ export function GeoAnswerSurface({
   const isClickMode = CLICK_MODES.has(mode);
   const isSilhouette = mode === "name_from_shape";
 
+  // A click used to submit and lock immediately, so a misclick was final. It now
+  // only *selects*: the country is highlighted, clicking elsewhere moves the
+  // selection, and nothing is committed until Valider or the timer. Same rule as
+  // typing — what is on screen when time runs out is the answer.
+  const [selected, setSelected] = useState<string | null>(null);
+  useEffect(() => {
+    setSelected(null);
+  }, [question.id]);
+
   // The flag mode has no map at all — rendering one would show the country's
   // outline next to its flag and answer the question for the player.
   if (mode === "name_from_flag") {
@@ -56,14 +67,39 @@ export function GeoAnswerSurface({
       <div className="h-[58vh] min-h-72 overflow-hidden rounded-md border border-border-soft bg-geo-sea">
         <GeoMap
           mode={isSilhouette ? "silhouette" : isClickMode ? "pick" : "display"}
-          interactive={isClickMode && !disabled}
+          interactive={isClickMode && !disabled && !committed}
           focusOn={isSilhouette ? (question.revealIso3 ?? null) : null}
           highlight={!isSilhouette && question.revealIso3 ? [question.revealIso3] : []}
           dimOthers={!isClickMode && !isSilhouette}
           showLabels={question.showLabels}
-          onSelect={isClickMode ? (iso3) => onSubmit({ iso3 }) : undefined}
+          selected={isClickMode ? selected : null}
+          onSelect={
+            isClickMode && !committed
+              ? (iso3) => {
+                  setSelected(iso3);
+                  onDraft({ iso3 });
+                }
+              : undefined
+          }
         />
       </div>
+      {isClickMode && !disabled && (
+        <div className="flex flex-col gap-1.5">
+          <Button
+            disabled={committed || !selected}
+            onClick={() => selected && onSubmit({ iso3: selected })}
+          >
+            {committed ? "Réponse verrouillée" : "Valider"}
+          </Button>
+          {!committed && (
+            <p className="text-12 text-ink-faint">
+              {selected
+                ? "Tu peux encore cliquer un autre pays pour changer d'avis."
+                : "Clique un pays sur la carte — pas besoin de valider, la sélection à la fin du temps compte."}
+            </p>
+          )}
+        </div>
+      )}
       {!isClickMode && (
         <OpenAnswerSurface
           disabled={disabled}
