@@ -37,16 +37,32 @@ interface SnapshotFile {
 
 type Article = "la" | "le" | "l" | "les" | "none";
 
-/** Countries the population/area ranking misjudges for a French-speaking room.
- *  Editorial, not derived — and deliberately short. */
-const TIER_OVERRIDE: Record<string, 1 | 2 | 3> = {
-  // Small or thinly populated, but instantly known here.
-  CHE: 1, BEL: 1, PRT: 1, IRL: 1, NLD: 1, AUT: 1, GRC: 1, DNK: 1, NOR: 1,
-  SWE: 1, FIN: 1, ISR: 1, MAR: 1, TUN: 1, CUB: 1, ISL: 1, LUX: 1, MCO: 1,
-  // Populous, but far less familiar than their rank implies.
-  BGD: 2, ETH: 2, COD: 2, TZA: 2, MMR: 2, SDN: 2, UGA: 2, UZB: 2, NPL: 2,
-  YEM: 2, AFG: 2, MOZ: 2, MDG: 2, CIV: 2, NER: 2, BFA: 2, MWI: 2, AGO: 2,
-};
+/**
+ * Wikipedia language-edition counts, from scripts/data/notability.json.
+ *
+ * This replaces a population/area ranking plus an editorial list of countries "a
+ * French room would know". Two things were wrong with that. It was my judgement
+ * about other people's knowledge, which was wrong in both directions. And it tiered
+ * a CAPITAL question by how well known the COUNTRY is, which is the wrong quantity:
+ * Vanuatu is a small country but Port-Vila is far more obscure than Vanuatu itself,
+ * while the Vatican is tiny and its capital is one of the best-known places on earth
+ * — both landed on tier 3, and both were wrong, in opposite directions.
+ *
+ * Sitelink counts separate cleanly and nobody has to have an opinion about them:
+ * Paris 366, Vatican 342, Brasilia 226, Port-Vila 134, Ngerulmud 88.
+ */
+interface Notability {
+  countries: Record<string, number>;
+  capitals: Record<string, { name: string; links: number }>;
+}
+
+/**
+ * Wikidata attaches ISO 3166 "NLD" to the *Kingdom of the Netherlands* entity,
+ * which carries 107 sitelinks against the Netherlands' ~300 — so the raw figure
+ * would rank the Netherlands the single most obscure country on earth. One
+ * documented artefact, corrected rather than left to distort the scale.
+ */
+const NOTABILITY_OVERRIDE: Record<string, number> = { NLD: 300 };
 
 /** Wikidata's French label is the full official form for a few countries, which
  *  reads badly in a question — « Où se trouvent les Royaume des Pays-Bas ? ».
@@ -97,8 +113,24 @@ function isoWithWorldZoomGeometry(): Set<string> {
   return out;
 }
 
-const TIER_1_MAX_RANK = 55;
-const TIER_2_MAX_RANK = 120;
+/**
+ * Tertiles, not quintiles: geo questions are capped at tier 3 by request. Nothing
+ * here reaches Aspi or 🙂 — those stay empty until there are questions that earn
+ * them, which "this island is obscure" is not. Boundaries come from the observed
+ * distribution so each tier holds about a third of the pool, rather than from
+ * absolute numbers that happen to look round.
+ */
+function tertileBounds(values: number[]): [number, number] {
+  const sorted = [...values].sort((a, b) => a - b);
+  const at = (p: number) => sorted[Math.floor((sorted.length - 1) * p)] ?? 0;
+  return [at(2 / 3), at(1 / 3)];
+}
+
+function tierFromLinks(links: number, bounds: [number, number]): 1 | 2 | 3 {
+  if (links >= bounds[0]) return 1;
+  if (links >= bounds[1]) return 2;
+  return 3;
+}
 
 function articleFor(iso3: string, table: Record<string, string[]>): Article {
   for (const key of ["none", "les", "l", "le", "la"] as const) {
@@ -162,22 +194,32 @@ async function main() {
     readFileSync(new URL("./data/fr-articles.json", import.meta.url), "utf-8"),
   ) as Record<string, string[]>;
 
-  const byPop = [...snapshot.countries].sort(
-    (a, b) => (b.population?.value ?? 0) - (a.population?.value ?? 0),
-  );
-  const byArea = [...snapshot.countries].sort(
-    (a, b) => (b.area_km2?.value ?? 0) - (a.area_km2?.value ?? 0),
-  );
-  const popRank = new Map(byPop.map((c, i) => [c.iso3, i + 1]));
-  const areaRank = new Map(byArea.map((c, i) => [c.iso3, i + 1]));
+  const notability = JSON.parse(
+    readFileSync(new URL("./data/notability.json", import.meta.url), "utf-8"),
+  ) as Notability;
 
-  function tierFor(iso3: string): 1 | 2 | 3 {
-    const override = TIER_OVERRIDE[iso3];
-    if (override) return override;
-    const rank = Math.min(popRank.get(iso3) ?? 999, areaRank.get(iso3) ?? 999);
-    if (rank <= TIER_1_MAX_RANK) return 1;
-    if (rank <= TIER_2_MAX_RANK) return 2;
-    return 3;
+  const countryLinks = (iso3: string) =>
+    NOTABILITY_OVERRIDE[iso3] ?? notability.countries[iso3] ?? 0;
+  const capitalLinks = (iso3: string) => notability.capitals[iso3]?.links ?? 0;
+
+  const countryBounds = tertileBounds(snapshot.countries.map((c) => countryLinks(c.iso3)));
+  const capitalBounds = tertileBounds(
+    snapshot.countries.map((c) => capitalLinks(c.iso3)).filter((v) => v > 0),
+  );
+  console.log(
+    `[info] tier bounds — country ${JSON.stringify(countryBounds)} capital ${JSON.stringify(capitalBounds)}`,
+  );
+
+  /**
+   * Difficulty depends on the MODE, not only on the country. "Find it on the map"
+   * and "name its flag" are questions about the country; "name its capital" is a
+   * question about the city, and the two come apart badly — see Vatican and Vanuatu.
+   */
+  type TieredMode = "locate_country" | "find_capital" | "name_from_flag";
+  function tierFor(iso3: string, mode: TieredMode): 1 | 2 | 3 {
+    return mode === "find_capital"
+      ? tierFromLinks(capitalLinks(iso3), capitalBounds)
+      : tierFromLinks(countryLinks(iso3), countryBounds);
   }
 
   const specs: Array<{
@@ -194,11 +236,10 @@ async function main() {
   for (const c of snapshot.countries) {
     const name = DISPLAY_NAME[c.iso3] ?? c.name_fr.value;
     const article = articleFor(c.iso3, articles);
-    const tier = tierFor(c.iso3);
     if (clickable.has(c.iso3)) {
       specs.push({
         iso3: c.iso3,
-        tier,
+        tier: tierFor(c.iso3, "locate_country"),
         mode: "locate_country",
         enonce: locatePrompt(article, name),
         // iso3, not the display name: resolveCountryName matches iso3 in its first
@@ -211,7 +252,7 @@ async function main() {
     if (c.capitals.length > 0) {
       specs.push({
         iso3: c.iso3,
-        tier,
+        tier: tierFor(c.iso3, "find_capital"),
         mode: "find_capital",
         enonce: `Quelle est la capitale ${ofCountry(article, name)} ?`,
         pays: c.iso3,
@@ -221,10 +262,11 @@ async function main() {
     // Flags only for tiers 1-2, per the difficulty ladder in the category
     // description. Every country has a flag asset, but a flag question for a
     // tier-3 country is a different kind of hard than the ladder describes.
-    if (tier <= 2) {
+    const flagTier = tierFor(c.iso3, "name_from_flag");
+    if (flagTier <= 2) {
       specs.push({
         iso3: c.iso3,
-        tier,
+        tier: flagTier,
         mode: "name_from_flag",
         // Prompts are identical across flag questions by necessity — naming the
         // country would answer it. The flag itself distinguishes them, and the
@@ -270,7 +312,7 @@ async function main() {
     .innerJoin(questionGeo, eq(questionGeo.questionId, questions.id));
   let realigned = 0;
   for (const q of existingGeo) {
-    const tier = tierFor(q.iso3);
+    const tier = tierFor(q.iso3, q.mode as TieredMode);
     if (q.difficulty !== tier) {
       await db.update(questions).set({ difficulty: tier }).where(eq(questions.id, q.id));
       realigned += 1;
