@@ -91,11 +91,9 @@ export function GeoAnswerSurface({
           >
             {committed ? "Réponse verrouillée" : "Valider"}
           </Button>
-          {!committed && (
+          {!committed && selected && (
             <p className="text-12 text-ink-faint">
-              {selected
-                ? "Tu peux encore cliquer un autre pays pour changer d'avis."
-                : "Clique un pays sur la carte — pas besoin de valider, la sélection à la fin du temps compte."}
+              Clique un autre pays pour changer d&apos;avis.
             </p>
           )}
         </div>

@@ -27,6 +27,7 @@ export function QuestionScreen({
   totalPlayers,
   locked,
   clockOffset,
+  scoringMode,
   myStreak,
 }: {
   socket: GameSocket;
@@ -36,6 +37,10 @@ export function QuestionScreen({
   totalPlayers: number;
   locked: boolean;
   clockOffset: number;
+  /** "speed" scales points by how fast the answer was settled; "flat" ignores time
+   *  entirely. It changes what Valider is actually for, so the hint below says
+   *  something different in each. */
+  scoringMode: "speed" | "flat";
   /** Streak going into this question (not yet affected by it) — RoomClient carries this
    *  forward from the previous question's reveal, since `reveal` itself is nulled out the
    *  moment the next question starts. */
@@ -119,6 +124,14 @@ export function QuestionScreen({
             onSubmit={submit}
             onDraft={draft}
           />
+        )}
+
+        {!submitted && !locked && (
+          <p className="text-12 text-ink-faint">
+            {scoringMode === "speed"
+              ? "Ta réponse compte sans valider : c'est ce qui est à l'écran à la fin du temps qui est pris. La rapidité se mesure à ta dernière modification — répondre vite et ne plus y toucher suffit. Valider verrouille et fait passer à la suite dès que tout le monde a validé."
+              : "Ta réponse compte sans valider : c'est ce qui est à l'écran à la fin du temps qui est pris. Valider la verrouille et fait passer à la suite dès que tout le monde a validé."}
+          </p>
         )}
 
         {submitted && !locked && (
