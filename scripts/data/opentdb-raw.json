@@ -1,7 +1,7 @@
 {
   "_comment": "Raw English questions from Open Trivia DB. NOT importable as-is — the app is French-only, and this source mixes good questions with Anglo-centric and plainly broken ones. Translate and vet into imported-questions.fr.json.",
   "_source": "https://opentdb.com",
-  "_count": 849,
+  "_count": 1149,
   "questions": [
     {
       "key": "what is on display in the madame tussaud s museum in london",
@@ -12735,6 +12735,4506 @@
           "1989 Jeep Wrangler YJ Sahar",
           "1989 Ford Explorer XLT",
           "Mercedes M-Class"
+        ]
+      }
+    },
+    {
+      "key": "m u g e n is the name for what type of game engine",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "M.U.G.E.N. is the name for what type of Game Engine?",
+        "correct": "Fighting Game",
+        "incorrect": [
+          "Platforming Game",
+          "Shooter Game",
+          "Puzzle Game"
+        ]
+      }
+    },
+    {
+      "key": "which of these is not a playable character in the 2016 video game overwatch",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which of these is NOT a playable character in the 2016 video game Overwatch?",
+        "correct": "Invoker",
+        "incorrect": [
+          "Mercy",
+          "Winston",
+          "Zenyatta"
+        ]
+      }
+    },
+    {
+      "key": "what was the name of the protagonist in portal and portal 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What was the name of the protagonist in Portal and Portal 2?",
+        "correct": "Chell",
+        "incorrect": [
+          "Mel",
+          "Chloe",
+          "Christine"
+        ]
+      }
+    },
+    {
+      "key": "what video game sparked controversy because of its hidden hot coffee minigame",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What video game sparked controversy because of its hidden \"Hot Coffee\" minigame?",
+        "correct": "Grand Theft Auto: San Andreas",
+        "incorrect": [
+          "Grand Theft Auto: Vice City",
+          "Hitman: Blood Money",
+          "Cooking Mama"
+        ]
+      }
+    },
+    {
+      "key": "in call of duty zombies what is the name of the pack a punched crossbow",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Call Of Duty: Zombies\", what is the name of the Pack-A-Punched Crossbow?",
+        "correct": "Awful Lawton",
+        "incorrect": [
+          "Longinus",
+          "V-R11",
+          "Predator"
+        ]
+      }
+    },
+    {
+      "key": "in which series of games do you collect souls to empower you and buy weaponry and armor with",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In which series of games do you collect souls to empower you and buy weaponry and armor with?",
+        "correct": "Souls ",
+        "incorrect": [
+          "Final Fantasy ",
+          "Monster Hunter",
+          "The Legend of Zelda"
+        ]
+      }
+    },
+    {
+      "key": "in overwatch which hero is able to wallride",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Overwatch\", which hero is able to wallride?",
+        "correct": "Lucio",
+        "incorrect": [
+          "Reinhardt",
+          "Sombra",
+          "Mercy"
+        ]
+      }
+    },
+    {
+      "key": "what company developed the xbox line of video game consoles",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What company developed the Xbox line of video game consoles?",
+        "correct": "Microsoft",
+        "incorrect": [
+          "Sony",
+          "Toshiba",
+          "IBM"
+        ]
+      }
+    },
+    {
+      "key": "in world of warcraft which of the following can be found outside of every instanced dungeon",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"World of Warcraft,\" which of the following can be found outside of every instanced dungeon?",
+        "correct": "A Meeting Stone",
+        "incorrect": [
+          "A Summoning Stone",
+          "A Gathering Stone",
+          "A Hearthstone"
+        ]
+      }
+    },
+    {
+      "key": "how many playable characters are there in yakuza 5",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "How many playable characters are there in Yakuza 5?",
+        "correct": "5",
+        "incorrect": [
+          "2",
+          "3",
+          "1"
+        ]
+      }
+    },
+    {
+      "key": "how many obsidian blocks are required to build a nether portal in minecraft",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "How many obsidian blocks are required to build a nether portal in Minecraft?",
+        "correct": "10",
+        "incorrect": [
+          "14",
+          "13",
+          "16"
+        ]
+      }
+    },
+    {
+      "key": "aperture science ceo cave johnson is voiced by which american actor",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Aperture Science CEO Cave Johnson is voiced by which American actor?",
+        "correct": "J.K. Simmons",
+        "incorrect": [
+          "Nolan North",
+          "John Patrick Lowrie",
+          "Christopher Lloyd"
+        ]
+      }
+    },
+    {
+      "key": "which of these is not a dragon age origins origin",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which of these is not a Dragon Age Origins \"Origin\": ",
+        "correct": "Human Commoner",
+        "incorrect": [
+          "Dwarf Commoner",
+          "Dwarf Noble",
+          "Human Noble"
+        ]
+      }
+    },
+    {
+      "key": "in xenoblade chronicles 2 which party member cannot use normal blades",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Xenoblade Chronicles 2\", Which party member cannot use normal blades?",
+        "correct": "Tora",
+        "incorrect": [
+          "Rex",
+          "Zeke",
+          "Nia"
+        ]
+      }
+    },
+    {
+      "key": "who turns out to be the true victor in the battle of armageddon in mortal kombat",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Who turns out to be the true victor in the Battle of Armageddon in Mortal Kombat?",
+        "correct": "Shao Kahn",
+        "incorrect": [
+          "Liu Kang",
+          "Shang Tsung",
+          "Raiden"
+        ]
+      }
+    },
+    {
+      "key": "in the 2002 video game kingdom hearts how many keyblades are usable",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the 2002 video game \"Kingdom Hearts\", how many Keyblades are usable?",
+        "correct": "18",
+        "incorrect": [
+          "13",
+          "16",
+          "15"
+        ]
+      }
+    },
+    {
+      "key": "which call of duty zombies map introduced the staffs of the ancients",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which \"Call Of Duty: Zombies\" map introduced the \"Staffs Of The Ancients\"?",
+        "correct": "Origins",
+        "incorrect": [
+          "Shangri-La",
+          "Revelations",
+          "Nuketown"
+        ]
+      }
+    },
+    {
+      "key": "which of the following is not a character in the video game doki doki literature club",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which of the following is not a character in the video game Doki Doki Literature Club?",
+        "correct": "Nico",
+        "incorrect": [
+          "Monika",
+          "Natsuki",
+          "Sayori"
+        ]
+      }
+    },
+    {
+      "key": "in grand theft auto v what was michael de santa s former surname",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Grand Theft Auto V, what was Michael De Santa's former surname?",
+        "correct": "Townley",
+        "incorrect": [
+          "De Santos",
+          "Watson",
+          "Simpson"
+        ]
+      }
+    },
+    {
+      "key": "in overwatch what is the name of the company that made d va s mech",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Overwatch\", what is the name of the company that made D.Va's mech?",
+        "correct": "MEKA",
+        "incorrect": [
+          "MI8",
+          "KPAMC",
+          "JSAMB"
+        ]
+      }
+    },
+    {
+      "key": "what video game engine does the videogame quake 2 run in",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What video game engine does the videogame Quake 2 run in?",
+        "correct": "iD Tech 2",
+        "incorrect": [
+          "iD Tech 3",
+          "iD Tech 1",
+          "Unreal Engine"
+        ]
+      }
+    },
+    {
+      "key": "which company did gabe newell work at before founding valve corporation",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which company did Gabe Newell work at before founding Valve Corporation?",
+        "correct": "Microsoft",
+        "incorrect": [
+          "Apple",
+          "Google",
+          "Yahoo"
+        ]
+      }
+    },
+    {
+      "key": "in what city in the dystopia alternate future of half life 2 do you first start in",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In what city in the dystopia alternate future of Half-Life 2 do you first start in?",
+        "correct": "City 17",
+        "incorrect": [
+          "City 18",
+          "City 6",
+          "City 45"
+        ]
+      }
+    },
+    {
+      "key": "what was the first game in the battlefield series",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What was the first game in the \"Battlefield\" series?",
+        "correct": "Battlefield 1942",
+        "incorrect": [
+          "Battlefield Vietnam",
+          "Battlefield 2",
+          "Battlefield 1"
+        ]
+      }
+    },
+    {
+      "key": "the acronym dota stands for",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "The acronym DOTA stands for",
+        "correct": "Defense of the Ancients",
+        "incorrect": [
+          "Defense of the Artifacts",
+          "Defense of the Antiques",
+          "Defense of the Animated"
+        ]
+      }
+    },
+    {
+      "key": "in the videogame bully what is the protagonist s last name",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the videogame Bully, what is the protagonist's last name?",
+        "correct": "Hopkins",
+        "incorrect": [
+          "Smith",
+          "Kowalski",
+          "Crabblesnitch"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the adventurer you meet at the mines in stardew valley",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of the adventurer you meet at the mines in Stardew Valley?",
+        "correct": "Marlon",
+        "incorrect": [
+          "Marnie",
+          "Morris",
+          "Marvin"
+        ]
+      }
+    },
+    {
+      "key": "what is the last name of the primary female protagonist of final fantasy viii",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the last name of the primary female protagonist of Final Fantasy VIII?",
+        "correct": "Heartilly",
+        "incorrect": [
+          "Loire",
+          "Almasy",
+          "Trepe"
+        ]
+      }
+    },
+    {
+      "key": "in the game battleblock theater what was the name of the voice actor who voiced the narrator",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the game Battleblock Theater, what was the name of the voice actor who voiced the narrator?",
+        "correct": "Will Stamper",
+        "incorrect": [
+          "Steve Blum",
+          "Richard Epcar",
+          "Yuri Lowenthal"
+        ]
+      }
+    },
+    {
+      "key": "what was the release date of grand theft auto iv",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What was the release date of \"Grand Theft Auto IV\"?",
+        "correct": "April 29, 2008",
+        "incorrect": [
+          "May 21, 2009",
+          "June 22, 2010",
+          "July 28, 2008"
+        ]
+      }
+    },
+    {
+      "key": "in the nintendo ds game ghost trick phantom detective what is the name of the hitman seen at the start of the game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the Nintendo DS game 'Ghost Trick: Phantom Detective', what is the name of the hitman seen at the start of the game?",
+        "correct": "Nearsighted Jeego",
+        "incorrect": [
+          "One Step Ahead Tengo",
+          "Missile",
+          "Cabanela"
+        ]
+      }
+    },
+    {
+      "key": "in undertale how many main endings are there",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Undertale\", how many main endings are there?",
+        "correct": "3",
+        "incorrect": [
+          "2",
+          "5",
+          "13"
+        ]
+      }
+    },
+    {
+      "key": "in super mario bros who informs mario that the princess is in another castle",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Super Mario Bros., who informs Mario that the princess is in another castle?",
+        "correct": "Toad",
+        "incorrect": [
+          "Luigi",
+          "Yoshi",
+          "Bowser"
+        ]
+      }
+    },
+    {
+      "key": "in world of warcraft s mists of pandaria expansion what was the level cap",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In World of Warcraft's Mists of Pandaria expansion, What was the level cap?",
+        "correct": "90",
+        "incorrect": [
+          "85",
+          "80",
+          "75"
+        ]
+      }
+    },
+    {
+      "key": "which kirby game first introduced copy abilities",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Which Kirby game first introduced Copy Abilities?",
+        "correct": "Kirby's Adventure",
+        "incorrect": [
+          "Kirby Super Star",
+          "Kirby's Dream Land 2",
+          "Kirby's Dream Land"
+        ]
+      }
+    },
+    {
+      "key": "who is the leader of team instinct in pok mon go",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the leader of Team Instinct in Pokémon Go?",
+        "correct": "Spark",
+        "incorrect": [
+          "Candela",
+          "Blanche",
+          "Willow"
+        ]
+      }
+    },
+    {
+      "key": "in civilization 5 which civilization can only settle one city",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Civilization 5\", which civilization can only settle one city?",
+        "correct": "Venice",
+        "incorrect": [
+          "India",
+          "Liechtenstein",
+          "Portugal"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of team fortress 2 update in which it became free to play",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of \"Team Fortress 2\" update, in which it became Free-to-play?",
+        "correct": "Über Update",
+        "incorrect": [
+          "Pyromania Update",
+          "Mann-Conomy Update",
+          "Engineer Update"
+        ]
+      }
+    },
+    {
+      "key": "the starting pistol of the terrorist team in a competitive match of counter strike global offensive is what",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "The starting pistol of the Terrorist team in a competitive match of Counter Strike: Global Offensive is what?",
+        "correct": "Glock-18",
+        "incorrect": [
+          "Tec-9",
+          "Desert Eagle",
+          "Dual Berretas"
+        ]
+      }
+    },
+    {
+      "key": "in overwatch which ape species is the hero winston",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Overwatch, which ape species is the hero Winston?",
+        "correct": "Gorilla",
+        "incorrect": [
+          "Orangutan",
+          "Chimpanzee",
+          "Gibbon"
+        ]
+      }
+    },
+    {
+      "key": "in the video game team fortress 2 which of these is not a primary",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the video game Team Fortress 2, which of these is NOT a primary?",
+        "correct": "Medigun",
+        "incorrect": [
+          "Scattergun",
+          "Grenade Launcher",
+          "Rocket Launcher"
+        ]
+      }
+    },
+    {
+      "key": "what game mode was not in the original wii sports",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What game mode was not in the original \"Wii Sports\"?",
+        "correct": "Table Tennis",
+        "incorrect": [
+          "Boxing",
+          "Baseball",
+          "Bowling"
+        ]
+      }
+    },
+    {
+      "key": "in dota 2 wraith king was previously known as",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Dota 2, Wraith King was previously known as...",
+        "correct": "Skeleton King",
+        "incorrect": [
+          "Reaper King",
+          "Skull King",
+          "Hell King"
+        ]
+      }
+    },
+    {
+      "key": "who made garry s mod",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "Who made Garry's Mod?",
+        "correct": "Garry Newman",
+        "incorrect": [
+          "Randy Newman",
+          "Facepunch Studios",
+          "Gabe Newell"
+        ]
+      }
+    },
+    {
+      "key": "in danganronpa trigger happy havoc what is the protagonist s name",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Danganronpa: Trigger Happy Havoc, what is the protagonist's name?",
+        "correct": "Makoto Naegi",
+        "incorrect": [
+          "Hajime Hinata",
+          "Nagito Komaeda",
+          "Komaru Naegi"
+        ]
+      }
+    },
+    {
+      "key": "in night in the woods where does gregg work",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In Night In The Woods, where does Gregg work?",
+        "correct": "Snack Falcon",
+        "incorrect": [
+          "Ol' Pickaxe",
+          "Video Outpost \"Too\"",
+          "Food Donkey"
+        ]
+      }
+    },
+    {
+      "key": "in what year was the game fallout released",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In what year was the game \"Fallout\" released?",
+        "correct": "1997",
+        "incorrect": [
+          "1998",
+          "1999",
+          "1996"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the main protagonist in xenoblade chronicles",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of the main protagonist in \"Xenoblade Chronicles\"?",
+        "correct": "Shulk",
+        "incorrect": [
+          "Reyn",
+          "Fiora",
+          "Dunban"
+        ]
+      }
+    },
+    {
+      "key": "what type of pok mon is charizard",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "What type of Pokémon is Charizard?",
+        "correct": "Fire/Flying",
+        "incorrect": [
+          "Fire",
+          "Dragon",
+          "Fire/Dragon"
+        ]
+      }
+    },
+    {
+      "key": "in the game sonic forces which of the following was not from a previous game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 1,
+      "en": {
+        "question": "In the game Sonic Forces, which of the following was not from a previous game?",
+        "correct": "Infinite",
+        "incorrect": [
+          "Metal Sonic",
+          "Zavoc",
+          "Chaos"
+        ]
+      }
+    },
+    {
+      "key": "what name does the little headcrab in half life 2 have",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What name does the little headcrab in \"Half Life 2\" have?",
+        "correct": "Lamarr",
+        "incorrect": [
+          "Jumperr",
+          "Drett",
+          "Jerry"
+        ]
+      }
+    },
+    {
+      "key": "which of these is not the name of a city in the grand theft auto series",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these is not the name of a city in the Grand Theft Auto series?",
+        "correct": "San Andreas",
+        "incorrect": [
+          "San Fierro",
+          "Las Venturas",
+          "Vice City"
+        ]
+      }
+    },
+    {
+      "key": "which one of these mortal kombat characters has been playable in every single mainline game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which one of these \"Mortal Kombat\" characters has been playable in every single mainline game?",
+        "correct": "Sub-Zero",
+        "incorrect": [
+          "Raiden",
+          "Scorpion",
+          "Liu Kang"
+        ]
+      }
+    },
+    {
+      "key": "in vanilla minecraft you can make armor out of all but which of the following",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In vanilla Minecraft, you can make armor out of all BUT which of the following?",
+        "correct": "Emeralds",
+        "incorrect": [
+          "Diamonds",
+          "Iron",
+          "Leather"
+        ]
+      }
+    },
+    {
+      "key": "what is not a playable race in final fantasy xiv a realm reborn",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What is not a playable race in \"Final Fantasy XIV: A Realm Reborn\"?",
+        "correct": "Hume",
+        "incorrect": [
+          "Miqo'te",
+          "Lalafell",
+          "Roegadyn"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the prison in half life 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the prison in \"Half Life 2\"?",
+        "correct": "Nova Prospekt",
+        "incorrect": [
+          "Great Prospekt",
+          "New Prospect",
+          "Lesser Prospekt"
+        ]
+      }
+    },
+    {
+      "key": "in the fallout new vegas add on honest hearts what is the name of joshua graham s personal 45 pistol",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In the Fallout: New Vegas add-on Honest Hearts, what is the name of Joshua Graham's personal .45 pistol?",
+        "correct": "A Light Shining in Darkness",
+        "incorrect": [
+          "Requiem",
+          "Maria",
+          "Recompense of the Fallen"
+        ]
+      }
+    },
+    {
+      "key": "in the legend of zelda ocarina of time what is the maximum amount of rupees that link can carry",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"The Legend of Zelda: Ocarina of Time,\" what is the maximum amount of rupees that Link can carry?",
+        "correct": "500",
+        "incorrect": [
+          "999",
+          "1000",
+          "5000"
+        ]
+      }
+    },
+    {
+      "key": "in the binding of isaac what is the name of the final boss that you fight in the void",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"The Binding of Isaac\", what is the name of the final boss that you fight in The Void?",
+        "correct": "Delirium",
+        "incorrect": [
+          "Mega Satan",
+          "Hush",
+          "The Lamb"
+        ]
+      }
+    },
+    {
+      "key": "which of these is not a fallout protagonist",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these is not a Fallout protagonist?",
+        "correct": "Tunnel Snake",
+        "incorrect": [
+          "Courier",
+          "Lone Wanderer",
+          "Vault Dweller"
+        ]
+      }
+    },
+    {
+      "key": "which genre is the touhou project associated with",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which genre is the Touhou Project associated with?",
+        "correct": "Shoot 'em up (bullet-hell) & Fighting",
+        "incorrect": [
+          "Turn-Based Strategy",
+          "MMORPG",
+          "Building "
+        ]
+      }
+    },
+    {
+      "key": "which video game earned music composer mike morasky the most awards for his work",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which video game earned music composer Mike Morasky the most awards for his work?",
+        "correct": "Portal 2",
+        "incorrect": [
+          "Left 4 Dead 2",
+          "Team Fortress 2",
+          "Counter-Strike: Global Offensive"
+        ]
+      }
+    },
+    {
+      "key": "which of these champions from the moba league of legends is not a yordle",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": " Which of these champions from the MOBA 'League of Legends' is NOT a Yordle?",
+        "correct": "Annie",
+        "incorrect": [
+          "Veigar",
+          "Tristana",
+          "Lulu"
+        ]
+      }
+    },
+    {
+      "key": "in call of duty zombies which map introduced the perk phd flopper",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Call Of Duty: Zombies\", which map introduced the perk \"PhD Flopper\"?",
+        "correct": "Ascension",
+        "incorrect": [
+          "Moon",
+          "Call Of The Dead",
+          "Die Rise"
+        ]
+      }
+    },
+    {
+      "key": "where was the sniper character in team fortress 2 born",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Where was the Sniper character in Team Fortress 2 born?",
+        "correct": "New Zealand",
+        "incorrect": [
+          "South Africa",
+          "Antarctica",
+          "Australia"
+        ]
+      }
+    },
+    {
+      "key": "which unlockable character in super smash bros for wii u and 3ds does not have to be fought to be unlocked",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which unlockable character in Super Smash Bros. For Wii U and 3DS does not have to be fought to be unlocked?",
+        "correct": "Mii Fighters",
+        "incorrect": [
+          "Ness",
+          "R.O.B.",
+          "Mewtwo"
+        ]
+      }
+    },
+    {
+      "key": "what were the first two pok mon games released",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What were the first two Pokémon games released?",
+        "correct": "Red and Green",
+        "incorrect": [
+          "Red and Blue",
+          "Green and Blue",
+          "Red and Yellow"
+        ]
+      }
+    },
+    {
+      "key": "in world of warcraft what dragon appears in the human guise of lord victor nefarius",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"World of Warcraft,\" what dragon appears in the human guise of Lord Victor Nefarius?",
+        "correct": "Nefarian",
+        "incorrect": [
+          "Nefarius",
+          "Neltharion",
+          "Nefaran"
+        ]
+      }
+    },
+    {
+      "key": "which touhou character is a hell raven",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which Touhou character is a Hell Raven?",
+        "correct": "Utsuho Reiuji",
+        "incorrect": [
+          "Flandre Scarlet",
+          "Marisa Kirisame",
+          "Aya Shameimaru"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the currency in the animal crossing series",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the currency in the \"Animal Crossing\" series?",
+        "correct": "Bells",
+        "incorrect": [
+          "Sea Shells",
+          "Leaves",
+          "Bugs"
+        ]
+      }
+    },
+    {
+      "key": "what was the first interactive movie video game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the first interactive movie video game?",
+        "correct": "Astron Belt",
+        "incorrect": [
+          "Dragon's Lair",
+          "Cube Quest",
+          "M.A.C.H. 3"
+        ]
+      }
+    },
+    {
+      "key": "what type of genre is the controversial 2015 game hatred",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What type of genre is the controversial 2015 game \"Hatred\"?",
+        "correct": "Shoot 'Em Up",
+        "incorrect": [
+          "Point & Click",
+          "MMORPG",
+          "Simulation"
+        ]
+      }
+    },
+    {
+      "key": "when was the video game publisher ubisoft founded",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "When was the video game publisher \"Ubisoft\" founded ?",
+        "correct": "March 1986",
+        "incorrect": [
+          "April 1990",
+          "June 2001",
+          "August 1956"
+        ]
+      }
+    },
+    {
+      "key": "which of these fortnite emotes does not involve a sport in some way",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these Fortnite emotes does NOT involve a sport in some way?",
+        "correct": "Freestylin'",
+        "incorrect": [
+          "Red Card",
+          "Kick Ups",
+          "Baller"
+        ]
+      }
+    },
+    {
+      "key": "what happened to half life 2 prior to its release which resulted in valve starting over the development of the game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What happened to Half-Life 2 prior to its release, which resulted in Valve starting over the development of the game?",
+        "correct": "The source code got leaked",
+        "incorrect": [
+          "They weren't satisfied with the result",
+          "The story was not good enough",
+          "Way too many bugs to be fixed"
+        ]
+      }
+    },
+    {
+      "key": "which company developed and published game dev tycoon",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which company developed and published Game Dev Tycoon?",
+        "correct": "Greenheart Games",
+        "incorrect": [
+          "Greenland Games",
+          "The Tycoonists",
+          "MomCorp"
+        ]
+      }
+    },
+    {
+      "key": "which stage was planned to be a part of sonic the hedgehog 2 but was scrapped during development",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which stage was planned to be a part of \"Sonic the Hedgehog 2\", but was scrapped during development?",
+        "correct": "Genocide City Zone",
+        "incorrect": [
+          "Stardust Speedway Zone",
+          "Sky High Zone ",
+          "Clockwork Zone"
+        ]
+      }
+    },
+    {
+      "key": "the cake depicted in valve s portal franchise most closely resembles which real world type of cake",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "The cake depicted in Valve's \"Portal\" franchise most closely resembles which real-world type of cake?",
+        "correct": "Black Forest",
+        "incorrect": [
+          "Devil's Food",
+          "Molten Chocolate",
+          "German Chocolate"
+        ]
+      }
+    },
+    {
+      "key": "which company developed the video game borderlands",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which company developed the video game \"Borderlands\"?",
+        "correct": "Gearbox Software",
+        "incorrect": [
+          "2K Games",
+          "Activision",
+          "Rockstar Games"
+        ]
+      }
+    },
+    {
+      "key": "which sonic the hedgehog game introudced knuckles the echidna",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which Sonic the Hedgehog game introudced Knuckles the Echidna?",
+        "correct": "Sonic the Hedgehog 3",
+        "incorrect": [
+          "Sonic the Hedgehog 2",
+          "Sonic & Knuckles",
+          "Sonic Adventure"
+        ]
+      }
+    },
+    {
+      "key": "which city hosted the cs go dreamhack open 2015",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which city hosted the CS:GO Dreamhack Open 2015?",
+        "correct": "Cluj-Napoca",
+        "incorrect": [
+          "Cologne",
+          "Atlanta",
+          "London"
+        ]
+      }
+    },
+    {
+      "key": "which of the following is not an official game in nintendo s super smash bros series",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the following is NOT an official game in Nintendo's Super Smash Bros. series?",
+        "correct": "Super Smash Bros. Crusade",
+        "incorrect": [
+          "Super Smash Bros. Melee",
+          "Super Smash Bros. Brawl",
+          "Super Smash Bros. for Nintendo 3DS and Wii U"
+        ]
+      }
+    },
+    {
+      "key": "excluding their instructor how many members of class vii are there in the game legend of heroes trails of cold steel",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Excluding their instructor, how many members of Class VII are there in the game \"Legend of Heroes: Trails of Cold Steel\"?",
+        "correct": "9",
+        "incorrect": [
+          "6",
+          "10",
+          "3"
+        ]
+      }
+    },
+    {
+      "key": "in payday 2 what weapon has the highest base weapon damage on a per shot basis",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"PAYDAY 2\", what weapon has the highest base weapon damage on a per-shot basis?",
+        "correct": "HRL-7",
+        "incorrect": [
+          "Heavy Crossbow",
+          "Thanatos .50 cal",
+          "Broomstick Pistol"
+        ]
+      }
+    },
+    {
+      "key": "who is the protagonist of the videogame dead rising 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Who is the protagonist of the videogame \"Dead Rising 2\"?",
+        "correct": "Chuck Greene",
+        "incorrect": [
+          "Nick Ramos",
+          "Frank West",
+          "Katie Greene"
+        ]
+      }
+    },
+    {
+      "key": "in overwatch coalescence is the name for the ultimate of which hero",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Overwatch\", Coalescence is the name for the ultimate of which hero?",
+        "correct": "Moira",
+        "incorrect": [
+          "Zenyatta",
+          "Torbjorn",
+          "Symmetra"
+        ]
+      }
+    },
+    {
+      "key": "what country is sean matsuda from in street fighter",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What country is Sean Matsuda from in Street Fighter?",
+        "correct": "Brazil",
+        "incorrect": [
+          "Japan",
+          "USA",
+          "UK"
+        ]
+      }
+    },
+    {
+      "key": "in world of warcraft lore who was first to have the title the ashbringer",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In World of Warcraft lore, who was first to have the title \"The Ashbringer\"?",
+        "correct": "Alexandros Mograine",
+        "incorrect": [
+          "Tirion Fordring",
+          "Arthas Menethil",
+          "Uther the Lightbringer"
+        ]
+      }
+    },
+    {
+      "key": "the video game publishers known as tinybuild published which of these games",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "The video game publishers known as \"tinyBuild\" published which of these games?",
+        "correct": "Clustertruck",
+        "incorrect": [
+          "Don't Starve",
+          "Stardew Valley",
+          "Slime Rancher"
+        ]
+      }
+    },
+    {
+      "key": "which of these video game series have not had a promotional item appear in team fortress 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these video game series have NOT had a promotional item appear in Team Fortress 2?",
+        "correct": "Half-Life",
+        "incorrect": [
+          "Quake",
+          "The Binding of Isaac",
+          "Fallout"
+        ]
+      }
+    },
+    {
+      "key": "in dota 2 what is earthshaker s real name",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In Dota 2, what is Earthshaker's real name?",
+        "correct": "Raigor Stonehoof",
+        "incorrect": [
+          "Banehallow Ambry",
+          "Carl",
+          "Barathrum"
+        ]
+      }
+    },
+    {
+      "key": "in which call of duty game are the apothicons introduced in the zombies mode",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In which \"Call of Duty\" game are the \"Apothicons\" introduced in the Zombies mode?",
+        "correct": "Call Of Duty: Black Ops III",
+        "incorrect": [
+          "Call Of Duty: Black Ops",
+          "Call Of Duty: World At War",
+          "Call Of Duty: Black Ops II"
+        ]
+      }
+    },
+    {
+      "key": "in the super smash bros series which game first featured luigi as a playable character",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "In the Super Smash Bros. series, which game first featured Luigi as a playable character?",
+        "correct": "Super Smash Bros.",
+        "incorrect": [
+          "Super Smash Bros. Melee",
+          "Super Smash Bros. Brawl",
+          "Super Smash Bros. for Wii U"
+        ]
+      }
+    },
+    {
+      "key": "which of these is not a playable character race in the video game starbound",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these is NOT a playable character race in the video game \"Starbound\"?",
+        "correct": "Fenerox",
+        "incorrect": [
+          "Floran",
+          "Novakid",
+          "Hylotl"
+        ]
+      }
+    },
+    {
+      "key": "what was the original release date of grand theft auto v",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the original release date of Grand Theft Auto V?",
+        "correct": "September 17, 2013",
+        "incorrect": [
+          "August 17, 2013",
+          "April 14, 2015",
+          "November 18, 2014"
+        ]
+      }
+    },
+    {
+      "key": "how many unique items does borderlands 2 claim to have",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "How many unique items does \"Borderlands 2\" claim to have?",
+        "correct": "87 Bazillion ",
+        "incorrect": [
+          "87 Million",
+          "87 Trillion",
+          "87 Gazillion "
+        ]
+      }
+    },
+    {
+      "key": "along with gabe newell who co founded valve",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Along with Gabe Newell, who co-founded Valve?",
+        "correct": "Mike Harrington",
+        "incorrect": [
+          "Robin Walker",
+          "Marc Laidlaw",
+          "Stephen Bahl"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the protagonist s first persona in persona 5",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the protagonist's first Persona in \"Persona 5\"?",
+        "correct": "Arsene",
+        "incorrect": [
+          "Mara",
+          "Izanagi",
+          "Sandaphlon"
+        ]
+      }
+    },
+    {
+      "key": "which horror movie had a sequel in the form of a video game released in august 20 2002",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which horror movie had a sequel in the form of a video game released in August 20, 2002?",
+        "correct": "The Thing",
+        "incorrect": [
+          "The Evil Dead",
+          "Saw",
+          "Alien"
+        ]
+      }
+    },
+    {
+      "key": "which cs go esports team won the major event esl one cologne 2016",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 2,
+      "en": {
+        "question": "Which CS:GO eSports team won the major event ESL One Cologne 2016?",
+        "correct": "SK Gaming",
+        "incorrect": [
+          "Team Liquid",
+          "Fnatic",
+          "Virtus.pro"
+        ]
+      }
+    },
+    {
+      "key": "in the team fortress 2 canon what did shakespearicles not invent",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the Team Fortress 2 canon, what did Shakespearicles NOT invent?",
+        "correct": "Stairs",
+        "incorrect": [
+          "Two-Story Building",
+          "Rocket Launcher",
+          "Stage Play"
+        ]
+      }
+    },
+    {
+      "key": "in sonic the hedgehog 2 for the sega genesis what do you input in the sound test screen to access the secret level select",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In \"Sonic the Hedgehog 2\" for the Sega Genesis, what do you input in the sound test screen to access the secret level select?",
+        "correct": "The Lead Programmer's birthday",
+        "incorrect": [
+          "The first release date of \"Sonic the Hedgehog\"",
+          "The date Sonic Team was founded",
+          "The first release date of \"Sonic the Hedgehog 2\""
+        ]
+      }
+    },
+    {
+      "key": "the internet meme all your base are belong to us is based on the poorly translated english version of which video game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "The Internet Meme \"All your base are belong to us\" is based on the poorly translated English Version of which Video Game?",
+        "correct": "Zero Wing",
+        "incorrect": [
+          "F-Zero",
+          "Wing Commander",
+          "Star Wars: X-Wing"
+        ]
+      }
+    },
+    {
+      "key": "which of these pok mon cannot learn surf",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which of these Pokémon cannot learn Surf?",
+        "correct": "Arbok",
+        "incorrect": [
+          "Linoone",
+          "Tauros",
+          "Nidoking"
+        ]
+      }
+    },
+    {
+      "key": "what was the name of the game created by masahiro sakurai and satoru iwata that would eventually evolve into super smash bros",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What was the name of the game created by Masahiro Sakurai and Satoru Iwata that would eventually evolve into \"Super Smash Bros.\"?",
+        "correct": "Dragon King: The Fighting Game",
+        "incorrect": [
+          "Nintendo Legends: Fight!",
+          "Martial Arts: King of the Hill",
+          "Aerial Warriors: Supreme Battle"
+        ]
+      }
+    },
+    {
+      "key": "when was the first call of duty title released",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "When was the first Call of Duty title released?",
+        "correct": "October 29, 2003",
+        "incorrect": [
+          "December 1, 2003",
+          "November 14, 2002",
+          "July 18, 2004"
+        ]
+      }
+    },
+    {
+      "key": "according to toby fox what was the method to creating the initial tune for megalovania",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "According to Toby Fox, what was the method to creating the initial tune for Megalovania?",
+        "correct": "Singing into a Microphone",
+        "incorrect": [
+          "Playing a Piano",
+          "Using a Composer Software",
+          "Listened to birds at the park"
+        ]
+      }
+    },
+    {
+      "key": "in the fallout series on which date did the great war happen",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the Fallout series, on which date did The Great War happen?",
+        "correct": "October 23rd, 2077",
+        "incorrect": [
+          "May 15th, 2058",
+          "December 14th, 2069",
+          "November 5th, 2076"
+        ]
+      }
+    },
+    {
+      "key": "which of the following commercial vehicles from grand theft auto iv did not reappear in grand theft auto v",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which of the following commercial vehicles from Grand Theft Auto IV did NOT reappear in Grand Theft Auto V?",
+        "correct": "Steed",
+        "incorrect": [
+          "Mule",
+          "Benson",
+          "Pony"
+        ]
+      }
+    },
+    {
+      "key": "what was the first call of duty zombies map to be directed by jason blundell",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What was the first \"Call Of Duty: Zombies\" map to be directed by Jason Blundell?",
+        "correct": "Mob Of The Dead",
+        "incorrect": [
+          "Buried",
+          "Origins",
+          "Moon"
+        ]
+      }
+    },
+    {
+      "key": "in counter strike global offensive what is the code implanted onto the c4 as the terrorists plant the bomb",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In Counter Strike: Global Offensive, what is the code implanted onto the C4 as the Terrorists plant the bomb?",
+        "correct": "7355608",
+        "incorrect": [
+          "7890728",
+          "7256380",
+          "7726354"
+        ]
+      }
+    },
+    {
+      "key": "how many total monsters appear in monster hunter generations",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many total monsters appear in Monster Hunter Generations?",
+        "correct": "105",
+        "incorrect": [
+          "100",
+          "98",
+          "73"
+        ]
+      }
+    },
+    {
+      "key": "how many partners can you obtain in paper mario the thousand year door",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many partners can you obtain in Paper Mario: The Thousand-Year Door?",
+        "correct": "7",
+        "incorrect": [
+          "6",
+          "9",
+          "10"
+        ]
+      }
+    },
+    {
+      "key": "in the game warframe what is the type of fish that is known to eat unwary natives of cetus",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the game Warframe, what is the type of fish that is known to eat unwary natives of Cetus?",
+        "correct": "Sharrac",
+        "incorrect": [
+          "Glappid",
+          "Karkina",
+          "Mawfish"
+        ]
+      }
+    },
+    {
+      "key": "what is the default name of the vampire character in shining soul 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What is the default name of the Vampire character in \"Shining Soul 2\".",
+        "correct": "Bloodstar",
+        "incorrect": [
+          "Sachs",
+          "Dracuul",
+          "Alucard"
+        ]
+      }
+    },
+    {
+      "key": "what is the main theme song of sonic adventure 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What is the main theme song of \"Sonic Adventure 2\"?",
+        "correct": "Live and Learn",
+        "incorrect": [
+          "Open Your Heart",
+          "Can You Feel the Sunshine?",
+          "His World"
+        ]
+      }
+    },
+    {
+      "key": "in the alternate timeline in mortal kombat which character was the one to slaughter the shirai ryu clan",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the alternate timeline in Mortal Kombat, which character was the one to slaughter the Shirai Ryu clan?",
+        "correct": "Quan Chi",
+        "incorrect": [
+          "Sub-Zero",
+          "Sektor",
+          "Shang Tsung"
+        ]
+      }
+    },
+    {
+      "key": "how many trophies are there in super smash bros for nintendo 3ds",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many trophies are there in \"Super Smash Bros. for Nintendo 3DS\"?",
+        "correct": "685",
+        "incorrect": [
+          "1360",
+          "716",
+          "1155"
+        ]
+      }
+    },
+    {
+      "key": "in the book video game metro 2033 which moscow metro station is the main character artyom s home station",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the book & video game Metro 2033, which Moscow Metro station is the main character Artyom's home station?",
+        "correct": "VDNKh",
+        "incorrect": [
+          "Prospekt Mira",
+          "Kitay-Gorod",
+          "Botanichesky Sad"
+        ]
+      }
+    },
+    {
+      "key": "in pok mon sun and moon team skull took over which town",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In \"Pokémon Sun and Moon\", Team Skull took over which town?",
+        "correct": "Po Town",
+        "incorrect": [
+          "Heahea City",
+          "Tapu Village",
+          "Iki Town"
+        ]
+      }
+    },
+    {
+      "key": "what major event caused the events of half life 1",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What major event caused the events of Half-Life 1?",
+        "correct": "The Resonance Cascade ",
+        "incorrect": [
+          "The Blue Shift",
+          "The Seven Hour War",
+          "The Narbacular Drop"
+        ]
+      }
+    },
+    {
+      "key": "in the devil may cry franchise which game is chronologically first",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the \"Devil May Cry\" franchise, which game is chronologically first?",
+        "correct": "Devil May Cry 3: Dante's Awakening ",
+        "incorrect": [
+          "Devil May Cry 4",
+          "Devil May Cry",
+          "Devil May Cry 2"
+        ]
+      }
+    },
+    {
+      "key": "in super mario rpg legend of the seven stars what is geno s real name",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In Super Mario RPG: Legend of The Seven Stars, what is Geno's real name?",
+        "correct": "♡♪!?",
+        "incorrect": [
+          "Geno",
+          "Exor",
+          "Smithy"
+        ]
+      }
+    },
+    {
+      "key": "in the super mario bros series what is yoshi s scientific name",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the Super Mario Bros. Series, what is Yoshi's scientific name?",
+        "correct": "T. Yoshisaur Munchakoopas",
+        "incorrect": [
+          "Yoshi",
+          "T. Yoshisotop Munchakoopas",
+          "Yossy"
+        ]
+      }
+    },
+    {
+      "key": "during development of super mario world yoshi s hard saddle was originally which of these",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "During development of \"Super Mario World\", Yoshi's hard saddle was originally which of these?",
+        "correct": "A shell",
+        "incorrect": [
+          "A slide of Gelatin",
+          "A poffin",
+          "A spike"
+        ]
+      }
+    },
+    {
+      "key": "in the popular moba league of legends which of the following champions is nicknamed the virtuoso",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the popular MOBA League of Legends, which of the following champions is nicknamed \"the Virtuoso\"?",
+        "correct": "Jhin",
+        "incorrect": [
+          "Kayle",
+          "Ezreal",
+          "Camille"
+        ]
+      }
+    },
+    {
+      "key": "the creeper in minecraft was the result of a bug while implementing which creature",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "The creeper in Minecraft was the result of a bug while implementing which creature?",
+        "correct": "Pig",
+        "incorrect": [
+          "Zombie",
+          "Chicken",
+          "Cow"
+        ]
+      }
+    },
+    {
+      "key": "in animal crossing new leaf which of these paintings from redd s art gallery is always genuine",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In Animal Crossing: New Leaf, which of these paintings from Redd's Art Gallery is always genuine?",
+        "correct": "Warm Painting",
+        "incorrect": [
+          "Jolly Painting",
+          "Neutral Painting",
+          "Wistful Painting"
+        ]
+      }
+    },
+    {
+      "key": "what was the nickname of the original model for half life s protagonist gordon freeman",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What was the nickname of the original model for Half-Life's protagonist Gordon Freeman?",
+        "correct": "Ivan the Space Biker",
+        "incorrect": [
+          "Gordon the Space Biker",
+          "Ivan the Alien Biker",
+          "Gordon the Alien Biker"
+        ]
+      }
+    },
+    {
+      "key": "which character from the mega man series made a small cameo on volt catfish s introduction scene in cd versions of mega man x3",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which character from the Mega Man series made a small cameo on Volt Catfish's introduction scene in CD versions of Mega Man X3?",
+        "correct": "Auto",
+        "incorrect": [
+          "Eddie",
+          "Tango",
+          "Rush"
+        ]
+      }
+    },
+    {
+      "key": "in the game call of duty what is the last level where you play as an american soldier",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the game Call of Duty, what is the last level where you play as an American soldier?",
+        "correct": "Festung Recogne",
+        "incorrect": [
+          "Ste. Mere-Eglise (Day)",
+          "Chateau",
+          "Brecourt"
+        ]
+      }
+    },
+    {
+      "key": "what touhou project character s first ever appearance was as a midboss in the eighth game imperishable night",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What Touhou Project character's first ever appearance was as a midboss in the eighth game, Imperishable Night?",
+        "correct": "Tewi Inaba",
+        "incorrect": [
+          "Mystia Lorelei",
+          "Kaguya Houraisan",
+          "Rumia"
+        ]
+      }
+    },
+    {
+      "key": "in the payday series where did dallas start his criminal career",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the PAYDAY series, where did Dallas start his criminal career?",
+        "correct": "Chicago, Illinois",
+        "incorrect": [
+          "Dallas, Texas",
+          "New York City, New York",
+          "Boston, Massachusetts"
+        ]
+      }
+    },
+    {
+      "key": "which of the four empires in eve online was the first to achieve faster than light travel",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which of the four empires in  Eve Online was the first to achieve faster than light travel?",
+        "correct": "Amarr Empire",
+        "incorrect": [
+          "Caldari State",
+          "Gallente Federation",
+          "Minmatar Republic"
+        ]
+      }
+    },
+    {
+      "key": "how many voice channels does the nintendo entertainment system support natively",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many voice channels does the Nintendo Entertainment System support natively?",
+        "correct": "5",
+        "incorrect": [
+          "4",
+          "6",
+          "3"
+        ]
+      }
+    },
+    {
+      "key": "which of these characters was considered but ultimately not included for super smash bros melee",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which of these characters was considered, but ultimately not included, for Super Smash Bros. Melee?",
+        "correct": "James Bond",
+        "incorrect": [
+          "Diddy Kong",
+          "Mega Man",
+          "Wave Racer"
+        ]
+      }
+    },
+    {
+      "key": "what is the plane of existence in microprose s 1997 magic the gathering",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What is the plane of existence in MicroProse's 1997 \"Magic the Gathering\"?",
+        "correct": "Shandalar",
+        "incorrect": [
+          "Theros",
+          "Ravnica",
+          "Amonkhet"
+        ]
+      }
+    },
+    {
+      "key": "which artist composed the original soundtrack for watch dogs 2",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which artist composed the original soundtrack for \"Watch Dogs 2\"?",
+        "correct": "Hudson Mohawke",
+        "incorrect": [
+          "Rustie",
+          "Machinedrum",
+          "Flying Lotus"
+        ]
+      }
+    },
+    {
+      "key": "which is the model number of the common laser rifle found in fallout 3 fallout new vegas and fallout 4",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Which is the model number of the common laser rifle found in Fallout 3, Fallout: New Vegas, and Fallout 4?",
+        "correct": "AER9",
+        "incorrect": [
+          "AER10",
+          "AER12",
+          "AER14"
+        ]
+      }
+    },
+    {
+      "key": "meryl silverburgh a video game character from the metal gear series was originally a character in which game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Meryl Silverburgh, a video game character from the Metal Gear series, was originally a character in which game?",
+        "correct": "Policenauts",
+        "incorrect": [
+          "Gradius",
+          "Contra",
+          "Castlevania: Symphony of the Night"
+        ]
+      }
+    },
+    {
+      "key": "when was pokemon go released in north america",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "When was Pokemon GO released in North America?",
+        "correct": "July 6th, 2016",
+        "incorrect": [
+          "June 5th, 2016",
+          "May 24th, 2016",
+          "January 2nd, 2017"
+        ]
+      }
+    },
+    {
+      "key": "how many playable characters are there in super smash bros for nintendo 3ds and wii u",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many playable characters are there in Super Smash Bros. for Nintendo 3DS and Wii U?",
+        "correct": "58",
+        "incorrect": [
+          "48",
+          "51",
+          "55"
+        ]
+      }
+    },
+    {
+      "key": "prior to his appearance in super smash bros ultimate what was king k rool s last appearance in any game",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Prior to his appearance in Super Smash Bros. Ultimate, What was King K. Rool's last appearance in any game?",
+        "correct": "Mario Super Sluggers",
+        "incorrect": [
+          "Donkey Kong 64",
+          "Donkey Kong Country 3",
+          "Donkey Kong: King Of Swing"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of your team in star wars republic commando",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What is the name of your team in Star Wars: Republic Commando?",
+        "correct": "Delta Squad",
+        "incorrect": [
+          "The Commandos",
+          "Bravo Six",
+          "Vader's Fist"
+        ]
+      }
+    },
+    {
+      "key": "in diablo lore this lesser evil spawned from one of the seven heads of tathamet and was known as the maiden of anguish",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In Diablo lore, this lesser evil spawned from one of the seven heads of Tathamet, and was known as the Maiden of Anguish.",
+        "correct": "Andariel",
+        "incorrect": [
+          "Valla",
+          "Malthael",
+          "Kashya"
+        ]
+      }
+    },
+    {
+      "key": "in what year was the game eliminator released",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In what year was the game \"Eliminator\" released?",
+        "correct": "1998",
+        "incorrect": [
+          "2000",
+          "1999",
+          "2001"
+        ]
+      }
+    },
+    {
+      "key": "why was the character trevor philips discharged from the air force",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "Why was the character Trevor Philips discharged from the Air Force?",
+        "correct": "Mental Health Issues",
+        "incorrect": [
+          "Injuries",
+          "Disease",
+          "Danger to Others"
+        ]
+      }
+    },
+    {
+      "key": "how many people can you recruit in the game suikoden in a single playthrough",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "How many people can you recruit in the game Suikoden in a single playthrough?",
+        "correct": "107",
+        "incorrect": [
+          "108",
+          "93",
+          "96"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the alligator in where s my water",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "What is the name of the alligator in Where's My Water?",
+        "correct": "Swampy",
+        "incorrect": [
+          "Cranky",
+          "Crocky",
+          "Justice"
+        ]
+      }
+    },
+    {
+      "key": "in the pok mon series what is palkia s hidden ability",
+      "opentdbCategory": 15,
+      "categorie": "Jeux vidéo",
+      "difficulte": 3,
+      "en": {
+        "question": "In the Pokémon series, what is Palkia's hidden ability?",
+        "correct": "Telepathy",
+        "incorrect": [
+          "Pressure",
+          "Water Bubble",
+          "Hydration"
+        ]
+      }
+    },
+    {
+      "key": "in computing terms typically what does cli stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In computing terms, typically what does CLI stand for?",
+        "correct": "Command Line Interface",
+        "incorrect": [
+          "Common Language Input",
+          "Control Line Interface",
+          "Common Language Interface"
+        ]
+      }
+    },
+    {
+      "key": "which internet company began life as an online bookstore called cadabra",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which internet company began life as an online bookstore called 'Cadabra'?",
+        "correct": "Amazon",
+        "incorrect": [
+          "eBay",
+          "Overstock",
+          "Shopify"
+        ]
+      }
+    },
+    {
+      "key": "unix time is defined as the number of seconds that have elapsed since when",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Unix Time is defined as the number of seconds that have elapsed since when?",
+        "correct": "Midnight, January 1, 1970",
+        "incorrect": [
+          "Midnight, July 4, 1976",
+          "Midnight on the creator of Unix's birthday",
+          "Midnight, July 4, 1980"
+        ]
+      }
+    },
+    {
+      "key": "what was bitcoin s block size limit in 2010",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What was Bitcoin's block size limit in 2010?",
+        "correct": "1 MB",
+        "incorrect": [
+          "1GB",
+          "1 KB",
+          "1 TB"
+        ]
+      }
+    },
+    {
+      "key": "what was the name given to android 4 3",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the name given to Android 4.3?",
+        "correct": "Jelly Bean",
+        "incorrect": [
+          "Lollipop",
+          "Nutella",
+          "Froyo"
+        ]
+      }
+    },
+    {
+      "key": "which operating system was released first",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which operating system was released first?",
+        "correct": "Mac OS",
+        "incorrect": [
+          "Windows",
+          "Linux",
+          "OS/2"
+        ]
+      }
+    },
+    {
+      "key": "when did the online streaming service mixer launch",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "When did the online streaming service \"Mixer\" launch?",
+        "correct": "2016",
+        "incorrect": [
+          "2013",
+          "2009",
+          "2011"
+        ]
+      }
+    },
+    {
+      "key": "in html which non standard tag used to be be used to make elements scroll across the viewport",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In HTML, which non-standard tag used to be be used to make elements scroll across the viewport?",
+        "correct": "<marquee></marquee>",
+        "incorrect": [
+          "<scroll></scroll>",
+          "<move></move>",
+          "<slide></slide>"
+        ]
+      }
+    },
+    {
+      "key": "at is the top level domain for what country",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": ".at is the top-level domain for what country?",
+        "correct": "Austria",
+        "incorrect": [
+          "Argentina",
+          "Australia",
+          "Angola"
+        ]
+      }
+    },
+    {
+      "key": "when was the programming language c released",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "When was the programming language \"C#\" released?",
+        "correct": "2000",
+        "incorrect": [
+          "1998",
+          "1999",
+          "2001"
+        ]
+      }
+    },
+    {
+      "key": "what is known as the brain of the computer",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What is known as \"the brain\" of the Computer?",
+        "correct": "Central Processing Unit",
+        "incorrect": [
+          "Motherboard",
+          "Graphics Processing Unit",
+          "Keyboard"
+        ]
+      }
+    },
+    {
+      "key": "which coding language was the 1 programming language in terms of usage on github in 2015",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which coding language was the #1 programming language in terms of usage on GitHub in 2015?",
+        "correct": "JavaScript",
+        "incorrect": [
+          "C#",
+          "Python",
+          "PHP"
+        ]
+      }
+    },
+    {
+      "key": "what is the correct term for the metal object in between the cpu and the cpu fan within a computer system",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the correct term for the metal object in between the CPU and the CPU fan within a computer system?",
+        "correct": "Heat Sink",
+        "incorrect": [
+          "CPU Vent",
+          "Temperature Decipator",
+          "Heat Vent"
+        ]
+      }
+    },
+    {
+      "key": "whistler was the codename of this microsoft operating system",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Whistler was the codename of this Microsoft Operating System.",
+        "correct": "Windows XP",
+        "incorrect": [
+          "Windows 2000",
+          "Windows 7",
+          "Windows 95"
+        ]
+      }
+    },
+    {
+      "key": "in programming the ternary operator is mostly defined with what symbol s",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In programming, the ternary operator is mostly defined with what symbol(s)?",
+        "correct": "?:",
+        "incorrect": [
+          "??",
+          "if then",
+          "?"
+        ]
+      }
+    },
+    {
+      "key": "the teapot often seen in many 3d modeling applications is called what",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "The teapot often seen in many 3D modeling applications is called what?",
+        "correct": "Utah Teapot",
+        "incorrect": [
+          "Pixar Teapot",
+          "3D Teapot",
+          "Tennessee Teapot"
+        ]
+      }
+    },
+    {
+      "key": "in programming what do you call functions with the same name but different implementations",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In programming, what do you call functions with the same name but different implementations?",
+        "correct": "Overloading",
+        "incorrect": [
+          "Overriding",
+          "Abstracting",
+          "Inheriting"
+        ]
+      }
+    },
+    {
+      "key": "what does the acronym cdn stand for in terms of networking",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does the acronym CDN stand for in terms of networking?",
+        "correct": "Content Delivery Network",
+        "incorrect": [
+          "Content Distribution Network",
+          "Computational Data Network",
+          "Compressed Data Network"
+        ]
+      }
+    },
+    {
+      "key": "approximately how many apple i personal computers were created",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Approximately how many Apple I personal computers were created?",
+        "correct": "200",
+        "incorrect": [
+          "100",
+          "500",
+          "1000"
+        ]
+      }
+    },
+    {
+      "key": "on which day did the world wide web go online",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "On which day did the World Wide Web go online?",
+        "correct": "December 20, 1990",
+        "incorrect": [
+          "December 17, 1996",
+          "November 12, 1990",
+          "November 24, 1995"
+        ]
+      }
+    },
+    {
+      "key": "what does ad stand for in relation to windows operating systems",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does AD stand for in relation to Windows Operating Systems? ",
+        "correct": "Active Directory",
+        "incorrect": [
+          "Alternative Drive",
+          "Automated Database",
+          "Active Department"
+        ]
+      }
+    },
+    {
+      "key": "originally used in pcm adapters what frequency is the standard for sampling audio in the compact disc digital audio format",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Originally used in PCM adapters, what frequency is the standard for sampling audio in the Compact Disc Digital Audio format?",
+        "correct": "44.1 kHz",
+        "incorrect": [
+          "32.0 kHz",
+          "1.5 MHz",
+          "20.5 kHz"
+        ]
+      }
+    },
+    {
+      "key": "the name of technology company hp stands for what",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "The name of technology company HP stands for what?",
+        "correct": "Hewlett-Packard",
+        "incorrect": [
+          "Howard Packmann",
+          "Husker-Pollosk",
+          "Hellman-Pohl"
+        ]
+      }
+    },
+    {
+      "key": "what was the name of the image that features as the default background wallpaper for windows xp",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the name of the image that features as the default background wallpaper for Windows XP?",
+        "correct": "Bliss",
+        "incorrect": [
+          "Azul",
+          "Red moon desert",
+          "Tulips"
+        ]
+      }
+    },
+    {
+      "key": "what does the dos in microsoft s first operating system ms dos stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does the DOS in Microsoft's first operating system \"MS-DOS\" stand for?",
+        "correct": "Disk Operating System",
+        "incorrect": [
+          "Dumb Operating System",
+          "Driver Oriented System",
+          "Diskless Operating System"
+        ]
+      }
+    },
+    {
+      "key": "what is the main cpu is the sega mega drive sega genesis",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the main CPU is the Sega Mega Drive / Sega Genesis?",
+        "correct": "Motorola 68000",
+        "incorrect": [
+          "Zilog Z80",
+          "Yamaha YM2612",
+          "Intel 8088"
+        ]
+      }
+    },
+    {
+      "key": "the computer oem manufacturer clevo known for its sager notebook line is based in which country",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "The computer OEM manufacturer Clevo, known for its Sager notebook line, is based in which country?",
+        "correct": "Taiwan",
+        "incorrect": [
+          "United States",
+          "Germany",
+          "China (People's Republic of)"
+        ]
+      }
+    },
+    {
+      "key": "what does the term gpu stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does the term GPU stand for?",
+        "correct": "Graphics Processing Unit",
+        "incorrect": [
+          "Gaming Processor Unit",
+          "Graphite Producing Unit",
+          "Graphical Proprietary Unit"
+        ]
+      }
+    },
+    {
+      "key": "on which computer hardware device is the bios chip located",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "On which computer hardware device is the BIOS chip located?",
+        "correct": "Motherboard",
+        "incorrect": [
+          "Hard Disk Drive",
+          "Central Processing Unit",
+          "Graphics Processing Unit"
+        ]
+      }
+    },
+    {
+      "key": "which programming language was developed by sun microsystems in 1995",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which programming language was developed by Sun Microsystems in 1995?",
+        "correct": "Java",
+        "incorrect": [
+          "Python",
+          "Solaris OS",
+          "C++"
+        ]
+      }
+    },
+    {
+      "key": "laserjet and inkjet printers are both examples of what type of printer",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Laserjet and inkjet printers are both examples of what type of printer?",
+        "correct": "Non-impact printer",
+        "incorrect": [
+          "Impact printer",
+          "Daisywheel printer",
+          "Dot matrix printer"
+        ]
+      }
+    },
+    {
+      "key": "what does raid stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does RAID stand for?",
+        "correct": "Redundant Array of Independent Disks",
+        "incorrect": [
+          "Rapid Access for Indexed Devices",
+          "Range of Applications with Identical Designs",
+          "Randomized Abstract Identification Description"
+        ]
+      }
+    },
+    {
+      "key": "rs is the top level domain for what country",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": ".rs is the top-level domain for what country?",
+        "correct": "Serbia",
+        "incorrect": [
+          "Romania",
+          "Russia",
+          "Rwanda"
+        ]
+      }
+    },
+    {
+      "key": "which of these is the name for the failed key escrow device introduced by the national security agency in 1993",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these is the name for the failed key escrow device introduced by the National Security Agency in 1993?",
+        "correct": "Clipper Chip",
+        "incorrect": [
+          "Enigma Machine",
+          "Skipjack",
+          "Nautilus"
+        ]
+      }
+    },
+    {
+      "key": "in the programming language python which of these statements would display the string hello world correctly",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In the programming language \"Python\", which of these statements would display the string \"Hello World\" correctly?",
+        "correct": "print(\"Hello World\")",
+        "incorrect": [
+          "console.log(\"Hello World\")",
+          "echo \"Hello World\"",
+          "printf(\"Hello World\")"
+        ]
+      }
+    },
+    {
+      "key": "how many bytes are in a single kibibyte",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "How many bytes are in a single Kibibyte?",
+        "correct": "1024",
+        "incorrect": [
+          "2400",
+          "1000",
+          "1240"
+        ]
+      }
+    },
+    {
+      "key": "how fast is usb 3 1 gen 2 theoretically",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "How fast is USB 3.1 Gen 2 theoretically?",
+        "correct": "10 Gb/s",
+        "incorrect": [
+          "5 Gb/s",
+          "8 Gb/s",
+          "1 Gb/s"
+        ]
+      }
+    },
+    {
+      "key": "what does lcd stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What does \"LCD\" stand for?",
+        "correct": "Liquid Crystal Display",
+        "incorrect": [
+          "Language Control Design",
+          "Last Common Difference",
+          "Long Continuous Design"
+        ]
+      }
+    },
+    {
+      "key": "which of the following languages is used as a scripting language in the unity 3d game engine",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the following languages is used as a scripting language in the Unity 3D game engine?",
+        "correct": "C#",
+        "incorrect": [
+          "Java",
+          "C++",
+          "Objective-C"
+        ]
+      }
+    },
+    {
+      "key": "which of these programming languages is a low level language",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of these programming languages is a low-level language?",
+        "correct": "Assembly",
+        "incorrect": [
+          "Python",
+          "C#",
+          "Pascal"
+        ]
+      }
+    },
+    {
+      "key": "what did the name of the tor anonymity network orignially stand for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What did the name of the Tor Anonymity Network orignially stand for?",
+        "correct": "The Onion Router",
+        "incorrect": [
+          "The Only Router",
+          "The Orange Router",
+          "The Ominous Router"
+        ]
+      }
+    },
+    {
+      "key": "what is the number of keys on a standard windows keyboard",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the number of keys on a standard Windows Keyboard?",
+        "correct": "104",
+        "incorrect": [
+          "64",
+          "94",
+          "76"
+        ]
+      }
+    },
+    {
+      "key": "all of the following programs are classified as raster graphics editors except",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "All of the following programs are classified as raster graphics editors EXCEPT:",
+        "correct": "Inkscape",
+        "incorrect": [
+          "Paint.NET",
+          "GIMP",
+          "Adobe Photoshop"
+        ]
+      }
+    },
+    {
+      "key": "what was the first android version specifically optimized for tablets",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the first Android version specifically optimized for tablets?",
+        "correct": "Honeycomb",
+        "incorrect": [
+          "Eclair",
+          "Froyo",
+          "Marshmellow"
+        ]
+      }
+    },
+    {
+      "key": "how many bits make up the significand portion of a single precision floating point number",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "How many bits make up the significand portion of a single precision floating point number?",
+        "correct": "23",
+        "incorrect": [
+          "8",
+          "53",
+          "15"
+        ]
+      }
+    },
+    {
+      "key": "what is largely considered the precursor to the usb format",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "What is largely considered the precursor to the USB format?",
+        "correct": "PS/2",
+        "incorrect": [
+          "SVGA",
+          "PCIe",
+          "FireWire"
+        ]
+      }
+    },
+    {
+      "key": "linus torvalds created which of these",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Linus Torvalds created which of these?",
+        "correct": "Linux",
+        "incorrect": [
+          "Microsoft Windows",
+          "Python",
+          "Wikipedia"
+        ]
+      }
+    },
+    {
+      "key": "in the server hosting industry iaas stands for",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "In the server hosting industry IaaS stands for...",
+        "correct": "Infrastructure as a Service",
+        "incorrect": [
+          "Internet as a Service",
+          "Internet and a Server",
+          "Infrastructure as a Server"
+        ]
+      }
+    },
+    {
+      "key": "which one of these is not an official development name for a ubuntu release",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which one of these is not an official development name for a Ubuntu release?",
+        "correct": "Mystic Mansion",
+        "incorrect": [
+          "Trusty Tahr",
+          "Utopic Unicorn",
+          "Wily Werewolf"
+        ]
+      }
+    },
+    {
+      "key": "which of the following is a personal computer made by the japanese company fujitsu",
+      "opentdbCategory": 18,
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the following is a personal computer made by the Japanese company Fujitsu?",
+        "correct": "FM-7",
+        "incorrect": [
+          "PC-9801",
+          "Xmillennium ",
+          "MSX"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of funny valentine s stand in jojo s bizarre adventure part 7 steel ball run",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of Funny Valentine's stand in Jojo's Bizarre Adventure Part 7, Steel Ball Run?",
+        "correct": "Dirty Deeds Done Dirt Cheap",
+        "incorrect": [
+          "Filthy Acts Done For A Reasonable Price",
+          "Civil War",
+          "God Bless The USA"
+        ]
+      }
+    },
+    {
+      "key": "in inuyasha what are the heros are looking to collect",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Inuyasha\", what are the heros are looking to collect?",
+        "correct": "Jewel Shards",
+        "incorrect": [
+          "Dragon Balls",
+          "Rave Stones",
+          "Sacred Stones"
+        ]
+      }
+    },
+    {
+      "key": "in the anime seven deadly sins what is the name of one of the sins",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the anime Seven Deadly Sins what is the name of one of the sins?",
+        "correct": "Diane",
+        "incorrect": [
+          "Sakura",
+          "Ayano",
+          "Sheska"
+        ]
+      }
+    },
+    {
+      "key": "who is the true moon princess in sailor moon",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the true moon princess in Sailor Moon?",
+        "correct": "Sailor Moon",
+        "incorrect": [
+          "Sailor Venus",
+          "Sailor Mars",
+          "Sailor Jupiter"
+        ]
+      }
+    },
+    {
+      "key": "in the anime my hero academia which character is shown with the ability to manipulate gravity",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the anime \"My Hero Academia\", which character is shown with the ability to manipulate gravity?",
+        "correct": "Uraraka",
+        "incorrect": [
+          "Bakugo",
+          "Deku",
+          "Asui "
+        ]
+      }
+    },
+    {
+      "key": "what name is the main character chihiro given in the 2001 movie spirited away",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What name is the main character Chihiro given in the 2001 movie \"Spirited Away\"?",
+        "correct": "Sen (Thousand)",
+        "incorrect": [
+          "Hyaku (Hundred)",
+          "Ichiman (Ten thousand)",
+          "Juu (Ten)"
+        ]
+      }
+    },
+    {
+      "key": "what is the theme song of neon genesis evangelion",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the theme song of \"Neon Genesis Evangelion\"?",
+        "correct": "A Cruel Angel's Thesis",
+        "incorrect": [
+          "Stardust Crusaders",
+          "Requiem for a Dream",
+          "God Knows"
+        ]
+      }
+    },
+    {
+      "key": "what is gatomon s name in the original japanese version of digimon adventure",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is Gatomon's name in the original Japanese version of Digimon Adventure?",
+        "correct": "Tailmon",
+        "incorrect": [
+          "Pawmon",
+          "Catmon",
+          "Nekomon"
+        ]
+      }
+    },
+    {
+      "key": "in the anime black butler who is betrothed to be married to ciel phantomhive",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the anime Black Butler, who is betrothed to be married to Ciel Phantomhive?",
+        "correct": "Elizabeth Midford",
+        "incorrect": [
+          "Rachel Phantomhive",
+          "Alexis Leon Midford",
+          "Angelina Dalles"
+        ]
+      }
+    },
+    {
+      "key": "what is the age of ash ketchum in pokemon when he starts his journey",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the age of Ash Ketchum in Pokemon when he starts his journey?",
+        "correct": "10",
+        "incorrect": [
+          "11",
+          "12",
+          "9"
+        ]
+      }
+    },
+    {
+      "key": "which part from the jojo s bizarre adventure manga is about a horse race across america",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Which part from the JoJo's Bizarre Adventure manga is about a horse race across America?",
+        "correct": "Part 7: Steel Ball Run",
+        "incorrect": [
+          "Part 6: Stone Ocean",
+          "Part 3: Stardust Crusaders",
+          "Part 5: Golden Wind"
+        ]
+      }
+    },
+    {
+      "key": "in future diary what is the name of yuno gasai s phone diary",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Future Diary\", what is the name of Yuno Gasai's Phone Diary?",
+        "correct": "Yukiteru Diary",
+        "incorrect": [
+          "Murder Diary",
+          "Escape Diary ",
+          "Justice Diary "
+        ]
+      }
+    },
+    {
+      "key": "in 2013 virtual pop star hatsune miku had a sponsorship with which pizza chain",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In 2013, virtual pop-star Hatsune Miku had a sponsorship with which pizza chain?",
+        "correct": "Domino's",
+        "incorrect": [
+          "Papa John's",
+          "Pizza Hut",
+          "Sabarro's"
+        ]
+      }
+    },
+    {
+      "key": "in the 9th pokemon movie who is the prince of the sea",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the 9th Pokemon movie, who is the Prince of the Sea?",
+        "correct": "Manaphy",
+        "incorrect": [
+          "Ash",
+          "May",
+          "Phantom"
+        ]
+      }
+    },
+    {
+      "key": "on what medium was clannad first created",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "On what medium was \"Clannad\" first created?",
+        "correct": "Visual novel",
+        "incorrect": [
+          "Anime",
+          "Manga",
+          "Light novel"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the corgi in cowboy bebop",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of the corgi in Cowboy Bebop?",
+        "correct": "Einstein",
+        "incorrect": [
+          "Edward",
+          "Rocket",
+          "Joel"
+        ]
+      }
+    },
+    {
+      "key": "in fairy tail what is the nickname of natsu dragneel",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"Fairy Tail\", what is the nickname of Natsu Dragneel?",
+        "correct": "The Salamander",
+        "incorrect": [
+          "The Dragon Slayer",
+          "The Dragon",
+          "The Demon"
+        ]
+      }
+    },
+    {
+      "key": "in a certain scientific railgun how many sisters did accelerator have to kill to achieve the rumored level 6",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"A Certain Scientific Railgun\", how many \"sisters\" did Accelerator have to kill to achieve the rumored level 6?",
+        "correct": "20,000",
+        "incorrect": [
+          "128",
+          "10,000",
+          "5,000"
+        ]
+      }
+    },
+    {
+      "key": "in the anime noragami who is one of the main protagonists",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the anime Noragami who is one of the main protagonists?",
+        "correct": "Yukine",
+        "incorrect": [
+          "Karuha",
+          "Mineha",
+          "Mayu"
+        ]
+      }
+    },
+    {
+      "key": "in one piece what color is tony tony chopper s nose",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"One Piece,\" what color is Tony Tony Chopper's nose?",
+        "correct": "Blue",
+        "incorrect": [
+          "Black",
+          "Grey",
+          "Red"
+        ]
+      }
+    },
+    {
+      "key": "in to love ru ren and run are from what planet",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"To Love-Ru\", Ren and Run are from what planet?",
+        "correct": "Memorze",
+        "incorrect": [
+          "Deviluke",
+          "Mistletoe",
+          "Okiwana"
+        ]
+      }
+    },
+    {
+      "key": "who is the main character with yellow hair in the anime naruto",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the main character with yellow hair in the anime Naruto?",
+        "correct": "Naruto",
+        "incorrect": [
+          "Ten Ten",
+          "Sasuke",
+          "Kakashi"
+        ]
+      }
+    },
+    {
+      "key": "kirito and asuna are main characters from which anime",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Kirito and Asuna are main characters from which anime?",
+        "correct": "Sword Art Online",
+        "incorrect": [
+          "One Piece",
+          "Death Note",
+          "Fairy Tail"
+        ]
+      }
+    },
+    {
+      "key": "how many jojos that are protagonists are there in the series jojo s bizarre adventure",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "How many \"JoJos\" that are protagonists are there in the series \"Jojo's Bizarre Adventure\"?",
+        "correct": "8+",
+        "incorrect": [
+          "6+",
+          "4+",
+          "5+"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the stuffed lion in bleach",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of the stuffed lion in Bleach?",
+        "correct": "Kon",
+        "incorrect": [
+          "Jo",
+          "Urdiu",
+          "Chad"
+        ]
+      }
+    },
+    {
+      "key": "which anime heavily features music from the genre eurobeat",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Which anime heavily features music from the genre \"Eurobeat\"?",
+        "correct": "Initial D",
+        "incorrect": [
+          "Wangan Midnight",
+          "Kino no Tabi",
+          "Cowboy Bebop"
+        ]
+      }
+    },
+    {
+      "key": "who is the armored titan in attack on titan",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the armored titan in \"Attack On Titan\"?",
+        "correct": "Reiner Braun",
+        "incorrect": [
+          "Armin Arlelt",
+          "Mikasa Ackermann",
+          "Eren Jaeger"
+        ]
+      }
+    },
+    {
+      "key": "what animation studio produced gurren lagann",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What animation studio produced \"Gurren Lagann\"?",
+        "correct": "Gainax",
+        "incorrect": [
+          "Kyoto Animation",
+          "Pierrot",
+          "A-1 Pictures"
+        ]
+      }
+    },
+    {
+      "key": "the characters of log horizon are trapped in what game",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "The characters of \"Log Horizon\" are trapped in what game?",
+        "correct": "Elder Tale",
+        "incorrect": [
+          "Sword Art Online",
+          "Tower Unite",
+          "Yggdrasil"
+        ]
+      }
+    },
+    {
+      "key": "in ms kobayashi s dragon maid who is kobayashi s maid",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In Ms. Kobayashi's Dragon Maid, who is Kobayashi's maid?",
+        "correct": "Tohru",
+        "incorrect": [
+          "Lucoa",
+          "Kanna",
+          "Elma"
+        ]
+      }
+    },
+    {
+      "key": "in the melancholy of haruhi suzumiya series the sos brigade club leader is unknowingly treated as a n by her peers",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In \"The Melancholy of Haruhi Suzumiya\" series, the SOS Brigade club leader is unknowingly treated as a(n) __ by her peers.",
+        "correct": "God",
+        "incorrect": [
+          "Alien",
+          "Time Traveler",
+          "Esper"
+        ]
+      }
+    },
+    {
+      "key": "what s the english dub name of smile precure",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What's the English Dub Name of \"Smile Precure\"?",
+        "correct": "Glitter Force",
+        "incorrect": [
+          "Sparkle Girls",
+          "Fairy Tale Patrol",
+          "Power Princesses"
+        ]
+      }
+    },
+    {
+      "key": "what anime studio was in charge of the hit anime made in abyss",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What anime studio was in charge of the hit anime \"Made in Abyss\"?",
+        "correct": "Kinema Citrus",
+        "incorrect": [
+          "Trigger",
+          "Studio 3hz",
+          "8bit"
+        ]
+      }
+    },
+    {
+      "key": "what color is ry ko matoi s half of the scissor blade in the anime kill la kill",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What color is Ryūko Matoi's half of the Scissor Blade in the anime Kill la KIll?",
+        "correct": "Red",
+        "incorrect": [
+          "Green",
+          "Blue",
+          "Purple"
+        ]
+      }
+    },
+    {
+      "key": "which of the following originated as a manga",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Which of the following originated as a manga?",
+        "correct": "Akira",
+        "incorrect": [
+          "Cowboy Bebop",
+          "High School DxD",
+          "Gurren Lagann"
+        ]
+      }
+    },
+    {
+      "key": "what year did attack on titan first air",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What year did \"Attack on Titan\" first air?",
+        "correct": "2013",
+        "incorrect": [
+          "2014",
+          "2012",
+          "2015"
+        ]
+      }
+    },
+    {
+      "key": "what was ash ketchum s second pokemon",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What was Ash Ketchum's second Pokemon?",
+        "correct": "Caterpie",
+        "incorrect": [
+          "Charmander",
+          "Pikachu",
+          "Pidgey"
+        ]
+      }
+    },
+    {
+      "key": "which pok mon and it s evolutions were banned from appearing in a main role after the episode 38 incident",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Which Pokémon and it's evolutions were banned from appearing in a main role after the Episode 38 Incident?",
+        "correct": "The Porygon Line",
+        "incorrect": [
+          "The Pikachu Line",
+          "The Elekid Line",
+          "The Magby Line"
+        ]
+      }
+    },
+    {
+      "key": "who is the author of the manga series astro boy",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the author of the manga series \"Astro Boy\"?",
+        "correct": "Osamu Tezuka",
+        "incorrect": [
+          "Mitsuteri Yokoyama",
+          "Takao Saito",
+          "Yoshihiro Tatsumi"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of jojo s bizarre adventure part 5",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the name of JoJo's Bizarre Adventure Part 5?",
+        "correct": "Vento Aureo",
+        "incorrect": [
+          "Vento Oreo",
+          "Vanto Aureo",
+          "Vento Eureo"
+        ]
+      }
+    },
+    {
+      "key": "who was given the title full metal in the anime series full metal alchemist",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who was given the title \"Full Metal\" in the anime series \"Full Metal Alchemist\"?",
+        "correct": "Edward Elric",
+        "incorrect": [
+          "Alphonse Elric",
+          "Van Hohenheim",
+          "Izumi Curtis"
+        ]
+      }
+    },
+    {
+      "key": "satella in re zero is the witch of what",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Satella in \"Re:Zero\" is the witch of what?",
+        "correct": "Envy",
+        "incorrect": [
+          "Pride",
+          "Sloth",
+          "Wrath"
+        ]
+      }
+    },
+    {
+      "key": "the two main characters of no game no life sora and shiro together go by what name",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "The two main characters of \"No Game No Life\", Sora and Shiro, together go by what name?",
+        "correct": "Blank",
+        "incorrect": [
+          "Immanity",
+          "Disboard",
+          "Warbeasts"
+        ]
+      }
+    },
+    {
+      "key": "in the 2012 animated film wolf children what are the names of the wolf children",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In the 2012 animated film \"Wolf Children\", what are the names of the wolf children?",
+        "correct": "Ame & Yuki",
+        "incorrect": [
+          "Hana & Yuki",
+          "Ame & Hana",
+          "Chuck & Anna"
+        ]
+      }
+    },
+    {
+      "key": "the name of junko enoshima s imposter at the beginning of danganronpa trigger happy havoc is",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "The name of Junko Enoshima's imposter at the beginning of Danganronpa: Trigger Happy Havoc is?",
+        "correct": "Mukuro Ikusaba",
+        "incorrect": [
+          "Ryota Mitarai",
+          "Ultimate Imposter",
+          "Komaru Naegi"
+        ]
+      }
+    },
+    {
+      "key": "who was a voice actor for the english dubbing of howl s moving castle 2004",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who was a voice actor for the English dubbing of HOWL'S MOVING CASTLE (2004)?",
+        "correct": "Christian Bale",
+        "incorrect": [
+          "Matt Damon",
+          "Joseph Gordon-Levitt",
+          "Willem Dafoe"
+        ]
+      }
+    },
+    {
+      "key": "who is the main heroine of the anime full metal panic",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the main heroine of the anime, Full Metal Panic!",
+        "correct": "Kaname Chidori",
+        "incorrect": [
+          "Teletha Testarossa",
+          "Melissa Mao",
+          "Kyoko Tokiwa"
+        ]
+      }
+    },
+    {
+      "key": "what is the last name of edward and alphonse in the fullmetal alchemist series",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "What is the last name of Edward and Alphonse in the Fullmetal Alchemist series.",
+        "correct": "Elric",
+        "incorrect": [
+          "Ellis",
+          "Eliek",
+          "Elwood"
+        ]
+      }
+    },
+    {
+      "key": "who is the colossal titan in attack on titan",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "Who is the colossal titan in \"Attack On Titan\"?",
+        "correct": "Bertolt Hoover",
+        "incorrect": [
+          "Reiner",
+          "Eren",
+          "Sasha"
+        ]
+      }
+    },
+    {
+      "key": "in digimon what is the japanese name for the final evolutionary stage",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "en": {
+        "question": "In Digimon, what is the Japanese name for the final evolutionary stage?",
+        "correct": "Ultimate",
+        "incorrect": [
+          "Mega",
+          "Adult",
+          "Champion"
+        ]
+      }
+    },
+    {
+      "key": "what song plays in the ending credits of the anime ergo proxy",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What song plays in the ending credits of the anime \"Ergo Proxy\"?",
+        "correct": "Paranoid Android",
+        "incorrect": [
+          "Sadistic Summer",
+          "Bittersweet Symphony",
+          "Mad World"
+        ]
+      }
+    },
+    {
+      "key": "what was studio trigger s first original long form animated series for television",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What was studio Trigger's first original long-form animated series for television?",
+        "correct": "Kill la Kill",
+        "incorrect": [
+          "Kiznaiver",
+          "Inferno Cop",
+          "Gurren Lagann"
+        ]
+      }
+    },
+    {
+      "key": "who voices shou suzuki in the english dub of mob psycho 100",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Who voices \"Shou Suzuki\" in the English dub of \"Mob Psycho 100\"?",
+        "correct": "Casey Mongillo",
+        "incorrect": [
+          "Ben Diskin",
+          "Chris Niosi",
+          "David Naughton"
+        ]
+      }
+    },
+    {
+      "key": "in shakugan no shana what was the shana usually referred as",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Shakugan no Shana\" what was the Shana usually referred as?",
+        "correct": "Flame-Haired Burning-Eyed Hunter",
+        "incorrect": [
+          "Flame Haze",
+          "Flame-Haired Burning-Eyed Haze",
+          "Shana"
+        ]
+      }
+    },
+    {
+      "key": "what studio animated ouran high school host club",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What studio animated Ouran High School Host Club?",
+        "correct": "Bones",
+        "incorrect": [
+          "Production I.G",
+          "Kyoto Animation",
+          "xebec"
+        ]
+      }
+    },
+    {
+      "key": "on what date did the original fruits basket anime air in japan",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "On what date did the original \"Fruits Basket\" anime air in Japan?",
+        "correct": "July 5th, 2001",
+        "incorrect": [
+          "November 1st, 2006",
+          "December 27th, 2001",
+          "October 11th, 2001"
+        ]
+      }
+    },
+    {
+      "key": "what year does part 7 of jojo s bizarre adventure take place in",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What year does Part 7 of \"JoJo's Bizarre Adventure\" take place in?",
+        "correct": "1890",
+        "incorrect": [
+          "1888",
+          "1999",
+          "2003"
+        ]
+      }
+    },
+    {
+      "key": "my hero academia s main character midoriya goes by what superhero name",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "My Hero Academia's main character Midoriya goes by what superhero name?",
+        "correct": "Deku",
+        "incorrect": [
+          "All Might",
+          "Saitama",
+          "Kona"
+        ]
+      }
+    },
+    {
+      "key": "when was the first episode of soul eater released",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "When was the first episode of Soul Eater released?",
+        "correct": "2008",
+        "incorrect": [
+          "2003",
+          "2005",
+          "2011"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the device that allows for infinite energy in the anime dimension w",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the device that allows for infinite energy in the anime \"Dimension W\"?",
+        "correct": "Coils",
+        "incorrect": [
+          "Wires",
+          "Collectors",
+          "Tesla"
+        ]
+      }
+    },
+    {
+      "key": "in the anime fullmetal alchemist who is known as the flame alchemist",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In the anime, \"Fullmetal Alchemist\", who is known as the 'Flame Alchemist'?",
+        "correct": "Roy Mustang",
+        "incorrect": [
+          "Edward Elric",
+          "Maes Hughes",
+          "Lin Yao"
+        ]
+      }
+    },
+    {
+      "key": "in jojo s bizarre adventure which of the following stands does not have a time based ability",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"JoJo's Bizarre Adventure\", which of the following Stands does NOT have a time-based ability?",
+        "correct": "20th Century Boy",
+        "incorrect": [
+          "Made in Heaven",
+          "Star Platinum",
+          "The World"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the protagonist of the 2017 anime land of the lustrous",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the protagonist of the 2017 anime \"Land of the Lustrous\"?",
+        "correct": "Phosphophyllite",
+        "incorrect": [
+          "Watermelon Tourmaline",
+          "Cinnabar",
+          "Padparadscha"
+        ]
+      }
+    },
+    {
+      "key": "the main antagonist of the second part of jojo s bizarre adventure is which of the following",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "The main antagonist of the second part of JoJo's Bizarre Adventure is which of the following?",
+        "correct": "Kars",
+        "incorrect": [
+          "Erina Joestar",
+          "Santana",
+          "Wired Beck"
+        ]
+      }
+    },
+    {
+      "key": "which character in touhou is able to control dolls",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which character in Touhou is able to control dolls?",
+        "correct": "Alice Margatroid",
+        "incorrect": [
+          "Marisa Kirisame",
+          "Clownpiece",
+          "Flandre Scarlet"
+        ]
+      }
+    },
+    {
+      "key": "in one piece which one of the following is not an ancient weapon",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"One Piece\", which one of the following is NOT an Ancient Weapon?",
+        "correct": "Jupiter",
+        "incorrect": [
+          "Uranus",
+          "Poseidon",
+          "Pluton"
+        ]
+      }
+    },
+    {
+      "key": "in the re zero manga series which of the following sin archbishops eats rem s existence",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In the \"Re:Zero\" manga series, which of the following Sin Archbishops eats Rem's existence?",
+        "correct": "Ley Batenkaitos",
+        "incorrect": [
+          "Roy Alphard",
+          "Petelgeuse Romanee-Conti",
+          "Louis Arneb"
+        ]
+      }
+    },
+    {
+      "key": "which band name isn t a stand in jojo s bizarre adventure",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which band name isn't a Stand in \"JoJo's Bizarre Adventure\"?",
+        "correct": "AC/DC",
+        "incorrect": [
+          "Green Day",
+          "Survivor",
+          "Red Hot Chili Peppers"
+        ]
+      }
+    },
+    {
+      "key": "what year did bishoujo senshi sailor moon air in japan",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What year did \"Bishoujo Senshi Sailor Moon\" air in Japan?",
+        "correct": "1992",
+        "incorrect": [
+          "1989",
+          "1990",
+          "1994"
+        ]
+      }
+    },
+    {
+      "key": "in to love ru who is the first to hear of yami s past from her",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"To Love-Ru\", who is the first to hear of Yami's past from her?",
+        "correct": "Rito",
+        "incorrect": [
+          "Mikan",
+          "Lala",
+          "Haruna"
+        ]
+      }
+    },
+    {
+      "key": "how does the character dragowizard qinus axia s from the anime buddyfight differ between the japanese and english dubs",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "How does the character Dragowizard, Qinus Axia's from the anime \"Buddyfight\" differ between the Japanese and English dubs?",
+        "correct": "Different Gender",
+        "incorrect": [
+          "Different Body Proportions",
+          "Different Backstory",
+          "Different Appearance"
+        ]
+      }
+    },
+    {
+      "key": "what was the reason for the banning of episode 35 of the pok mon original series anime",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What was the reason for the banning of episode 35 of the \"Pokémon Original Series\" Anime?",
+        "correct": "Gun Usage",
+        "incorrect": [
+          "Flashing Images",
+          "Jynx",
+          "Strong Violence"
+        ]
+      }
+    },
+    {
+      "key": "krusty is the guild master of which guild in log horizon",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Krusty is the guild master of which guild in \"Log Horizon\"?",
+        "correct": "D. D. D",
+        "incorrect": [
+          "Silver Sword",
+          "West Wind Brigade",
+          "Oceanic Systems (Marine Agency)"
+        ]
+      }
+    },
+    {
+      "key": "which one of these manga titles was not created by urasawa naoki",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which one of these Manga titles was not created by Urasawa Naoki?",
+        "correct": "My Father's Journal",
+        "incorrect": [
+          "Billy Bat",
+          "20th Century Boys",
+          "Monster"
+        ]
+      }
+    },
+    {
+      "key": "who wrote and directed the animated movie spirited away 2001",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Who wrote and directed the animated movie \"Spirited Away\" (2001)?",
+        "correct": "Hayao Miyazaki",
+        "incorrect": [
+          "Isao Takahata",
+          "Mamoru Hosoda",
+          "Hidetaka Miyazaki"
+        ]
+      }
+    },
+    {
+      "key": "which of the following films was not directed by hayao miyazaki",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the following films was NOT directed by Hayao Miyazaki?",
+        "correct": "Wolf Children",
+        "incorrect": [
+          "Princess Mononoke",
+          "Spirited Away",
+          "Kiki's Delivery Service"
+        ]
+      }
+    },
+    {
+      "key": "what studio animated fullmetal alchemist",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What studio animated Fullmetal Alchemist?",
+        "correct": "Bones",
+        "incorrect": [
+          "Trigger",
+          "Pierrot",
+          "xebec"
+        ]
+      }
+    },
+    {
+      "key": "who is the main character in one piece",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Who is the main character in One Piece?",
+        "correct": "Luffy",
+        "incorrect": [
+          "Shanks",
+          "Zoro",
+          "Smoker"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of the main character of the anime one punch man",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of the main character of the anime \"One-Punch Man\"?",
+        "correct": "Saitama",
+        "incorrect": [
+          "Genos",
+          "Sonic",
+          "King"
+        ]
+      }
+    },
+    {
+      "key": "in the 2011 tv anime series the idolm ster what was the name of iori s stuffed toy bunny",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In the 2011 TV anime series, \"THE iDOLM@STER\", what was the name of Iori's stuffed toy bunny?",
+        "correct": "Charles",
+        "incorrect": [
+          "Bubsy",
+          "Kero",
+          "Usagi"
+        ]
+      }
+    },
+    {
+      "key": "in puella magi madoka magica what is the first name of madoka s younger brother",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Puella Magi Madoka Magica\", what is the first name of Madoka's younger brother?",
+        "correct": "Tatsuya",
+        "incorrect": [
+          "Montoya",
+          "Tomohisa",
+          "Minato"
+        ]
+      }
+    },
+    {
+      "key": "in the anime mr osomatsu how many brothers does osomatsu san have",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In the anime \"Mr. Osomatsu\", how many brothers does Osomatsu-san have?",
+        "correct": "5",
+        "incorrect": [
+          "6",
+          "7",
+          "4"
+        ]
+      }
+    },
+    {
+      "key": "the main protagonist of the fifth part of jojo s bizarre adventure is which of the following",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "The main protagonist of the fifth part of JoJo's Bizarre Adventure is which of the following?",
+        "correct": "Giorno Giovanna",
+        "incorrect": [
+          "Guido Mista",
+          "Jonathan Joestar",
+          "Joey JoJo"
+        ]
+      }
+    },
+    {
+      "key": "which of the following anime of the mecha genre began airing in 1982",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the following anime of the mecha genre began airing in 1982?",
+        "correct": "The Super Dimension Fortress Macross",
+        "incorrect": [
+          "Mobile Suit Gundam",
+          "Armored Trooper VOTOMS",
+          "Neon Genesis Evangelion"
+        ]
+      }
+    },
+    {
+      "key": "what is the name of ry ko matoi s theme song in the anime kill la kill",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What is the name of Ryūko Matoi's theme song in the anime Kill la Kill?",
+        "correct": "Before My Body Is Dry",
+        "incorrect": [
+          "Don't Lose Your Way",
+          "Till I Die",
+          "Suck Your Blood"
+        ]
+      }
+    },
+    {
+      "key": "in a certain magical index what is accelerator able to control",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"A Certain Magical Index,\" what is Accelerator able to control?",
+        "correct": "Vectors",
+        "incorrect": [
+          "Velocity",
+          "Quantums",
+          "Wormholes"
+        ]
+      }
+    },
+    {
+      "key": "in the toaru majutsu no index anime touma kamijou is a level 0 esper that has the ability to do what",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In the \"Toaru Majutsu no Index\" anime, Touma Kamijou is a level 0 esper that has the ability to do what?",
+        "correct": "Dispell any esper or magical powers",
+        "incorrect": [
+          "Teleport",
+          "Make telepathic communications",
+          "Create electricity from his own body"
+        ]
+      }
+    },
+    {
+      "key": "who is the creator of the manga series one piece",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Who is the creator of the manga series \"One Piece\"?",
+        "correct": "Eiichiro Oda",
+        "incorrect": [
+          "Yoshihiro Togashi",
+          "Hayao Miyazaki",
+          "Masashi Kishimoto"
+        ]
+      }
+    },
+    {
+      "key": "in dragon ball z who was the first character to go super saiyan 2",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In Dragon Ball Z, who was the first character to go Super Saiyan 2?",
+        "correct": "Gohan",
+        "incorrect": [
+          "Goku",
+          "Vegeta",
+          "Trunks"
+        ]
+      }
+    },
+    {
+      "key": "in jojo s bizarre adventure which character is able to accelerate time",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In JoJo's Bizarre Adventure, which character is able to accelerate time?",
+        "correct": "Enrico Pucci",
+        "incorrect": [
+          "Jotaro Kujo",
+          "Jolyne Cujoh",
+          "Kujo Jotaro"
+        ]
+      }
+    },
+    {
+      "key": "what year did the popular vocaloid hatsune miku come out",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What year did the popular Vocaloid: Hatsune Miku come out?",
+        "correct": "2007",
+        "incorrect": [
+          "2000",
+          "2008",
+          "2010"
+        ]
+      }
+    },
+    {
+      "key": "which of the stands from jojo s bizarre adventure mimics the likeness of a tomato",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which of the stands from \"JoJo's Bizarre Adventure\" mimics the likeness of a tomato?",
+        "correct": "Pearl Jam",
+        "incorrect": [
+          "Red Hot Chili Pepper",
+          "Cream Starter",
+          "Nut King Call"
+        ]
+      }
+    },
+    {
+      "key": "in highschool dxd what is the name of the item some humans are born with",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Highschool DxD\", what is the name of the item some humans are born with?",
+        "correct": "Sacred Gear",
+        "incorrect": [
+          "Imperial Arm",
+          "Hallowed Relic",
+          "Blessed Artifact"
+        ]
+      }
+    },
+    {
+      "key": "which studio animated soul eater",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which studio animated Soul Eater?",
+        "correct": "Bones",
+        "incorrect": [
+          "Kyoto Animation",
+          "xebec",
+          "Production I.G"
+        ]
+      }
+    },
+    {
+      "key": "which japanese music group was formed to produce theme music for the anime guilty crown",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which Japanese music group was formed to produce theme music for the anime \"Guilty Crown\"?",
+        "correct": "Egoist",
+        "incorrect": [
+          "Goose house",
+          "Babymetal",
+          "Garnidelia"
+        ]
+      }
+    },
+    {
+      "key": "which anime did seiji kishi not direct",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "Which anime did Seiji Kishi NOT direct?",
+        "correct": "Another",
+        "incorrect": [
+          "Humanity Has Declined",
+          "Assassination Classroom",
+          "Danganronpa: The Animation"
+        ]
+      }
+    },
+    {
+      "key": "the character plum from no game no life is of what race",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "The character Plum from \"No Game No Life\" is of what race?",
+        "correct": "Dhampir",
+        "incorrect": [
+          "Flügel",
+          "Imanity",
+          "Seiren"
+        ]
+      }
+    },
+    {
+      "key": "in pok mon chronicles why was misty afraid of gyarados",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In Pokémon Chronicles, why was Misty afraid of Gyarados?",
+        "correct": "She crawled into it's mouth as a baby.",
+        "incorrect": [
+          "She found it scary.",
+          "She was badly injured from it.",
+          "It is part Bug."
+        ]
+      }
+    },
+    {
+      "key": "in toriko which of the following foods is knowingly compatible with toriko",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "In \"Toriko\", which of the following foods is knowingly compatible with Toriko?",
+        "correct": "Poison Potato",
+        "incorrect": [
+          "Mors Oil",
+          "Alpacookie",
+          "Parmesansho Fruit"
+        ]
+      }
+    },
+    {
+      "key": "what sport is being played in the anime eyeshield 21",
+      "opentdbCategory": 31,
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "en": {
+        "question": "What sport is being played in the Anime Eyeshield 21?",
+        "correct": "American Football",
+        "incorrect": [
+          "Baseball",
+          "Football",
+          "Basketball"
         ]
       }
     }
