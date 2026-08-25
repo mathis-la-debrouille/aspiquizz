@@ -23,6 +23,7 @@ import {
   RadioCard,
   ScoreTicker,
   Select,
+  SegmentedControl,
   Skeleton,
   SparkleFreeStar,
   StreakMeter,
@@ -142,6 +143,35 @@ export default function UiGalleryPage() {
               <option value="histoire">Histoire</option>
               <option value="culture">Culture générale</option>
             </Select>
+            <SegmentedControl
+              label="Notation"
+              value="speed"
+              onChange={() => {}}
+              options={[
+                { value: "speed", label: "Rapidité", hint: "Répondre vite rapporte plus." },
+                { value: "flat", label: "Fixe", hint: "Le temps n'a aucun effet." },
+              ]}
+            />
+            <SegmentedControl
+              label="Trois options"
+              value="b"
+              onChange={() => {}}
+              options={[
+                { value: "a", label: "Facile" },
+                { value: "b", label: "Moyen" },
+                { value: "c", label: "Difficile" },
+              ]}
+            />
+            <SegmentedControl
+              label="Désactivé"
+              value="a"
+              disabled
+              onChange={() => {}}
+              options={[
+                { value: "a", label: "Actif" },
+                { value: "b", label: "Inactif" },
+              ]}
+            />
           </div>
           <div className="flex flex-col gap-3">
             <Checkbox label="Autoriser les retardataires" description="Rejoindre en spectateur" />

@@ -4,6 +4,7 @@ export * from "@/components/ui/Panel";
 export * from "@/components/ui/Input";
 export * from "@/components/ui/Textarea";
 export * from "@/components/ui/Select";
+export * from "@/components/ui/SegmentedControl";
 export * from "@/components/ui/Checkbox";
 export * from "@/components/ui/RadioCard";
 export * from "@/components/ui/Toggle";

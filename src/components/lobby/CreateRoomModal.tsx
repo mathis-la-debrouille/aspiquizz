@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioCard } from "@/components/ui/RadioCard";
@@ -172,23 +173,36 @@ export function CreateRoomModal({
 
         <RhythmSection value={rhythm} onChange={setRhythm} />
 
-        <div className="grid grid-cols-2 gap-3">
-          <Select
+        {/* Two binary choices, so both are laid out rather than hidden behind a
+         *  dropdown each — and the selected option explains itself underneath,
+         *  which "Rapidité" on its own never did. */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <SegmentedControl
             label="Visibilité"
             value={visibility}
-            onChange={(e) => setVisibility(e.target.value as "public" | "private")}
-          >
-            <option value="public">Public</option>
-            <option value="private">Privé</option>
-          </Select>
-          <Select
+            onChange={setVisibility}
+            options={[
+              { value: "public", label: "Public", hint: "Visible dans la liste des salons." },
+              { value: "private", label: "Privé", hint: "Accessible uniquement avec le code." },
+            ]}
+          />
+          <SegmentedControl
             label="Notation"
             value={scoringMode}
-            onChange={(e) => setScoringMode(e.target.value as "speed" | "flat")}
-          >
-            <option value="speed">Rapidité</option>
-            <option value="flat">Fixe</option>
-          </Select>
+            onChange={setScoringMode}
+            options={[
+              {
+                value: "speed",
+                label: "Rapidité",
+                hint: "Répondre vite rapporte plus de points.",
+              },
+              {
+                value: "flat",
+                label: "Fixe",
+                hint: "Le temps n'a aucun effet sur les points.",
+              },
+            ]}
+          />
         </div>
 
         {error && <p className="text-14 text-clay-soft">{error}</p>}
