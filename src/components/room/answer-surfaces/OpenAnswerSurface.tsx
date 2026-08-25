@@ -88,12 +88,6 @@ export function OpenAnswerSurface({
           Valider
         </Button>
       </div>
-      {!locked && (
-        <p className="text-12 text-ink-faint">
-          Pas besoin de valider — ce qui est écrit à la fin du temps compte. Valider fait
-          simplement avancer le tour plus vite.
-        </p>
-      )}
     </div>
   );
 }
