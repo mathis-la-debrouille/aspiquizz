@@ -11,6 +11,8 @@ import {
   roomStartSchema,
   hostSkipSchema,
   hostNextSchema,
+  correctionSetSchema,
+  correctionNextSchema,
   playerReadySchema,
   answerSubmitSchema,
   chatSendSchema,
@@ -31,6 +33,8 @@ import {
   toLobbySummary,
   toRoomStateView,
   cancelLoop,
+  setCorrectionAward,
+  advanceCorrection,
   type RoomState,
 } from "@/server/game/engine";
 import type {
@@ -305,8 +309,11 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!parsed.success) return;
     const room = getRoom(parsed.data.code);
     if (!room || room.currentIndex !== parsed.data.position) return;
-    const accepted = recordAnswer(room, user.id, parsed.data.payload);
-    if (accepted) {
+    const accepted = recordAnswer(room, user.id, parsed.data.payload, parsed.data.final);
+    // Only a commit is announced. Broadcasting on every keystroke would light up the
+    // "n/m ont répondu" counter the moment someone starts typing, which tells the
+    // room nothing and leaks who is still thinking.
+    if (accepted && parsed.data.final) {
       io.to(roomChannel(room.code)).emit("question:answered", { userId: user.id });
     }
   });
@@ -318,6 +325,39 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!room || room.hostId !== user.id) return;
     if (room.phase !== "question" || !room.deadlineMs) return;
     room.deadlineMs = Date.now(); // the loop's poll picks this up within one tick
+  });
+
+  socket.on("correction:set", (payload) => {
+    const parsed = correctionSetSchema.safeParse(payload);
+    if (!parsed.success) return;
+    const room = getRoom(parsed.data.code);
+    if (!room) return;
+    // Host-only, checked here rather than in the UI: this is the trust boundary, and
+    // a player who could flip their own verdict could award themselves the game.
+    if (room.hostId !== user.id)
+      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    const { position, userId, awarded } = parsed.data;
+    // Broadcast the CLAMPED value, not what the client sent — the ceiling is the
+    // question's own tier, so this is what actually got stored.
+    const stored = setCorrectionAward(room, position, userId, awarded);
+    if (stored === null) return;
+    // Broadcast, not acked: the whole room watches the correction, so everyone sees
+    // the ruling land, not just the host who clicked it.
+    io.to(roomChannel(room.code)).emit("correction:verdict", {
+      position,
+      userId,
+      awarded: stored,
+    });
+  });
+
+  socket.on("correction:next", (payload) => {
+    const parsed = correctionNextSchema.safeParse(payload);
+    if (!parsed.success) return;
+    const room = getRoom(parsed.data.code);
+    if (!room) return;
+    if (room.hostId !== user.id)
+      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    advanceCorrection(room);
   });
 
   socket.on("host:next", (payload) => {

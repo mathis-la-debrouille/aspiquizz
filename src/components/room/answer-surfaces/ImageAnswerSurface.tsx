@@ -8,11 +8,15 @@ import type { SanitisedQuestion } from "@/server/game/sanitize";
 export function ImageAnswerSurface({
   question,
   disabled,
+  committed,
   onSubmit,
+  onDraft,
 }: {
   question: SanitisedQuestion;
   disabled: boolean;
+  committed: boolean;
   onSubmit: (payload: AnswerPayload) => void;
+  onDraft: (payload: AnswerPayload) => void;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -34,7 +38,12 @@ export function ImageAnswerSurface({
           onSubmit={onSubmit}
         />
       ) : (
-        <OpenAnswerSurface disabled={disabled} onSubmit={onSubmit} />
+        <OpenAnswerSurface
+          disabled={disabled}
+          committed={committed}
+          onSubmit={onSubmit}
+          onDraft={onDraft}
+        />
       )}
     </div>
   );

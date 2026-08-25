@@ -19,11 +19,15 @@ import type { AnswerPayload } from "@/components/room/QuestionScreen";
 export function FlagAnswerSurface({
   iso3,
   disabled,
+  committed,
   onSubmit,
+  onDraft,
 }: {
   iso3: string | undefined;
   disabled: boolean;
+  committed: boolean;
   onSubmit: (payload: AnswerPayload) => void;
+  onDraft: (payload: AnswerPayload) => void;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -44,7 +48,12 @@ export function FlagAnswerSurface({
           <p className="text-14 text-ink-faint">Drapeau indisponible.</p>
         )}
       </div>
-      <OpenAnswerSurface disabled={disabled} onSubmit={onSubmit} />
+      <OpenAnswerSurface
+        disabled={disabled}
+        committed={committed}
+        onSubmit={onSubmit}
+        onDraft={onDraft}
+      />
     </div>
   );
 }

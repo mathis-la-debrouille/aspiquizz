@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   computePoints,
   pointsForDifficulty,
+  maxPointsFor,
   levelFromXp,
   levelProgress,
   xpFromPoints,
@@ -163,5 +164,34 @@ describe("pointsForDifficulty", () => {
     expect(pointsForDifficulty(0)).toBe(pointsForDifficulty(1));
     expect(pointsForDifficulty(9)).toBe(pointsForDifficulty(5));
     expect(pointsForDifficulty(-3)).toBe(pointsForDifficulty(1));
+  });
+});
+
+describe("maxPointsFor", () => {
+  it("makes a question worth its difficulty tier at full marks", () => {
+    expect(maxPointsFor(1)).toBe(1);
+    expect(maxPointsFor(3)).toBe(3);
+    expect(maxPointsFor(5)).toBe(5);
+  });
+
+  it("clamps out-of-range tiers rather than returning 0 or something huge", () => {
+    expect(maxPointsFor(0)).toBe(1);
+    expect(maxPointsFor(9)).toBe(5);
+    expect(maxPointsFor(-2)).toBe(1);
+  });
+
+  it("keeps partial marks proportional to the tier's base points", () => {
+    // What the engine does when the host awards a fraction: 2 of 5 on a tier-5
+    // question is two fifths of that tier's base, not two fifths of the ceiling
+    // of some other tier.
+    const base = (tier: number, awarded: number) =>
+      Math.round(pointsForDifficulty(tier) * (awarded / maxPointsFor(tier)));
+    expect(base(5, 5)).toBe(pointsForDifficulty(5));
+    expect(base(5, 0)).toBe(0);
+    expect(base(5, 2)).toBe(400);
+    expect(base(3, 1)).toBe(200);
+    // A full mark on a low tier is still worth less than a partial on a high one
+    // only when the fraction says so — tier 1 full (200) equals tier 5 at 1 of 5.
+    expect(base(1, 1)).toBe(base(5, 1));
   });
 });

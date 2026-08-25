@@ -59,6 +59,17 @@ export const roomStartSchema = z.object({ code: roomCodeSchema });
 export const hostSkipSchema = z.object({ code: roomCodeSchema });
 export const hostNextSchema = z.object({ code: roomCodeSchema });
 
+/** Correction phase — the host ruling on one player's answer. */
+export const correctionSetSchema = z.object({
+  code: roomCodeSchema,
+  position: z.number().int().min(0),
+  userId: z.string().min(1),
+  /** Upper bound is the question's difficulty tier; clamped server-side against the
+   *  real question, since a client could otherwise claim any number here. */
+  awarded: z.number().int().min(0).max(5),
+});
+export const correctionNextSchema = z.object({ code: roomCodeSchema });
+
 export const playerReadySchema = z.object({ code: roomCodeSchema, ready: z.boolean() });
 
 const answerPayloadSchema = z.object({
@@ -71,6 +82,10 @@ export const answerSubmitSchema = z.object({
   code: roomCodeSchema,
   position: z.number().int().min(0),
   payload: answerPayloadSchema,
+  /** False for a keystroke-by-keystroke draft, true when the player commits.
+   *  Defaults to true so an older client, or any caller that omits it, keeps the
+   *  previous commit-on-submit behaviour rather than silently sending drafts. */
+  final: z.boolean().optional().default(true),
 });
 
 export const chatSendSchema = z.object({

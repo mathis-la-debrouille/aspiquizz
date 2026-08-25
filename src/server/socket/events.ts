@@ -34,7 +34,16 @@ export interface RoomPlayerView {
 }
 
 export type RoomPhase =
-  "lobby" | "countdown" | "question" | "locked" | "reveal" | "scoreboard" | "finished";
+  | "lobby"
+  | "countdown"
+  | "question"
+  | "locked"
+  /** Post-run correction: the host rules on every answer, question by question,
+   *  with the whole room watching. Nothing is scored before this. */
+  | "correction"
+  | "reveal"
+  | "scoreboard"
+  | "finished";
 
 export interface RoomStateView {
   code: string;
@@ -122,6 +131,38 @@ export interface RoomFinishedPayload {
   answerLog: AnswerLogEntry[];
 }
 
+/** One player's raw answer to one question, as typed, for the correction phase. */
+export interface CorrectionAnswer {
+  userId: string;
+  displayName: string;
+  /** Exactly what the player submitted — never normalised, so the room can judge it. */
+  text: string;
+  /** iso3 for click-to-answer geo modes, where there is no text to show. */
+  iso3?: string;
+  /** What the grader concluded, used to pre-fill the host's ruling. A suggestion,
+   *  never the verdict: 40 questions times six players is too many decisions to
+   *  make from scratch, and the machine is right most of the time. Full marks when
+   *  the grader accepts the answer, zero when it doesn't. */
+  suggested: number;
+  /** Points the host has awarded, 0..maxPoints. Starts equal to `suggested`. */
+  awarded: number;
+  msTaken: number;
+}
+
+export interface CorrectionShowPayload {
+  position: number;
+  total: number;
+  prompt: string;
+  /** The accepted answer(s), joined — what the room is judging against. */
+  correct: string;
+  explanation: string | null;
+  difficulty: number;
+  /** What this question is worth at full marks — its difficulty tier, 1 to 5.
+   *  Shown to the room and the upper bound of the host's slider. */
+  maxPoints: number;
+  answers: CorrectionAnswer[];
+}
+
 export interface ChatMessagePayload {
   userId: string;
   displayName: string;
@@ -153,6 +194,9 @@ export interface ServerToClientEvents {
   "question:answered": (payload: { userId: string }) => void;
   "question:lock": (payload: { position: number }) => void;
   "question:reveal": (payload: QuestionRevealPayload) => void;
+  "correction:show": (payload: CorrectionShowPayload) => void;
+  /** Broadcast so every player sees the host's ruling land live, not just the host. */
+  "correction:verdict": (payload: { position: number; userId: string; awarded: number }) => void;
   "scoreboard:update": (entries: ScoreboardEntry[]) => void;
   "room:finished": (payload: RoomFinishedPayload) => void;
   "chat:message": (payload: ChatMessagePayload) => void;
@@ -185,9 +229,21 @@ export interface ClientToServerEvents {
     code: string;
     position: number;
     payload: { text?: string; choiceIds?: string[]; iso3?: string };
+    /** Omit or set true to commit; false sends a draft that keeps updating. */
+    final?: boolean;
   }) => void;
   "host:skip": (payload: { code: string }) => void;
   "host:next": (payload: { code: string }) => void;
+  /** Host awards points to one player during the correction phase — 0..maxPoints,
+   *  so a half-right answer can score 1 of 3 rather than all or nothing. */
+  "correction:set": (payload: {
+    code: string;
+    position: number;
+    userId: string;
+    awarded: number;
+  }) => void;
+  /** Host commits the current question's verdicts and moves to the next one. */
+  "correction:next": (payload: { code: string }) => void;
   "chat:send": (payload: { code: string; text: string }) => void;
   "reaction:send": (payload: { code: string; emoji: string }) => void;
   "time:sync": (

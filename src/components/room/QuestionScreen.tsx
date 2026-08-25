@@ -47,6 +47,13 @@ export function QuestionScreen({
     setSubmitted(false);
   }, [active.position]);
 
+  /** A draft: keeps the server's copy current without committing. Not gated on
+   *  `submitted`, only on the question being locked. */
+  function draft(payload: AnswerPayload) {
+    if (submitted || locked) return;
+    socket.emit("answer:submit", { code, position: active.position, payload, final: false });
+  }
+
   function submit(payload: AnswerPayload) {
     if (submitted || locked) return;
     setSubmitted(true);
@@ -80,7 +87,12 @@ export function QuestionScreen({
         {q.hint && <p className="text-12 text-ink-faint">Indice : {q.hint}</p>}
 
         {q.type === "open" && (
-          <OpenAnswerSurface disabled={submitted || locked} onSubmit={submit} />
+          <OpenAnswerSurface
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
         )}
         {q.type === "mcq" && (
           <McqAnswerSurface
@@ -91,10 +103,22 @@ export function QuestionScreen({
           />
         )}
         {q.type === "image" && (
-          <ImageAnswerSurface question={q} disabled={submitted || locked} onSubmit={submit} />
+          <ImageAnswerSurface
+            question={q}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
         )}
         {q.type === "geo" && (
-          <GeoAnswerSurface question={q} disabled={submitted || locked} onSubmit={submit} />
+          <GeoAnswerSurface
+            question={q}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
         )}
 
         {submitted && !locked && (

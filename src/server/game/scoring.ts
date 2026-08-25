@@ -42,6 +42,17 @@ export function pointsForDifficulty(difficulty: number): number {
   return tier * POINTS_PER_DIFFICULTY;
 }
 
+/**
+ * What a question is worth at full marks: its difficulty tier, so tier 3 is worth
+ * 3 points. This is the scale the correction phase shows the room and the upper
+ * bound of the host's slider — deliberately the small, legible 1-5 number rather
+ * than the internal base points, which the speed and streak multipliers push into
+ * the hundreds.
+ */
+export function maxPointsFor(difficulty: number): number {
+  return Math.max(1, Math.min(5, Math.round(difficulty)));
+}
+
 const STREAK_CAP = 5;
 const STREAK_BONUS_PER_STEP = 0.1;
 

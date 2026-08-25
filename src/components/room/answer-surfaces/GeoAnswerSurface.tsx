@@ -20,11 +20,15 @@ const CLICK_MODES = new Set(["locate_country", "capital_of"]);
 export function GeoAnswerSurface({
   question,
   disabled,
+  committed,
   onSubmit,
+  onDraft,
 }: {
   question: SanitisedQuestion;
   disabled: boolean;
+  committed: boolean;
   onSubmit: (payload: AnswerPayload) => void;
+  onDraft: (payload: AnswerPayload) => void;
 }) {
   const mode = question.geoMode!;
   const isClickMode = CLICK_MODES.has(mode);
@@ -34,7 +38,13 @@ export function GeoAnswerSurface({
   // outline next to its flag and answer the question for the player.
   if (mode === "name_from_flag") {
     return (
-      <FlagAnswerSurface iso3={question.revealIso3} disabled={disabled} onSubmit={onSubmit} />
+      <FlagAnswerSurface
+        iso3={question.revealIso3}
+        disabled={disabled}
+        committed={committed}
+        onSubmit={onSubmit}
+        onDraft={onDraft}
+      />
     );
   }
 
@@ -54,7 +64,14 @@ export function GeoAnswerSurface({
           onSelect={isClickMode ? (iso3) => onSubmit({ iso3 }) : undefined}
         />
       </div>
-      {!isClickMode && <OpenAnswerSurface disabled={disabled} onSubmit={onSubmit} />}
+      {!isClickMode && (
+        <OpenAnswerSurface
+          disabled={disabled}
+          committed={committed}
+          onSubmit={onSubmit}
+          onDraft={onDraft}
+        />
+      )}
     </div>
   );
 }

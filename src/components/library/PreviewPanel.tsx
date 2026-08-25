@@ -209,7 +209,9 @@ function PreviewContent({
 
         {/* Real, disabled answer surfaces — the same components a player sees mid-game, so this
             view can never visually drift from reality (Addendum A.6). */}
-        {detail.type === "open" && <OpenAnswerSurface disabled onSubmit={noop} />}
+        {detail.type === "open" && (
+          <OpenAnswerSurface disabled committed={false} onSubmit={noop} onDraft={noop} />
+        )}
         {detail.type === "mcq" && (
           <McqAnswerSurface
             choices={sanitised.choices ?? []}
@@ -218,8 +220,24 @@ function PreviewContent({
             onSubmit={noop}
           />
         )}
-        {detail.type === "image" && <ImageAnswerSurface question={sanitised} disabled onSubmit={noop} />}
-        {detail.type === "geo" && <GeoAnswerSurface question={sanitised} disabled onSubmit={noop} />}
+        {detail.type === "image" && (
+          <ImageAnswerSurface
+            question={sanitised}
+            disabled
+            committed={false}
+            onSubmit={noop}
+            onDraft={noop}
+          />
+        )}
+        {detail.type === "geo" && (
+          <GeoAnswerSurface
+            question={sanitised}
+            disabled
+            committed={false}
+            onSubmit={noop}
+            onDraft={noop}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-2 border-t border-border-soft pt-4">
