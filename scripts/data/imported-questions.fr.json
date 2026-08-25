@@ -1,0 +1,672 @@
+{
+  "_comment": "Questions traduites et relues depuis Open Trivia DB (https://opentdb.com). Chaque entrée a été vérifiée factuellement et adaptée : ce n'est pas une traduction automatique. Les questions écartées le sont pour une raison — anglocentrées, unités impériales, jeux de mots intraduisibles, ou factuellement fausses à la source.",
+  "_source": "https://opentdb.com — traduction et relecture humaine",
+  "_batch": 1,
+  "questions": [
+    {
+      "categorie": "Culture générale",
+      "difficulte": 1,
+      "enonce": "Qu'expose le musée Madame Tussauds à Londres ?",
+      "choix": [
+        { "texte": "Des sculptures de cire", "correct": true },
+        { "texte": "Des voitures de collection", "correct": false },
+        { "texte": "Des vêtements de créateurs", "correct": false },
+        { "texte": "Des bobines de films inédits", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 1,
+      "enonce": "Comment appelle-t-on l'avant d'un bateau ?",
+      "choix": [
+        { "texte": "La proue", "correct": true },
+        { "texte": "La poupe", "correct": false },
+        { "texte": "Bâbord", "correct": false },
+        { "texte": "Tribord", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 1,
+      "enonce": "Virgin Atlantic, Virgin Trains et Virgin Racing appartiennent à quel entrepreneur ?",
+      "choix": [
+        { "texte": "Richard Branson", "correct": true },
+        { "texte": "Alan Sugar", "correct": false },
+        { "texte": "Bill Gates", "correct": false },
+        { "texte": "Elon Musk", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 1,
+      "enonce": "Quelle est la troisième pédale d'une voiture à boîte manuelle ?",
+      "choix": [
+        { "texte": "L'embrayage", "correct": true },
+        { "texte": "Le frein à main", "correct": false },
+        { "texte": "L'accélérateur secondaire", "correct": false },
+        { "texte": "Le sélecteur de vitesse", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 2,
+      "enonce": "Quelle est la monnaie du Laos ?",
+      "choix": [
+        { "texte": "Le kip", "correct": true },
+        { "texte": "Le dong", "correct": false },
+        { "texte": "Le baht", "correct": false },
+        { "texte": "Le riel", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 2,
+      "enonce": "Quel sophisme consiste à attaquer la personne plutôt que son argument ?",
+      "choix": [
+        { "texte": "L'argument ad hominem", "correct": true },
+        { "texte": "L'argument ad populum", "correct": false },
+        { "texte": "Le post hoc ergo propter hoc", "correct": false },
+        { "texte": "L'homme de paille", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 2,
+      "enonce": "Lequel de ces gratte-ciel culmine à 451,9 mètres ?",
+      "choix": [
+        { "texte": "Les tours Petronas, Malaisie", "correct": true },
+        { "texte": "La tour Zifeng, Chine", "correct": false },
+        { "texte": "La tour Al Hamra, Koweït", "correct": false },
+        { "texte": "La tour Willis, États-Unis", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 3,
+      "enonce": "Que signifie la locution latine « Veni, vidi, vici » ?",
+      "choix": [
+        { "texte": "Je suis venu, j'ai vu, j'ai vaincu", "correct": true },
+        { "texte": "Le passé, le présent, l'avenir", "correct": false },
+        { "texte": "Je pense, donc je suis", "correct": false },
+        { "texte": "La fortune sourit aux audacieux", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Culture générale",
+      "difficulte": 3,
+      "enonce": "Que vendait Nokia à sa création en 1865 ?",
+      "choix": [
+        { "texte": "Du papier", "correct": true },
+        { "texte": "Des pneus", "correct": false },
+        { "texte": "Des câbles télégraphiques", "correct": false },
+        { "texte": "Des bottes en caoutchouc", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 1,
+      "enonce": "Quelle est l'unité de température du Système international ?",
+      "choix": [
+        { "texte": "Le kelvin", "correct": true },
+        { "texte": "Le degré Celsius", "correct": false },
+        { "texte": "Le degré Fahrenheit", "correct": false },
+        { "texte": "Le degré Rankine", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 1,
+      "enonce": "Quel gaz noble a le numéro atomique le plus faible ?",
+      "choix": [
+        { "texte": "L'hélium", "correct": true },
+        { "texte": "Le néon", "correct": false },
+        { "texte": "L'argon", "correct": false },
+        { "texte": "Le krypton", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 1,
+      "enonce": "Combien de planètes compte le Système solaire ?",
+      "choix": [
+        { "texte": "Huit", "correct": true },
+        { "texte": "Neuf", "correct": false },
+        { "texte": "Sept", "correct": false },
+        { "texte": "Dix", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 1,
+      "enonce": "Quel élément chimique forme les diamants sous très forte pression ?",
+      "choix": [
+        { "texte": "Le carbone", "correct": true },
+        { "texte": "L'azote", "correct": false },
+        { "texte": "L'oxygène", "correct": false },
+        { "texte": "Le silicium", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "enonce": "Ganymède est la plus grande lune de quelle planète ?",
+      "choix": [
+        { "texte": "Jupiter", "correct": true },
+        { "texte": "Saturne", "correct": false },
+        { "texte": "Neptune", "correct": false },
+        { "texte": "Uranus", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "enonce": "Quel organite est surnommé « la centrale énergétique de la cellule » ?",
+      "choix": [
+        { "texte": "La mitochondrie", "correct": true },
+        { "texte": "Le noyau", "correct": false },
+        { "texte": "L'appareil de Golgi", "correct": false },
+        { "texte": "Le réticulum endoplasmique", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "enonce": "De quel continent la patate douce est-elle originaire ?",
+      "choix": [
+        { "texte": "L'Amérique du Sud", "correct": true },
+        { "texte": "L'Asie", "correct": false },
+        { "texte": "L'Afrique", "correct": false },
+        { "texte": "L'Océanie", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 2,
+      "enonce": "De quelle planète la sonde Viking 1 a-t-elle envoyé des images au sol dès 1976 ?",
+      "choix": [
+        { "texte": "Mars", "correct": true },
+        { "texte": "Vénus", "correct": false },
+        { "texte": "Jupiter", "correct": false },
+        { "texte": "Mercure", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 3,
+      "enonce": "Quel est le nom anatomique de la rotule ?",
+      "choix": [
+        { "texte": "La patella", "correct": true },
+        { "texte": "Le fémur", "correct": false },
+        { "texte": "La scapula", "correct": false },
+        { "texte": "Le tibia", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 3,
+      "enonce": "Combien d'entités contient une mole ?",
+      "choix": [
+        { "texte": "6,022 × 10^23", "correct": true },
+        { "texte": "6,022 × 10^22", "correct": false },
+        { "texte": "6,002 × 10^23", "correct": false },
+        { "texte": "3,14 × 10^23", "correct": false }
+      ],
+      "explication": "C'est le nombre d'Avogadro."
+    },
+    {
+      "categorie": "Sciences",
+      "difficulte": 3,
+      "enonce": "Quel est le nom scientifique du gorille des plaines de l'Ouest ?",
+      "choix": [
+        { "texte": "Gorilla gorilla gorilla", "correct": true },
+        { "texte": "Gorilla beringei beringei", "correct": false },
+        { "texte": "Gorilla gorilla diehli", "correct": false },
+        { "texte": "Gorilla beringei graueri", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Les Védas, recueil d'hymnes en sanskrit, sont les textes sacrés de quelle religion ?",
+      "choix": [
+        { "texte": "L'hindouisme", "correct": true },
+        { "texte": "Le bouddhisme", "correct": false },
+        { "texte": "Le judaïsme", "correct": false },
+        { "texte": "Le jaïnisme", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel général a franchi les Alpes avec des éléphants de guerre pendant la deuxième guerre punique ?",
+      "choix": [
+        { "texte": "Hannibal", "correct": true },
+        { "texte": "Alexandre le Grand", "correct": false },
+        { "texte": "Scipion l'Africain", "correct": false },
+        { "texte": "Jules César", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "En quelle année Nelson Mandela a-t-il été libéré de prison ?",
+      "choix": [
+        { "texte": "1990", "correct": true },
+        { "texte": "1994", "correct": false },
+        { "texte": "1985", "correct": false },
+        { "texte": "1992", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel pays a rejoint l'Union européenne en 2013 ?",
+      "choix": [
+        { "texte": "La Croatie", "correct": true },
+        { "texte": "La Bulgarie", "correct": false },
+        { "texte": "La Slovénie", "correct": false },
+        { "texte": "La Roumanie", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Qui fut le premier dirigeant d'Haïti après son indépendance ?",
+      "choix": [
+        { "texte": "Jean-Jacques Dessalines", "correct": true },
+        { "texte": "Toussaint Louverture", "correct": false },
+        { "texte": "Henri Christophe", "correct": false },
+        { "texte": "Alexandre Pétion", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Qui a dirigé la Yougoslavie communiste de 1945 à sa mort en 1980 ?",
+      "choix": [
+        { "texte": "Josip Broz Tito", "correct": true },
+        { "texte": "Slobodan Milošević", "correct": false },
+        { "texte": "Alexandre Ier", "correct": false },
+        { "texte": "Ante Pavelić", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Laquelle des six épouses d'Henri VIII est restée mariée avec lui le plus longtemps ?",
+      "choix": [
+        { "texte": "Catherine d'Aragon", "correct": true },
+        { "texte": "Anne Boleyn", "correct": false },
+        { "texte": "Jeanne Seymour", "correct": false },
+        { "texte": "Catherine Parr", "correct": false }
+      ],
+      "explication": "Environ 24 ans, de 1509 à 1533."
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle était la capitale du Sud-Vietnam avant la guerre du Vietnam ?",
+      "choix": [
+        { "texte": "Saïgon", "correct": true },
+        { "texte": "Hanoï", "correct": false },
+        { "texte": "Hué", "correct": false },
+        { "texte": "Da Nang", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "En quelle année Constantinople est-elle tombée aux mains des Ottomans ?",
+      "choix": [
+        { "texte": "1453", "correct": true },
+        { "texte": "1492", "correct": false },
+        { "texte": "1435", "correct": false },
+        { "texte": "1204", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "À quel philosophe grec attribue-t-on « Je sais que je ne sais rien » ?",
+      "choix": [
+        { "texte": "Socrate", "correct": true },
+        { "texte": "Platon", "correct": false },
+        { "texte": "Aristote", "correct": false },
+        { "texte": "Épicure", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel était le nom d'origine de la ville de New York ?",
+      "choix": [
+        { "texte": "La Nouvelle-Amsterdam", "correct": true },
+        { "texte": "La Nouvelle-Angoulême", "correct": false },
+        { "texte": "Fort Orange", "correct": false },
+        { "texte": "La Nouvelle-Albion", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Pendant la guerre d'Espagne, Franco combattait pour quel camp ?",
+      "choix": [
+        { "texte": "Les nationalistes", "correct": true },
+        { "texte": "Les républicains", "correct": false },
+        { "texte": "Le Front populaire", "correct": false },
+        { "texte": "Les anarchistes", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 1,
+      "enonce": "De quel pays viennent les footballeurs Cafu, Roberto Carlos et Pelé ?",
+      "choix": [
+        { "texte": "Le Brésil", "correct": true },
+        { "texte": "L'Argentine", "correct": false },
+        { "texte": "Le Portugal", "correct": false },
+        { "texte": "L'Uruguay", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 1,
+      "enonce": "Dans quel sport utilise-t-on un volant en plumes ?",
+      "choix": [
+        { "texte": "Le badminton", "correct": true },
+        { "texte": "Le tennis de table", "correct": false },
+        { "texte": "Le squash", "correct": false },
+        { "texte": "Le padel", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 1,
+      "enonce": "Combien de joueurs compte une équipe de football sur le terrain ?",
+      "choix": [
+        { "texte": "11", "correct": true },
+        { "texte": "10", "correct": false },
+        { "texte": "12", "correct": false },
+        { "texte": "9", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 2,
+      "enonce": "Quel club a remporté la Ligue des champions en 2017 ?",
+      "choix": [
+        { "texte": "Le Real Madrid", "correct": true },
+        { "texte": "La Juventus", "correct": false },
+        { "texte": "L'Atlético de Madrid", "correct": false },
+        { "texte": "L'AS Monaco", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 2,
+      "enonce": "Quel pilote de Formule 1 était surnommé « le Professeur » ?",
+      "choix": [
+        { "texte": "Alain Prost", "correct": true },
+        { "texte": "Ayrton Senna", "correct": false },
+        { "texte": "Niki Lauda", "correct": false },
+        { "texte": "Jackie Stewart", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 2,
+      "enonce": "Edson Arantes do Nascimento est le vrai nom de quel footballeur ?",
+      "choix": [
+        { "texte": "Pelé", "correct": true },
+        { "texte": "Zico", "correct": false },
+        { "texte": "Romário", "correct": false },
+        { "texte": "Garrincha", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 2,
+      "enonce": "Dans quelle ville se sont tenus les Jeux olympiques d'hiver de 2014 ?",
+      "choix": [
+        { "texte": "Sotchi", "correct": true },
+        { "texte": "Pyeongchang", "correct": false },
+        { "texte": "Vancouver", "correct": false },
+        { "texte": "Turin", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Sport",
+      "difficulte": 3,
+      "enonce": "Qui a gagné le Grand Prix de Saint-Marin 1994, la course où Ayrton Senna a perdu la vie ?",
+      "choix": [
+        { "texte": "Michael Schumacher", "correct": true },
+        { "texte": "Gerhard Berger", "correct": false },
+        { "texte": "Damon Hill", "correct": false },
+        { "texte": "Nicola Larini", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 1,
+      "enonce": "Quel album de Nirvana montre un bébé nu sur sa pochette ?",
+      "choix": [
+        { "texte": "Nevermind", "correct": true },
+        { "texte": "In Utero", "correct": false },
+        { "texte": "Bleach", "correct": false },
+        { "texte": "Incesticide", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 1,
+      "enonce": "Combien de cordes possède un violoncelle ?",
+      "choix": [
+        { "texte": "4", "correct": true },
+        { "texte": "5", "correct": false },
+        { "texte": "6", "correct": false },
+        { "texte": "3", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 1,
+      "enonce": "De quel pays vient la chanson « Gangnam Style » ?",
+      "choix": [
+        { "texte": "La Corée du Sud", "correct": true },
+        { "texte": "Le Japon", "correct": false },
+        { "texte": "La Chine", "correct": false },
+        { "texte": "Taïwan", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 2,
+      "enonce": "Quel artiste canadien a écrit la chanson « Hallelujah » ?",
+      "choix": [
+        { "texte": "Leonard Cohen", "correct": true },
+        { "texte": "Neil Young", "correct": false },
+        { "texte": "Jeff Buckley", "correct": false },
+        { "texte": "Bob Dylan", "correct": false }
+      ],
+      "explication": "La reprise de Jeff Buckley est la plus connue, mais la chanson est de Cohen (1984)."
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 2,
+      "enonce": "Quelle chanson Pink Floyd a-t-elle écrite pour son ancien chanteur Syd Barrett ?",
+      "choix": [
+        { "texte": "Shine On You Crazy Diamond", "correct": true },
+        { "texte": "Wish You Were Here", "correct": false },
+        { "texte": "Have a Cigar", "correct": false },
+        { "texte": "Comfortably Numb", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 2,
+      "enonce": "Dans quelle décennie eut lieu « The Day the Music Died », le crash aérien qui tua trois musiciens ?",
+      "choix": [
+        { "texte": "Les années 1950", "correct": true },
+        { "texte": "Les années 1960", "correct": false },
+        { "texte": "Les années 1940", "correct": false },
+        { "texte": "Les années 1970", "correct": false }
+      ],
+      "explication": "3 février 1959 : Buddy Holly, Ritchie Valens et The Big Bopper."
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 3,
+      "enonce": "Sur quel album des Beatles trouve-t-on « Eleanor Rigby » ?",
+      "choix": [
+        { "texte": "Revolver", "correct": true },
+        { "texte": "Rubber Soul", "correct": false },
+        { "texte": "Abbey Road", "correct": false },
+        { "texte": "Help!", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Musique",
+      "difficulte": 3,
+      "enonce": "Lequel de ces groupes n'a PAS joué au Live Aid de Wembley en 1985 ?",
+      "choix": [
+        { "texte": "The Rolling Stones", "correct": true },
+        { "texte": "Queen", "correct": false },
+        { "texte": "Elton John", "correct": false },
+        { "texte": "David Bowie", "correct": false }
+      ],
+      "explication": "Les Stones jouaient à Philadelphie, l'autre scène du Live Aid."
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "enonce": "Qui a réalisé « The Revenant » en 2015 ?",
+      "choix": [
+        { "texte": "Alejandro González Iñárritu", "correct": true },
+        { "texte": "Christopher Nolan", "correct": false },
+        { "texte": "David Fincher", "correct": false },
+        { "texte": "Denis Villeneuve", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "enonce": "De quel film vient la réplique « Houston, we have a problem » ?",
+      "choix": [
+        { "texte": "Apollo 13", "correct": true },
+        { "texte": "L'Étoffe des héros", "correct": false },
+        { "texte": "Gravity", "correct": false },
+        { "texte": "Interstellar", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 1,
+      "enonce": "Qui a réalisé les deux volets de « Kill Bill » ?",
+      "choix": [
+        { "texte": "Quentin Tarantino", "correct": true },
+        { "texte": "Robert Rodriguez", "correct": false },
+        { "texte": "Stanley Kubrick", "correct": false },
+        { "texte": "Guy Ritchie", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "enonce": "Qui interprète Thanos dans « Avengers: Infinity War » ?",
+      "choix": [
+        { "texte": "Josh Brolin", "correct": true },
+        { "texte": "Tom Hiddleston", "correct": false },
+        { "texte": "Mark Ruffalo", "correct": false },
+        { "texte": "Sean Gunn", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "enonce": "Dans l'univers Star Wars, quelle est la planète d'origine de Han Solo ?",
+      "choix": [
+        { "texte": "Corellia", "correct": true },
+        { "texte": "Tatooine", "correct": false },
+        { "texte": "Naboo", "correct": false },
+        { "texte": "Coruscant", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Cinéma & Séries",
+      "difficulte": 2,
+      "enonce": "Quelle suite a fait mieux au box-office que le film original ?",
+      "choix": [
+        { "texte": "Toy Story 2", "correct": true },
+        { "texte": "Speed 2", "correct": false },
+        { "texte": "Sin City : J'ai tué pour elle", "correct": false },
+        { "texte": "Le Fils du Mask", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Littérature",
+      "difficulte": 1,
+      "enonce": "Quel poste Harry Potter occupe-t-il au Quidditch ?",
+      "choix": [
+        { "texte": "Attrapeur", "correct": true },
+        { "texte": "Gardien", "correct": false },
+        { "texte": "Poursuiveur", "correct": false },
+        { "texte": "Batteur", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Littérature",
+      "difficulte": 2,
+      "enonce": "Sous quel nom de plume Eric Blair est-il connu ?",
+      "choix": [
+        { "texte": "George Orwell", "correct": true },
+        { "texte": "Aldous Huxley", "correct": false },
+        { "texte": "Ray Bradbury", "correct": false },
+        { "texte": "Anthony Burgess", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Littérature",
+      "difficulte": 2,
+      "enonce": "Qui est l'auteur de la série « Percy Jackson » ?",
+      "choix": [
+        { "texte": "Rick Riordan", "correct": true },
+        { "texte": "J. K. Rowling", "correct": false },
+        { "texte": "Roald Dahl", "correct": false },
+        { "texte": "Philip Pullman", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Littérature",
+      "difficulte": 2,
+      "enonce": "Dans « Le Seigneur des anneaux », qui est le père du nain Gimli ?",
+      "choix": [
+        { "texte": "Glóin", "correct": true },
+        { "texte": "Thorin Écu-de-chêne", "correct": false },
+        { "texte": "Balin", "correct": false },
+        { "texte": "Dwalin", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Littérature",
+      "difficulte": 2,
+      "enonce": "Dans « Le Guide du voyageur galactique », quelle est la réponse à la grande question sur la vie, l'univers et le reste ?",
+      "choix": [
+        { "texte": "42", "correct": true },
+        { "texte": "L'amour", "correct": false },
+        { "texte": "Le chocolat", "correct": false },
+        { "texte": "Rien", "correct": false }
+      ]
+    },
+    {
+      "categorie": "Mythologie",
+      "difficulte": 1,
+      "enonce": "Selon la légende, quel animal de bois les Grecs ont-ils construit pour entrer dans Troie ?",
+      "choix": [
+        { "texte": "Un cheval", "correct": true },
+        { "texte": "Un taureau", "correct": false },
+        { "texte": "Un éléphant", "correct": false },
+        { "texte": "Un loup", "correct": false }
+      ]
+    }
+  ]
+}
