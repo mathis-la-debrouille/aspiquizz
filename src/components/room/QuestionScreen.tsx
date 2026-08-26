@@ -55,6 +55,20 @@ export function QuestionScreen({
     setSubmitted(false);
   }, [active.position]);
 
+  /**
+   * Remounts the answer surface on every question. Resetting `submitted` was not
+   * enough: each surface holds its own state — the typed text, the selected country,
+   * the pending draft timer — and React keeps the same instance across questions
+   * because it sits in the same place in the tree. So the previous answer stayed in
+   * the field, and worse, a debounced draft from the last question could fire after
+   * the next one had started and be recorded as the answer to it (draft() reads
+   * active.position when it fires, not when it was scheduled).
+   *
+   * One key does all of it, including running each surface's unmount cleanup, which
+   * is what actually clears that timer.
+   */
+  const surfaceKey = `q-${active.position}`;
+
   /** A draft: keeps the server's copy current without committing. Not gated on
    *  `submitted`, only on the question being locked. */
   function draft(payload: AnswerPayload) {
@@ -96,6 +110,7 @@ export function QuestionScreen({
 
         {q.type === "open" && (
           <OpenAnswerSurface
+            key={surfaceKey}
             disabled={locked}
             committed={submitted}
             onSubmit={submit}
@@ -104,6 +119,7 @@ export function QuestionScreen({
         )}
         {q.type === "mcq" && (
           <McqAnswerSurface
+            key={surfaceKey}
             choices={q.choices ?? []}
             multiSelect={q.multiSelect ?? false}
             disabled={submitted || locked}
@@ -112,6 +128,7 @@ export function QuestionScreen({
         )}
         {q.type === "image" && (
           <ImageAnswerSurface
+            key={surfaceKey}
             question={q}
             disabled={locked}
             committed={submitted}
@@ -121,6 +138,7 @@ export function QuestionScreen({
         )}
         {q.type === "geo" && (
           <GeoAnswerSurface
+            key={surfaceKey}
             question={q}
             disabled={locked}
             committed={submitted}
@@ -130,6 +148,7 @@ export function QuestionScreen({
         )}
         {q.type === "sort" && (
           <SortAnswerSurface
+            key={surfaceKey}
             question={q}
             disabled={locked}
             committed={submitted}
