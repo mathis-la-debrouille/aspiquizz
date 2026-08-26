@@ -19,11 +19,35 @@ try {
 }
 
 /**
- * Falls back to a local libSQL file when DATABASE_URL is unset, so the app
- * runs with zero external services — see CLAUDE.md / brief §15.
+ * Falls back to a local libSQL file when DATABASE_URL is *unset*, so the app runs with zero
+ * external services — see CLAUDE.md / brief §15.
+ *
+ * Set-but-empty is a different thing entirely and now throws. The comment above records this
+ * bug happening once via a missing `.env`; it happened a second time through the gap that fix
+ * left open — `--env-file` pointed at a file whose `DATABASE_URL=` line held nothing but a
+ * trailing comment, so the variable was defined and blank, `|| "file:./local.db"` swallowed it,
+ * and roughly 500 questions were seeded into a local file over several minutes while every log
+ * line, and the agent writing them, said "production". An empty value is never someone asking
+ * for the local file — they asked for something and the something is missing. Say so.
  */
-const url = process.env["DATABASE_URL"]?.trim() || "file:./local.db";
+const rawUrl = process.env["DATABASE_URL"];
+if (rawUrl !== undefined && rawUrl.trim() === "") {
+  throw new Error(
+    "DATABASE_URL is set but empty. Either give it a real libsql:// URL, or unset it entirely " +
+      "to use the local file (file:./local.db). An empty value used to fall through to the " +
+      "local file silently, which is how data gets written somewhere nobody is looking.",
+  );
+}
+const url = rawUrl?.trim() || "file:./local.db";
 const authToken = process.env["DATABASE_AUTH_TOKEN"]?.trim() || undefined;
+
+// Which database this process is actually talking to, said out loud once. Scripts that write
+// data print plenty about *what* they wrote and nothing about *where* — and "where" is the part
+// that was wrong. Cheap enough to always emit; the remote URL carries no credentials (the token
+// is separate), so this is safe to have in a log.
+if (process.env["NODE_ENV"] !== "test") {
+  console.log(`[db] ${url.startsWith("file:") ? `local ${url}` : url}`);
+}
 
 export const client = createClient({ url, ...(authToken ? { authToken } : {}) });
 
