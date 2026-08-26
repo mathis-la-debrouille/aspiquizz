@@ -83,6 +83,9 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
         });
       }
     };
+    const onCountdown = () => {
+      setPhase("countdown");
+    };
     const onQuestionShow = (payload: QuestionShowPayload) => {
       setPhase("question");
       setActiveQuestion(payload);
@@ -193,6 +196,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     socket.on("room:player_left", onPlayerLeft);
     socket.on("room:player_kicked", onPlayerKicked);
     socket.on("room:host_changed", onHostChanged);
+    socket.on("room:countdown", onCountdown);
     socket.on("question:show", onQuestionShow);
     socket.on("question:answered", onAnswered);
     socket.on("question:lock", onQuestionLock);
@@ -213,6 +217,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
       socket.off("question:show", onQuestionShow);
       socket.off("question:answered", onAnswered);
       socket.off("question:lock", onQuestionLock);
+      socket.off("room:countdown", onCountdown);
       socket.off("question:reveal", onReveal);
       socket.off("correction:show", onCorrectionShow);
       socket.off("correction:verdict", onCorrectionVerdict);

@@ -69,7 +69,12 @@ export const correctionSetSchema = z.object({
    *  real question, since a client could otherwise claim any number here. */
   awarded: z.number().int().min(0).max(5),
 });
-export const correctionNextSchema = z.object({ code: roomCodeSchema });
+/** Carries the position the host is looking at: a stale click — the third of four
+ *  on a slow connection — must not advance a question the room hasn't seen yet. */
+export const correctionNextSchema = z.object({
+  code: roomCodeSchema,
+  position: z.number().int().min(0),
+});
 
 export const playerReadySchema = z.object({ code: roomCodeSchema, ready: z.boolean() });
 

@@ -193,6 +193,11 @@ export interface ServerToClientEvents {
   "room:player_left": (payload: { userId: string }) => void;
   "room:player_kicked": (payload: { userId: string }) => void;
   "room:host_changed": (payload: { hostId: string }) => void;
+  /** Emitted the instant the run starts, before the pre-question countdown. Without
+   *  it the phase change was server-only: clients stayed on the waiting room for the
+   *  whole countdown plus however long the first question took to load, with the
+   *  "Lancer la partie" button still sitting there as if nothing had happened. */
+  "room:countdown": (payload: { startsInMs: number; total: number }) => void;
   "question:show": (payload: QuestionShowPayload) => void;
   "question:answered": (payload: { userId: string }) => void;
   "question:lock": (payload: { position: number }) => void;
@@ -245,8 +250,10 @@ export interface ClientToServerEvents {
     userId: string;
     awarded: number;
   }) => void;
-  /** Host commits the current question's verdicts and moves to the next one. */
-  "correction:next": (payload: { code: string }) => void;
+  /** Host commits the current question's verdicts and moves to the next one. The
+   *  position is the one being displayed, so a stale repeat click is ignored rather
+   *  than skipping the next question. */
+  "correction:next": (payload: { code: string; position: number }) => void;
   "chat:send": (payload: { code: string; text: string }) => void;
   "reaction:send": (payload: { code: string; emoji: string }) => void;
   "time:sync": (

@@ -55,6 +55,7 @@ export function WaitingRoom({
   chatMessages: ChatMessagePayload[];
 }) {
   const [copied, setCopied] = useState(false);
+  const [starting, setStarting] = useState(false);
   const isHost = state.hostId === currentUserId;
   const me = state.players.find((p) => p.userId === currentUserId);
 
@@ -155,12 +156,20 @@ export function WaitingRoom({
           </Button>
         )}
         {isHost && (
+          // Local pending state, not just the incoming phase change: selecting the
+          // questions and writing room_questions is a few round trips to a remote
+          // DB, so there is a beat between the click and the countdown arriving.
+          // Without this the button sat there looking unclicked, which read as
+          // broken rather than busy — and a second click would start a second run.
           <Button
             leadingIcon={<Play className="h-4 w-4" strokeWidth={1.5} />}
-            disabled={state.players.length < 1}
-            onClick={() => socket.emit("room:start", { code })}
+            disabled={state.players.length < 1 || starting}
+            onClick={() => {
+              setStarting(true);
+              socket.emit("room:start", { code });
+            }}
           >
-            Lancer la partie
+            {starting ? "Lancement…" : "Lancer la partie"}
           </Button>
         )}
       </div>

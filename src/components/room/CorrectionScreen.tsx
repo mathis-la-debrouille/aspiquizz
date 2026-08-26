@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { DifficultyBadge } from "@/components/ui/Badge";
@@ -45,6 +46,15 @@ export function CorrectionScreen({
 
   const answers = [...payload.answers].sort((a, b) => a.msTaken - b.msTaken);
   const isLast = payload.position + 1 === payload.total;
+
+  // Applying a question's verdicts is several database writes, so there is a beat
+  // between the click and the next question arriving. Without a pending state the
+  // button looked unclicked and invited a second, third and fourth click — which is
+  // also why the server now ignores an advance for a position it has left.
+  const [advancing, setAdvancing] = useState(false);
+  useEffect(() => {
+    setAdvancing(false);
+  }, [payload.position]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -175,8 +185,18 @@ export function CorrectionScreen({
         </ul>
 
         {isHost ? (
-          <Button onClick={() => socket.emit("correction:next", { code })}>
-            {isLast ? "Terminer et voir le podium" : "Question suivante"}
+          <Button
+            disabled={advancing}
+            onClick={() => {
+              setAdvancing(true);
+              socket.emit("correction:next", { code, position: payload.position });
+            }}
+          >
+            {advancing
+              ? "Enregistrement…"
+              : isLast
+                ? "Terminer et voir le podium"
+                : "Question suivante"}
           </Button>
         ) : (
           <p className="text-14 text-ink-faint" role="status">
