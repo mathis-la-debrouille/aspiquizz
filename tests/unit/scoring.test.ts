@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  assignRanks,
   maxPointsFor,
   xpFromPoints,
   levelFromXp,
@@ -50,5 +51,42 @@ describe("progression", () => {
     const mid = levelProgress(xpForLevel(3) + (xpForLevel(4) - xpForLevel(3)) / 2);
     expect(mid).toBeCloseTo(0.5);
     expect(levelProgress(10 ** 9)).toBeLessThanOrEqual(1);
+  });
+});
+
+describe("assignRanks", () => {
+  it("gives tied scores the same rank and skips the ranks the tie used", () => {
+    const ranked = assignRanks([
+      { userId: "a", score: 12 },
+      { userId: "b", score: 13 },
+      { userId: "c", score: 13 },
+    ]);
+    expect(ranked.map((r) => [r.userId, r.rank])).toEqual([
+      ["b", 1],
+      ["c", 1],
+      ["a", 3],
+    ]);
+  });
+
+  it("sorts its input rather than trusting it", () => {
+    const ranked = assignRanks([{ score: 1 }, { score: 9 }, { score: 5 }]);
+    expect(ranked.map((r) => r.score)).toEqual([9, 5, 1]);
+    expect(ranked.map((r) => r.rank)).toEqual([1, 2, 3]);
+  });
+
+  it("handles everyone tied, including on zero", () => {
+    expect(assignRanks([{ score: 0 }, { score: 0 }, { score: 0 }]).map((r) => r.rank)).toEqual([
+      1, 1, 1,
+    ]);
+  });
+
+  it("never mutates the array it was given", () => {
+    const input = [{ score: 1 }, { score: 9 }];
+    assignRanks(input);
+    expect(input.map((r) => r.score)).toEqual([1, 9]);
+  });
+
+  it("returns an empty list for an empty room", () => {
+    expect(assignRanks([])).toEqual([]);
   });
 });
