@@ -35,7 +35,9 @@ export function ImageAnswerSurface({
           choices={question.choices ?? []}
           multiSelect={question.multiSelect ?? false}
           disabled={disabled}
+          committed={committed}
           onSubmit={onSubmit}
+          onDraft={onDraft}
         />
       ) : (
         <OpenAnswerSurface

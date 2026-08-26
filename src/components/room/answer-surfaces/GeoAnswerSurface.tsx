@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerSurface";
@@ -41,6 +41,12 @@ export function GeoAnswerSurface({
   // selection, and nothing is committed until Valider or the timer. Same rule as
   // typing — what is on screen when time runs out is the answer.
   const [selected, setSelected] = useState<string | null>(null);
+  // Stable identity: a fresh `[iso3]` literal on every render made GeoMap's highlight effect
+  // re-run on every countdown tick, which is what used to hide the missing-dependency bug above.
+  const highlightIso3 = useMemo(
+    () => (!isSilhouette && question.revealIso3 ? [question.revealIso3] : []),
+    [isSilhouette, question.revealIso3],
+  );
   useEffect(() => {
     setSelected(null);
   }, [question.id]);
@@ -69,7 +75,7 @@ export function GeoAnswerSurface({
           mode={isSilhouette ? "silhouette" : isClickMode ? "pick" : "display"}
           interactive={isClickMode && !disabled && !committed}
           focusOn={isSilhouette ? (question.revealIso3 ?? null) : null}
-          highlight={!isSilhouette && question.revealIso3 ? [question.revealIso3] : []}
+          highlight={highlightIso3}
           dimOthers={!isClickMode && !isSilhouette}
           showLabels={question.showLabels}
           selected={isClickMode ? selected : null}

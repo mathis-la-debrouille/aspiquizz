@@ -29,13 +29,14 @@ export const roomConfigSchema = z.object({
   questionCount: z.number().int().min(1).max(50),
   timeLimitS: z.number().int().min(5).max(120),
   timeLimitByType: timeLimitByTypeSchema,
+  /** Defaulted, not required: an older client that never sends it still gets the badge. */
+  showDifficulty: z.boolean().default(true),
   categoryIds: z.array(z.string()).default([]),
   difficultyMin: z.number().int().min(1).max(5),
   difficultyMax: z.number().int().min(1).max(5),
   allowLateJoin: z.boolean().default(true),
   maxPlayers: z.number().int().min(2).max(50),
   revealDurationS: z.number().int().min(2).max(20),
-  scoringMode: z.enum(["speed", "flat"]),
   /**
    * Not in the brief's §5 config literal, but §11.1's host:next event is
    * explicitly documented as "advance during a reveal, if manualAdvance" —

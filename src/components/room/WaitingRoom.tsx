@@ -8,6 +8,7 @@ import { PlayerChip } from "@/components/ui/PlayerChip";
 import { Badge } from "@/components/ui/Badge";
 import { ChatPanel } from "@/components/room/ChatPanel";
 import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
+import { Toggle } from "@/components/ui/Toggle";
 import type { GameSocket } from "@/lib/socket/client";
 import type { RoomStateView, ChatMessagePayload } from "@/server/socket/events";
 
@@ -111,7 +112,7 @@ export function WaitingRoom({
           <Badge tone="neutral">{state.config.questionCount} questions</Badge>
           <Badge tone="neutral">{state.config.timeLimitS}s / question</Badge>
           <Badge tone="neutral">
-            {state.config.scoringMode === "speed" ? "Notation rapidité" : "Notation fixe"}
+            {state.config.showDifficulty ? "Difficulté affichée" : "Difficulté cachée"}
           </Badge>
         </div>
       </Panel>
@@ -128,6 +129,24 @@ export function WaitingRoom({
           }
         >
           <RhythmSection value={rhythm} onChange={setRhythm} />
+          {/* Applied immediately rather than via "Appliquer": it's one boolean, there is no
+              drag-to-spam problem the rhythm sliders have, and a switch that needs a second
+              click to take effect reads as broken. */}
+          <div className="mt-4 border-t border-border-soft pt-4">
+            <Toggle
+              label="Afficher la difficulté pendant la partie"
+              checked={state.config.showDifficulty}
+              onChange={(e) =>
+                socket.emit("room:update_config", {
+                  code,
+                  config: { ...state.config, showDifficulty: e.target.checked },
+                })
+              }
+            />
+            <p className="mt-1 text-12 text-ink-faint">
+              Le palier et le nombre de points de chaque question, visibles par tout le monde.
+            </p>
+          </div>
         </Panel>
       )}
 

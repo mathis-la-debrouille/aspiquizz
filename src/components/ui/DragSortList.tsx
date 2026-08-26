@@ -25,9 +25,13 @@ export interface DragSortListProps<T> {
  * tracks the pointer via `translateY` every frame, but the other rows only re-render at their
  * new slots once the drag has actually crossed enough of them to change the resulting order —
  * simpler to get right for lists this short (3-6 items) than animating every sibling out of the
- * way, and still reads as real drag-and-drop. Up/down buttons sit next to the drag handle as a
- * keyboard/no-pointer-drag fallback — the same reordering affordance the admin category list
- * already uses, so this never becomes drag-only.
+ * way, and still reads as real drag-and-drop. Up/down buttons stay as a keyboard/no-pointer-drag
+ * fallback — the same affordance the admin category list uses, so this is never drag-only.
+ *
+ * The whole row is the drag surface, not the grip icon. When only the 16px grip could start a
+ * drag, the first real game's verdict was "you can't drag and drop these" — players grabbed the
+ * label, nothing happened, and they fell back to the arrows. The grip remains as the visual cue
+ * that a row is draggable; `data-nodrag` marks the subtrees (the arrows) that must stay clicks.
  */
 export function DragSortList<T>({
   items,
@@ -55,8 +59,12 @@ export function DragSortList<T>({
     [],
   );
 
-  function handlePointerDown(id: string, e: ReactPointerEvent<HTMLButtonElement>) {
+  function handlePointerDown(id: string, e: ReactPointerEvent<HTMLElement>) {
     if (disabled) return;
+    // Only the primary button/finger, and never a drag started on the up/down buttons — those
+    // are clicks, and capturing the pointer would swallow them.
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("[data-nodrag]")) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     startYRef.current = e.clientY;
     const centers = new Map<string, number>();
@@ -69,7 +77,7 @@ export function DragSortList<T>({
     setDragOffsetY(0);
   }
 
-  function handlePointerMove(e: ReactPointerEvent<HTMLButtonElement>) {
+  function handlePointerMove(e: ReactPointerEvent<HTMLElement>) {
     if (!draggingId) return;
     const offset = e.clientY - startYRef.current;
     setDragOffsetY(offset);
@@ -88,7 +96,23 @@ export function DragSortList<T>({
 
     const next = [...others.slice(0, newIndex), draggedItem, ...others.slice(newIndex)];
     const changed = next.some((it, i) => getId(it) !== getId(items[i]!));
-    if (changed) onReorder(next);
+    if (changed) {
+      onReorder(next);
+      // The dragged row is about to be re-rendered into a different slot, and `translateY` is
+      // relative to wherever the row now sits — so without this it visibly jumped a full row
+      // height away from the finger at the exact moment the reorder landed. Re-baselining the
+      // gesture to "here, now, zero offset" keeps the row under the pointer.
+      startYRef.current = e.clientY;
+      setDragOffsetY(0);
+      requestAnimationFrame(() => {
+        const centers = new Map<string, number>();
+        for (const [rowId, node] of rowRefs.current) {
+          const rect = node.getBoundingClientRect();
+          centers.set(rowId, rect.top + rect.height / 2);
+        }
+        startCentersRef.current = centers;
+      });
+    }
   }
 
   function endDrag() {
@@ -113,29 +137,33 @@ export function DragSortList<T>({
           <div
             key={id}
             ref={setRowRef(id)}
+            // The whole row is the drag surface. It used to be the 16px grip icon alone, which
+            // in a real game read as "you can't drag these at all" — everyone tried to grab the
+            // label. The grip stays as the affordance that says dragging is possible.
+            onPointerDown={(e) => handlePointerDown(id, e)}
+            onPointerMove={handlePointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
             className={cn(
               "flex items-center gap-1 rounded-md border border-border-hard bg-bg-inset",
+              !disabled && "cursor-grab active:cursor-grabbing",
               isDragging && "relative z-10 shadow-[var(--shadow-lift)]",
             )}
-            style={isDragging ? { transform: `translateY(${dragOffsetY}px)` } : undefined}
+            style={{
+              touchAction: "none",
+              ...(isDragging ? { transform: `translateY(${dragOffsetY}px)` } : {}),
+            }}
           >
-            <button
-              type="button"
-              aria-label="Faire glisser pour réordonner"
-              disabled={disabled}
-              onPointerDown={(e) => handlePointerDown(id, e)}
-              onPointerMove={handlePointerMove}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
-              className="flex h-full shrink-0 cursor-grab items-center px-2 py-3 text-ink-faint active:cursor-grabbing disabled:cursor-not-allowed"
-              style={{ touchAction: "none" }}
+            <span
+              aria-hidden="true"
+              className="flex shrink-0 items-center px-2 py-3 text-ink-faint"
             >
               <GripVertical className="h-4 w-4" strokeWidth={1.5} />
-            </button>
+            </span>
 
-            <div className="min-w-0 flex-1">{renderItem(item, index, isDragging)}</div>
+            <div className="min-w-0 flex-1 select-none">{renderItem(item, index, isDragging)}</div>
 
-            <div className="flex shrink-0 flex-col">
+            <div className="flex shrink-0 flex-col" data-nodrag>
               <button
                 type="button"
                 aria-label="Monter"
