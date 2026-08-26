@@ -222,7 +222,9 @@ function PreviewContent({
             choices={sanitised.choices ?? []}
             multiSelect={sanitised.multiSelect ?? false}
             disabled
+            committed={false}
             onSubmit={noop}
+            onDraft={noop}
           />
         )}
         {detail.type === "image" && (

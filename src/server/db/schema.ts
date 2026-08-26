@@ -499,13 +499,16 @@ export interface RoomConfig {
   timeLimitS: number;
   /** Per-type override — resolved as `timeLimitByType[type] ?? timeLimitS` at room start (B.2). */
   timeLimitByType?: Partial<Record<QuestionType, number>>;
+  /** Show each question's difficulty tier and what it's worth while the question is live.
+   *  Toggleable by the host in the salon: knowing a question is worth 3 helps you decide how
+   *  long to think about it, and some of the group would rather not be told. */
+  showDifficulty: boolean;
   categoryIds: string[];
   difficultyMin: number;
   difficultyMax: number;
   allowLateJoin: boolean;
   maxPlayers: number;
   revealDurationS: number;
-  scoringMode: ScoringMode;
 }
 
 export const rooms = sqliteTable(

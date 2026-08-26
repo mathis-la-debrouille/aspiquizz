@@ -45,7 +45,7 @@ export function CreateRoomModal({
   const [rhythm, setRhythm] = useState<RhythmValue>({ timeLimitS: 20 });
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [maxPlayers, setMaxPlayers] = useState(10);
-  const [scoringMode, setScoringMode] = useState<"speed" | "flat">("speed");
+  const [showDifficulty, setShowDifficulty] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +78,7 @@ export function CreateRoomModal({
           allowLateJoin: true,
           maxPlayers,
           revealDurationS: 6,
-          scoringMode,
+          showDifficulty,
           manualAdvance: false,
         },
       },
@@ -201,9 +201,6 @@ export function CreateRoomModal({
 
         <RhythmSection value={rhythm} onChange={setRhythm} />
 
-        {/* Two binary choices, so both are laid out rather than hidden behind a
-         *  dropdown each — and the selected option explains itself underneath,
-         *  which "Rapidité" on its own never did. */}
         <div className="grid gap-3 sm:grid-cols-2">
           <SegmentedControl
             label="Visibilité"
@@ -215,20 +212,12 @@ export function CreateRoomModal({
             ]}
           />
           <SegmentedControl
-            label="Notation"
-            value={scoringMode}
-            onChange={setScoringMode}
+            label="Difficulté affichée"
+            value={showDifficulty ? "on" : "off"}
+            onChange={(v) => setShowDifficulty(v === "on")}
             options={[
-              {
-                value: "speed",
-                label: "Rapidité",
-                hint: "Répondre vite rapporte plus de points.",
-              },
-              {
-                value: "flat",
-                label: "Fixe",
-                hint: "Le temps n'a aucun effet sur les points.",
-              },
+              { value: "on", label: "Affichée", hint: "Le palier et les points sont visibles." },
+              { value: "off", label: "Cachée", hint: "Aucun indice sur la difficulté." },
             ]}
           />
         </div>

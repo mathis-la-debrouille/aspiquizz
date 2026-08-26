@@ -13,7 +13,8 @@ import {
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
-import { computePoints, pointsForDifficulty, maxPointsFor } from "@/server/game/scoring";
+import { maxPointsFor } from "@/server/game/scoring";
+import { resolveTimeLimitS } from "@/lib/game-rules";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import {
   getFullQuestionDetail,
@@ -367,10 +368,11 @@ export async function startGame(io: GameIo, room: RoomState): Promise<void> {
   room.frozenQuestions = selected.map((s, position) => ({
     position,
     questionId: s.questionId,
-    // Resolution order per Addendum B.2: an explicit per-type override wins, else the room's
-    // flat default. Written once here into room_questions.time_limit_s below and never
-    // re-read from config afterwards.
-    timeLimitS: room.config.timeLimitByType?.[s.type] ?? room.config.timeLimitS,
+    // Resolution order (Addendum B.2, plus a per-type default): an explicit override for this
+    // type wins, then the type's own default (sort needs longer than anything you answer by
+    // tapping), then the room's flat value. Written once here into room_questions.time_limit_s
+    // and never re-read from config afterwards.
+    timeLimitS: resolveTimeLimitS(s.type, room.config.timeLimitS, room.config.timeLimitByType),
   }));
   room.status = "running";
 
@@ -616,8 +618,6 @@ async function applyCorrectionForQuestion(
   detail: FullQuestionDetail,
   ledger: Map<string, CorrectionEntry>,
 ): Promise<void> {
-  const maxPoints = maxPointsFor(detail.difficulty);
-
   // Scores and streaks are computed for everyone first, then written. A player's
   // streak depends only on their own previous answer, never on another player's, so
   // the writes are independent — and doing them one player at a time was four
@@ -637,19 +637,9 @@ async function applyCorrectionForQuestion(
     player.bestStreak = Math.max(player.bestStreak, player.streak);
     if (scored) player.correctCount += 1;
 
-    const { points } = computePoints({
-      isCorrect: scored,
-      msTaken: entry.msTaken,
-      timeLimitMs: frozen.timeLimitS * 1000,
-      // The awarded fraction scales the tier's base points, so the host thinks in
-      // "2 out of 5" while the score keeps the calibration the speed and streak
-      // multipliers were tuned against.
-      pointsBase: Math.round(
-        pointsForDifficulty(detail.difficulty) * (entry.awarded / Math.max(1, maxPoints)),
-      ),
-      streak: player.streak,
-      scoringMode: room.config.scoringMode,
-    });
+    // The awarded points ARE the score. No speed ratio, no streak multiplier, no 200-1000
+    // internal base — see scoring.ts for why that went.
+    const points = entry.awarded;
     player.score += points;
 
     writes.push(

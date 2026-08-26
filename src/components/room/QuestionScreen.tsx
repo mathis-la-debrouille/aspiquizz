@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
-import { CategoryBadge } from "@/components/ui/Badge";
+import { CategoryBadge, DifficultyBadge } from "@/components/ui/Badge";
 import { Timer } from "@/components/ui/Timer";
-import { StreakMeter } from "@/components/ui/StreakMeter";
 import { OpenAnswerSurface } from "@/components/room/answer-surfaces/OpenAnswerSurface";
 import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSurface";
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
@@ -33,8 +32,7 @@ export function QuestionScreen({
   totalPlayers,
   locked,
   clockOffset,
-  scoringMode,
-  myStreak,
+  showDifficulty,
 }: {
   socket: GameSocket;
   code: string;
@@ -43,14 +41,8 @@ export function QuestionScreen({
   totalPlayers: number;
   locked: boolean;
   clockOffset: number;
-  /** "speed" scales points by how fast the answer was settled; "flat" ignores time
-   *  entirely. It changes what Valider is actually for, so the hint below says
-   *  something different in each. */
-  scoringMode: "speed" | "flat";
-  /** Streak going into this question (not yet affected by it) — RoomClient carries this
-   *  forward from the previous question's reveal, since `reveal` itself is nulled out the
-   *  moment the next question starts. */
-  myStreak: number;
+  /** Room setting — the host can turn the difficulty badge off in the salon. */
+  showDifficulty: boolean;
 }) {
   const [submitted, setSubmitted] = useState(false);
 
@@ -96,12 +88,19 @@ export function QuestionScreen({
       <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
         <div className="flex items-center gap-2">
           <CategoryBadge name={q.categoryName} colorToken={q.categoryColorToken} />
+          {showDifficulty && (
+            <>
+              <DifficultyBadge level={Math.max(1, Math.min(5, q.difficulty)) as 1 | 2 | 3 | 4 | 5} />
+              <span className="font-numeral text-12 text-gold">
+                {q.pointsBase} {q.pointsBase > 1 ? "points" : "point"}
+              </span>
+            </>
+          )}
           <span className="font-numeral text-14 tabular-nums text-ink-faint">
             {active.position + 1} / {active.total}
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <StreakMeter streak={myStreak} />
           <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
           <FlagQuestionButton questionId={q.id} roomCode={code} />
         </div>
@@ -125,8 +124,10 @@ export function QuestionScreen({
             key={surfaceKey}
             choices={q.choices ?? []}
             multiSelect={q.multiSelect ?? false}
-            disabled={submitted || locked}
+            disabled={locked}
+            committed={submitted}
             onSubmit={submit}
+            onDraft={draft}
           />
         )}
         {q.type === "image" && (
@@ -172,9 +173,9 @@ export function QuestionScreen({
 
         {!submitted && !locked && (
           <p className="text-12 text-ink-faint">
-            {scoringMode === "speed"
-              ? "Ta réponse compte sans valider : c'est ce qui est à l'écran à la fin du temps qui est pris. La rapidité se mesure à ta dernière modification — répondre vite et ne plus y toucher suffit. Valider verrouille et fait passer à la suite dès que tout le monde a validé."
-              : "Ta réponse compte sans valider : c'est ce qui est à l'écran à la fin du temps qui est pris. Valider la verrouille et fait passer à la suite dès que tout le monde a validé."}
+            Ta réponse compte sans valider : c&apos;est ce qui est à l&apos;écran à la fin du
+            temps qui est pris. Valider la verrouille et fait passer à la suite dès que tout le
+            monde a validé.
           </p>
         )}
 

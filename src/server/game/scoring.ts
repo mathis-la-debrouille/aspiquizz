@@ -1,80 +1,24 @@
 /**
- * Pure scoring — brief §12. No DB, no I/O; see grading.ts for the same rule.
+ * Pure scoring. No DB, no I/O; see grading.ts for the same rule.
  */
 
-export type ScoringMode = "speed" | "flat";
-
-export interface ScoringInput {
-  isCorrect: boolean;
-  msTaken: number;
-  timeLimitMs: number;
-  pointsBase: number;
-  /** Consecutive correct answers *including this one* — 0 resets the bonus. */
-  streak: number;
-  scoringMode: ScoringMode;
-}
-
-export interface ScoringResult {
-  points: number;
-  /** 0–1, informational — drives the "rapidité +N" breakdown line. */
-  speedRatio: number;
-  /** 1–1.5, informational — drives the "série ×N" breakdown line. */
-  streakMultiplier: number;
-}
-
 /**
- * Points scale with difficulty: a tier-5 question is worth five times a tier-1,
- * two and a half times a tier-2, and so on — difficulty IS the multiplier.
+ * What a question is worth at full marks: its difficulty tier. Tier 3 is worth 3 points, and
+ * that number IS the score — there is no separate internal scale any more.
  *
- * Calibrated on 200 rather than 1000 so tier 5 lands on the existing 1000-point
- * ceiling instead of pushing it to 5000. Inflating the ceiling would inflate
- * total points, and XP/level are derived from totals (xpFromPoints / levelFromXp),
- * so every level already earned would silently rescale by about 2.24x.
- *
- * Derived at read time rather than stored: questions.points_base holds 1000 for
- * every existing row, and computing here means retuning the curve later needs no
- * migration and no backfill.
- */
-const POINTS_PER_DIFFICULTY = 200;
-
-export function pointsForDifficulty(difficulty: number): number {
-  const tier = Math.max(1, Math.min(5, Math.round(difficulty)));
-  return tier * POINTS_PER_DIFFICULTY;
-}
-
-/**
- * What a question is worth at full marks: its difficulty tier, so tier 3 is worth
- * 3 points. This is the scale the correction phase shows the room and the upper
- * bound of the host's slider — deliberately the small, legible 1-5 number rather
- * than the internal base points, which the speed and streak multipliers push into
- * the hundreds.
+ * The previous model multiplied a 200-1000 point base by a speed ratio and a streak bonus, so a
+ * correct answer was worth somewhere between 100 and 1500 depending on how fast you typed and
+ * what you'd got right before. Played once, it turned out nobody could tell why they had 4794
+ * and someone else 4996 — and speed rewards the wrong thing in a format where the room reads
+ * the answers out loud afterwards anyway. So: a question is worth its tier, the host awards
+ * 0..tier, and the score is the sum. +1, +2, +3.
  */
 export function maxPointsFor(difficulty: number): number {
   return Math.max(1, Math.min(5, Math.round(difficulty)));
 }
 
-const STREAK_CAP = 5;
-const STREAK_BONUS_PER_STEP = 0.1;
-
 function clamp01(n: number): number {
   return Math.max(0, Math.min(1, n));
-}
-
-export function computePoints(input: ScoringInput): ScoringResult {
-  if (!input.isCorrect) {
-    return { points: 0, speedRatio: 0, streakMultiplier: 1 };
-  }
-
-  const speedRatio =
-    input.scoringMode === "flat" ? 1 : clamp01(1 - input.msTaken / input.timeLimitMs);
-
-  const basePoints =
-    input.scoringMode === "flat" ? input.pointsBase : input.pointsBase * (0.5 + 0.5 * speedRatio);
-
-  const streakMultiplier = 1 + Math.min(input.streak, STREAK_CAP) * STREAK_BONUS_PER_STEP;
-  const points = Math.round(basePoints * streakMultiplier);
-
-  return { points, speedRatio, streakMultiplier };
 }
 
 // ---------------------------------------------------------------------------

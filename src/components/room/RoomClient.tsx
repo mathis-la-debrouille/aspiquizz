@@ -316,8 +316,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               totalPlayers={state.players.filter((p) => p.connected).length}
               locked={phase === "locked"}
               clockOffset={clockOffset}
-              scoringMode={state.config.scoringMode}
-              myStreak={state.players.find((p) => p.userId === currentUserId)?.streak ?? 0}
+              showDifficulty={state.config.showDifficulty}
             />
           ) : viewKey === "correction" && correction ? (
             <CorrectionScreen

@@ -385,6 +385,14 @@ export function GeoMap({
   }
 
   // --- Selection/highlight state applied imperatively — never re-renders the path list. ---
+  //
+  // `features` and `svgMounted` are dependencies even though the body never reads them: the body
+  // reads the DOM those two produce. Without them the effect ran once while `features` was still
+  // null — before a single <path data-iso3> existed — marked nothing, and then waited for one of
+  // the other deps to change. In game that read as a delay of up to a second before the target
+  // country lit up: `highlight` is a fresh array literal from the caller, so the *next* render
+  // re-ran it, and the next render came from the countdown ticking. The highlight was arriving
+  // on the coat-tails of the timer.
   useEffect(() => {
     const container = svgRef.current;
     if (!container) return;
@@ -412,7 +420,7 @@ export function GeoMap({
     mark(selected, "selected");
     mark(correct, "correct");
     mark(wrong, "wrong");
-  }, [highlight, selected, correct, wrong, pendingIso3]);
+  }, [highlight, selected, correct, wrong, pendingIso3, features, svgMounted]);
 
   // Reset any pending (unconfirmed) tap when the question/props change under us.
   useEffect(() => {
