@@ -18,6 +18,7 @@ import { eq } from "drizzle-orm";
 import { db, client } from "@/server/db";
 import { users, questions } from "@/server/db/schema";
 import { createQuestionFromDraft } from "@/server/questions/ingest";
+import type { QuestionDraft } from "@/lib/schemas/ingest";
 
 interface ImportedQuestion {
   categorie: string;
@@ -26,8 +27,10 @@ interface ImportedQuestion {
   /** Absent means published. Present only for a question somebody took out of rotation —
    *  honoured here so a restore doesn't quietly republish it. */
   statut?: "draft" | "archived";
-  /** First entry is the correct one; order is shuffled at play time by the engine. */
-  choix: Array<{ texte: string; correct: boolean }>;
+  /** mcq only. First entry is the correct one; order is shuffled at play time by the engine. */
+  choix?: Array<{ texte: string; correct: boolean }>;
+  /** open only. First entry is the canonical answer, the rest are accepted variants. */
+  reponses?: string[];
   explication?: string;
   /** Kept for traceability back to the source row, not shown to players. */
   source?: string;
@@ -56,24 +59,48 @@ async function main() {
   console.log(`[info] categories: ${JSON.stringify(byCategory)}`);
   console.log(`[info] tiers: ${JSON.stringify(byTier)}`);
 
-  // Every question must have exactly one correct choice — a silent second one would
-  // make the question ungradeable rather than merely wrong.
-  const malformed = incoming.filter((q) => q.choix.filter((c) => c.correct).length !== 1);
+  // The file holds both shapes, because export-questions.ts writes both: `choix` for mcq,
+  // `reponses` for open. Reading only the first one is how this script used to crash on the
+  // first open question anybody exported — an export the same repo produces has to be
+  // re-importable, or the file isn't a backup of anything.
+  const neither = incoming.filter((q) => !q.choix && !q.reponses);
+  if (neither.length > 0) {
+    console.error(`[fail] ${neither.length} questions have neither "choix" nor "reponses":`);
+    for (const q of neither.slice(0, 10)) console.error(`         ${q.enonce}`);
+    process.exit(1);
+  }
+
+  // Exactly one correct choice — a silent second one would make the question ungradeable
+  // rather than merely wrong.
+  const malformed = incoming.filter(
+    (q) => q.choix && q.choix.filter((c) => c.correct).length !== 1,
+  );
   if (malformed.length > 0) {
     console.error(`[fail] ${malformed.length} questions do not have exactly one correct choice:`);
     for (const q of malformed.slice(0, 10)) console.error(`         ${q.enonce}`);
     process.exit(1);
   }
-  const tooFew = incoming.filter((q) => q.choix.length < 2);
+  const tooFew = incoming.filter((q) => q.choix && q.choix.length < 2);
   if (tooFew.length > 0) {
     console.error(`[fail] ${tooFew.length} questions have fewer than 2 choices`);
+    process.exit(1);
+  }
+  const noAnswer = incoming.filter((q) => q.reponses && q.reponses.length === 0);
+  if (noAnswer.length > 0) {
+    console.error(`[fail] ${noAnswer.length} open questions have no accepted answer`);
     process.exit(1);
   }
 
   if (dryRun) {
     for (const q of incoming.slice(0, 15)) {
       console.log(`  d${q.difficulte} [${q.categorie}] ${q.enonce}`);
-      console.log(`      ${q.choix.map((c) => (c.correct ? `**${c.texte}**` : c.texte)).join(" | ")}`);
+      console.log(
+        `      ${
+          q.choix
+            ? q.choix.map((c) => (c.correct ? `**${c.texte}**` : c.texte)).join(" | ")
+            : (q.reponses ?? []).join(" / ")
+        }`,
+      );
     }
     console.log("[info] --dry-run, nothing written");
     client.close();
@@ -96,17 +123,20 @@ async function main() {
       skipped += 1;
       continue;
     }
-    const result = await createQuestionFromDraft(
-      {
-        type: "mcq",
-        enonce: q.enonce,
-        categorie: q.categorie,
-        difficulte: q.difficulte,
-        choix: q.choix,
-        ...(q.explication ? { explication: q.explication } : {}),
-      },
-      { authorId: author.id, source: "manual", initialStatus: q.statut ?? "published" },
-    );
+    const common = {
+      enonce: q.enonce,
+      categorie: q.categorie,
+      difficulte: q.difficulte,
+      ...(q.explication ? { explication: q.explication } : {}),
+    };
+    const draft: QuestionDraft = q.choix
+      ? { type: "mcq", ...common, choix: q.choix }
+      : { type: "open", ...common, reponses: q.reponses! };
+    const result = await createQuestionFromDraft(draft, {
+      authorId: author.id,
+      source: "manual",
+      initialStatus: q.statut ?? "published",
+    });
     if (result.ok) created += 1;
     else failures.push(`${q.enonce} :: ${result.errors.map((e) => e.message).join("; ")}`);
   }
