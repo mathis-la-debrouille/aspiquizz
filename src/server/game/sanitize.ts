@@ -39,6 +39,10 @@ export interface RawChoice {
 }
 
 export interface QuestionForSanitizing {
+  /** Room setting (config.mcqAsOpen): present an mcq question as a free-text one. The choices
+   *  are then omitted entirely rather than merely unused — sending four options a client could
+   *  read is most of the answer. */
+  asFreeText?: boolean;
   id: string;
   type: QuestionType;
   prompt: string;
@@ -106,6 +110,9 @@ export interface SanitisedQuestion {
   sortItems?: SanitisedSortItem[];
   /** estimation only — the question's framing, never the answer. */
   estimationUnit?: string | null;
+  /** mcq / image(mcq) in the room's free-text mode: `choices` is absent entirely and the
+   *  client renders a text input. */
+  asFreeText?: boolean;
 }
 
 export interface SanitisedSortItem {
@@ -156,6 +163,10 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       return base;
 
     case "mcq":
+      // In the room's free-text mode the choices don't travel at all. Omitting them is the
+      // point: four options on screen is most of the answer, so "hidden by the client" would
+      // be no protection whatsoever.
+      if (q.asFreeText) return { ...base, asFreeText: true };
       // Shuffled, for the same reason sort's items are: `question_choices.position` is the
       // order the author wrote them in, and every importer writes the correct one first
       // ("First entry is the correct one" — seed-imported-questions.ts). Sending that order
@@ -169,6 +180,9 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       };
 
     case "image":
+      if (q.asFreeText && q.answerMode === "mcq") {
+        return { ...base, mediaId: q.mediaId, answerMode: "open", asFreeText: true };
+      }
       return {
         ...base,
         mediaId: q.mediaId,

@@ -252,3 +252,45 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     }
   });
 });
+
+describe("mcqAsOpen — the room's free-text mode", () => {
+  const mcq: QuestionForSanitizing = {
+    ...baseFields,
+    type: "mcq",
+    choices: [
+      { id: "a", label: "1958", isCorrect: true },
+      { id: "b", label: "1946", isCorrect: false },
+    ],
+  };
+
+  it("sends no choices at all, not merely unmarked ones", () => {
+    const sanitised = toSanitisedQuestion({ ...mcq, asFreeText: true });
+    expect(sanitised.asFreeText).toBe(true);
+    expect(sanitised.choices).toBeUndefined();
+    // The labels are the answer set in this mode, so none of them may travel.
+    const json = JSON.stringify(sanitised);
+    expect(json).not.toContain("1958");
+    expect(json).not.toContain("1946");
+  });
+
+  it("leaves the normal mode alone", () => {
+    const sanitised = toSanitisedQuestion({ ...mcq, asFreeText: false });
+    expect(sanitised.asFreeText).toBeUndefined();
+    expect(sanitised.choices).toHaveLength(2);
+  });
+
+  it("does the same for an image question answered by choices", () => {
+    const sanitised = toSanitisedQuestion({
+      ...baseFields,
+      type: "image",
+      answerMode: "mcq",
+      mediaId: "m1",
+      asFreeText: true,
+      choices: [{ id: "a", label: "Renault", isCorrect: true }],
+    });
+    expect(sanitised.asFreeText).toBe(true);
+    expect(sanitised.choices).toBeUndefined();
+    expect(sanitised.answerMode).toBe("open");
+    expect(JSON.stringify(sanitised)).not.toContain("Renault");
+  });
+});

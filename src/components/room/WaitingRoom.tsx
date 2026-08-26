@@ -114,6 +114,7 @@ export function WaitingRoom({
           <Badge tone="neutral">
             {state.config.showDifficulty ? "Difficulté affichée" : "Difficulté cachée"}
           </Badge>
+          {state.config.mcqAsOpen && <Badge tone="gold">QCM en réponse libre</Badge>}
         </div>
       </Panel>
 
@@ -146,6 +147,22 @@ export function WaitingRoom({
             <p className="mt-1 text-12 text-ink-faint">
               Le palier et le nombre de points de chaque question, visibles par tout le monde.
             </p>
+            <div className="mt-3">
+              <Toggle
+                label="QCM en réponse libre"
+                checked={state.config.mcqAsOpen}
+                onChange={(e) =>
+                  socket.emit("room:update_config", {
+                    code,
+                    config: { ...state.config, mcqAsOpen: e.target.checked },
+                  })
+                }
+              />
+              <p className="mt-1 text-12 text-ink-faint">
+                Les options ne sont pas envoyées du tout : il faut trouver la réponse et la
+                taper. C&apos;est la même question, en beaucoup plus dur.
+              </p>
+            </div>
           </div>
         </Panel>
       )}

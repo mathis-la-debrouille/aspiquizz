@@ -426,7 +426,7 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     io.to(channel).emit("question:show", {
       position: frozen.position,
       total: room.frozenQuestions.length,
-      question: toSanitised(detail, frozen.timeLimitS),
+      question: toSanitised(detail, frozen.timeLimitS, room.config.mcqAsOpen),
       deadlineMs,
       serverNowMs: Date.now(),
     });
@@ -443,7 +443,7 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     // together). The grader still runs — its verdict is stored as `suggested` and
     // pre-fills the host's toggles, because 40 questions times six players is far
     // too many decisions to make from a blank slate.
-    const gradable = toGradable(detail);
+    const gradable = toGradable(detail, room.config.mcqAsOpen);
     const ledger = new Map<string, CorrectionEntry>();
 
     for (const player of room.players.values()) {

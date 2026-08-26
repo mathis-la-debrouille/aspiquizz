@@ -499,6 +499,12 @@ export interface RoomConfig {
   timeLimitS: number;
   /** Per-type override — resolved as `timeLimitByType[type] ?? timeLimitS` at room start (B.2). */
   timeLimitByType?: Partial<Record<QuestionType, number>>;
+  /** Turn every multiple-choice question into a free-text one: the choices are not sent at
+   *  all, the player types their answer, and the labels of the choices marked correct at
+   *  authoring time are what it's graded against. A hard mode for a library that is mostly
+   *  mcq — and the honest version of those questions, since seeing four options is most of
+   *  the answer. */
+  mcqAsOpen: boolean;
   /** Show each question's difficulty tier and what it's worth while the question is live.
    *  Toggleable by the host in the salon: knowing a question is worth 3 helps you decide how
    *  long to think about it, and some of the group would rather not be told. */

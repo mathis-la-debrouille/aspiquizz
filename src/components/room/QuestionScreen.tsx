@@ -119,7 +119,19 @@ export function QuestionScreen({
             onDraft={draft}
           />
         )}
-        {q.type === "mcq" && (
+        {/* The room's mcqAsOpen setting: the server sent no choices at all, so this renders
+            the same text field an `open` question uses. Nothing here decides the mode — if
+            `asFreeText` came back there is genuinely nothing to display as options. */}
+        {q.type === "mcq" && q.asFreeText && (
+          <OpenAnswerSurface
+            key={surfaceKey}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
+        )}
+        {q.type === "mcq" && !q.asFreeText && (
           <McqAnswerSurface
             key={surfaceKey}
             choices={q.choices ?? []}
