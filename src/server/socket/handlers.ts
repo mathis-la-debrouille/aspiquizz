@@ -357,7 +357,7 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!room) return;
     if (room.hostId !== user.id)
       return emitError(socket, "forbidden", "Seul l'hôte corrige.");
-    advanceCorrection(room);
+    advanceCorrection(room, parsed.data.position);
   });
 
   socket.on("host:next", (payload) => {

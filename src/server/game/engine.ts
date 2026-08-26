@@ -403,6 +403,10 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
     // this format removes.
     if (frozen.position === 0) {
       room.phase = "countdown";
+      io.to(channel).emit("room:countdown", {
+        startsInMs: COUNTDOWN_MS,
+        total: room.frozenQuestions.length,
+      });
       await sleep(COUNTDOWN_MS);
       if (room.loopCancelled) return;
     }
@@ -606,6 +610,13 @@ async function applyCorrectionForQuestion(
 ): Promise<void> {
   const maxPoints = maxPointsFor(detail.difficulty);
 
+  // Scores and streaks are computed for everyone first, then written. A player's
+  // streak depends only on their own previous answer, never on another player's, so
+  // the writes are independent — and doing them one player at a time was four
+  // sequential round trips each, twenty-four for a room of six, all of it between
+  // the host's click and the next question appearing.
+  const writes: Array<Promise<unknown>> = [];
+
   for (const [userId, entry] of ledger) {
     const player = room.players.get(userId);
     if (!player) continue;
@@ -633,55 +644,63 @@ async function applyCorrectionForQuestion(
     });
     player.score += points;
 
-    await db
-      .update(answers)
-      .set({ isCorrect: scored, pointsAwarded: points })
+    writes.push(
+      db
+        .update(answers)
+        .set({ isCorrect: scored, pointsAwarded: points })
       .where(
         and(
           eq(answers.roomId, room.id),
           eq(answers.position, frozen.position),
-          eq(answers.userId, userId),
+            eq(answers.userId, userId),
+          ),
         ),
-      );
-    await db
-      .update(roomPlayers)
-      .set({ score: player.score, streak: player.streak, correctCount: player.correctCount })
-      .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, userId)));
-
-    await db
-      .insert(userCategoryStats)
-      .values({
-        userId,
-        categoryId: detail.categoryId,
-        answered: 1,
-        correct: scored ? 1 : 0,
-      })
-      .onConflictDoUpdate({
-        target: [userCategoryStats.userId, userCategoryStats.categoryId],
-        set: {
-          answered: sql`${userCategoryStats.answered} + 1`,
-          correct: sql`${userCategoryStats.correct} + ${scored ? 1 : 0}`,
-        },
-      });
-
-    await db
-      .insert(questionStats)
-      .values({
-        questionId: frozen.questionId,
-        timesAsked: 1,
-        timesCorrect: scored ? 1 : 0,
-        totalMs: entry.msTaken,
-      })
-      .onConflictDoUpdate({
-        target: questionStats.questionId,
-        set: {
-          timesAsked: sql`${questionStats.timesAsked} + 1`,
-          timesCorrect: sql`${questionStats.timesCorrect} + ${scored ? 1 : 0}`,
-          totalMs: sql`${questionStats.totalMs} + ${entry.msTaken}`,
-          updatedAt: new Date(),
-        },
-      });
+    );
+    writes.push(
+      db
+        .update(roomPlayers)
+        .set({ score: player.score, streak: player.streak, correctCount: player.correctCount })
+        .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, userId))),
+    );
+    writes.push(
+      db
+        .insert(userCategoryStats)
+        .values({
+          userId,
+          categoryId: detail.categoryId,
+          answered: 1,
+          correct: scored ? 1 : 0,
+        })
+        .onConflictDoUpdate({
+          target: [userCategoryStats.userId, userCategoryStats.categoryId],
+          set: {
+            answered: sql`${userCategoryStats.answered} + 1`,
+            correct: sql`${userCategoryStats.correct} + ${scored ? 1 : 0}`,
+          },
+        }),
+    );
+    writes.push(
+      db
+        .insert(questionStats)
+        .values({
+          questionId: frozen.questionId,
+          timesAsked: 1,
+          timesCorrect: scored ? 1 : 0,
+          totalMs: entry.msTaken,
+        })
+        .onConflictDoUpdate({
+          target: questionStats.questionId,
+          set: {
+            timesAsked: sql`${questionStats.timesAsked} + 1`,
+            timesCorrect: sql`${questionStats.timesCorrect} + ${scored ? 1 : 0}`,
+            totalMs: sql`${questionStats.totalMs} + ${entry.msTaken}`,
+            updatedAt: new Date(),
+          },
+        }),
+    );
   }
+
+  await Promise.all(writes);
 }
 
 /**
@@ -714,9 +733,19 @@ export function setCorrectionAward(
 }
 
 
-/** Host commits the current question and moves on. */
-export function advanceCorrection(room: RoomState): boolean {
+/**
+ * Host commits the current question and moves on.
+ *
+ * `position` is checked against the one on screen. Applying a question's verdicts
+ * means a few database round trips per player, and during those the advance handle
+ * is null — so a second click is already harmless. A third, landing after the next
+ * question has armed its own handle, would otherwise skip that question outright.
+ * Which is exactly what someone does when a button gives no feedback: they click it
+ * four times.
+ */
+export function advanceCorrection(room: RoomState, position: number): boolean {
   if (room.phase !== "correction" || !room.correction?.advance) return false;
+  if (room.correction.index !== position) return false;
   room.correction.advance();
   return true;
 }
