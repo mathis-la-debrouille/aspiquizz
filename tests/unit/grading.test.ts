@@ -9,6 +9,7 @@ import {
   type GradableMcqQuestion,
   type GradableOpenQuestion,
   type GradableSortQuestion,
+  type GradableEstimationQuestion,
 } from "@/server/game/grading";
 
 // ---------------------------------------------------------------------------
@@ -404,5 +405,79 @@ describe("gradeAnswer — sort", () => {
 
   it("wrong, not a crash, on no answer at all", () => {
     expect(gradeAnswer(question, {}).isCorrect).toBe(false);
+  });
+});
+
+describe("gradeAnswer — estimation", () => {
+  const absolute: GradableEstimationQuestion = {
+    type: "estimation",
+    correctValue: 400,
+    toleranceType: "absolute",
+    toleranceValue: 50,
+  };
+
+  it("exact guess: correct, suggests full credit", () => {
+    const result = gradeAnswer(absolute, { value: 400 });
+    expect(result.isCorrect).toBe(true);
+    expect(result.suggestedFraction).toBe(1);
+  });
+
+  it("within tolerance: correct, suggested fraction scales linearly with distance", () => {
+    const result = gradeAnswer(absolute, { value: 425 }); // 25 off, half the 50 tolerance
+    expect(result.isCorrect).toBe(true);
+    expect(result.suggestedFraction).toBeCloseTo(0.5);
+  });
+
+  it("right at the tolerance boundary: still correct, suggests no credit", () => {
+    const result = gradeAnswer(absolute, { value: 450 });
+    expect(result.isCorrect).toBe(true);
+    expect(result.suggestedFraction).toBeCloseTo(0);
+  });
+
+  it("outside tolerance: wrong, suggests no credit", () => {
+    const result = gradeAnswer(absolute, { value: 451 });
+    expect(result.isCorrect).toBe(false);
+    expect(result.suggestedFraction).toBe(0);
+  });
+
+  it("nearer guess earns a strictly higher suggested fraction — 'nearest earns most'", () => {
+    const near = gradeAnswer(absolute, { value: 410 });
+    const far = gradeAnswer(absolute, { value: 440 });
+    expect(near.suggestedFraction!).toBeGreaterThan(far.suggestedFraction!);
+  });
+
+  it("percentage tolerance scales with the correct value, not a fixed amount", () => {
+    const question: GradableEstimationQuestion = {
+      type: "estimation",
+      correctValue: 8_000_000,
+      toleranceType: "percentage",
+      toleranceValue: 10, // ±10% of 8,000,000 = ±800,000
+    };
+    expect(gradeAnswer(question, { value: 8_700_000 }).isCorrect).toBe(true);
+    expect(gradeAnswer(question, { value: 8_900_000 }).isCorrect).toBe(false);
+  });
+
+  it("scoring is independent per player — never compares against another player's guess", () => {
+    // No mechanism in the function signature even allows a second player's answer in; this test
+    // exists to pin that down as a deliberate design choice, not an oversight.
+    const a = gradeAnswer(absolute, { value: 410 });
+    const b = gradeAnswer(absolute, { value: 410 });
+    expect(a).toEqual(b);
+  });
+
+  it("wrong, not a crash, on no answer at all or a non-finite value", () => {
+    expect(gradeAnswer(absolute, {}).isCorrect).toBe(false);
+    expect(gradeAnswer(absolute, { value: NaN }).isCorrect).toBe(false);
+  });
+
+  it("a zero-width tolerance requires an exact match", () => {
+    const question: GradableEstimationQuestion = {
+      type: "estimation",
+      correctValue: 10,
+      toleranceType: "absolute",
+      toleranceValue: 0,
+    };
+    expect(gradeAnswer(question, { value: 10 }).isCorrect).toBe(true);
+    expect(gradeAnswer(question, { value: 11 }).isCorrect).toBe(false);
   });
 });

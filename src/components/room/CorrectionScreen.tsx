@@ -110,7 +110,9 @@ export function CorrectionScreen({
                         ? `a cliqué ${COUNTRY_NAME_FR[a.iso3] ?? a.iso3}`
                         : a.orderedLabels && a.orderedLabels.length > 0
                           ? a.orderedLabels.join(" → ")
-                          : "— pas de réponse"}
+                          : a.value !== undefined
+                            ? a.value.toString()
+                            : "— pas de réponse"}
                   </span>
                   <span className="font-numeral text-12 tabular-nums text-ink-faint">
                     {(a.msTaken / 1000).toFixed(1)}s

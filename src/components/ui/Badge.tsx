@@ -67,6 +67,7 @@ const QUESTION_TYPE_LABELS_FR = {
   image: "Image",
   geo: "Géographie",
   sort: "Tri",
+  estimation: "Estimation",
 } as const;
 
 export function QuestionTypeBadge({ type }: { type: keyof typeof QUESTION_TYPE_LABELS_FR }) {

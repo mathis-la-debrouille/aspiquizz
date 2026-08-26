@@ -10,6 +10,7 @@ import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSur
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
 import { SortAnswerSurface } from "@/components/room/answer-surfaces/SortAnswerSurface";
+import { EstimationAnswerSurface } from "@/components/room/answer-surfaces/EstimationAnswerSurface";
 import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import type { GameSocket } from "@/lib/socket/client";
 import type { QuestionShowPayload } from "@/server/socket/events";
@@ -20,6 +21,8 @@ export interface AnswerPayload {
   iso3?: string;
   /** sort — item ids, top to bottom, in the order the player currently has them. */
   order?: string[];
+  /** estimation — the player's numeric guess. */
+  value?: number;
 }
 
 export function QuestionScreen({
@@ -148,6 +151,16 @@ export function QuestionScreen({
         )}
         {q.type === "sort" && (
           <SortAnswerSurface
+            key={surfaceKey}
+            question={q}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
+        )}
+        {q.type === "estimation" && (
+          <EstimationAnswerSurface
             key={surfaceKey}
             question={q}
             disabled={locked}

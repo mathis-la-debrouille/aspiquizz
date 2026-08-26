@@ -9,6 +9,7 @@ import {
   questionOpenAnswers,
   questionGeo,
   questionSortItems,
+  questionEstimation,
   questionStats,
   answers,
   countries,
@@ -206,6 +207,15 @@ export async function duplicateQuestion(questionId: string): Promise<DuplicateRe
         position,
       })),
     );
+  }
+  if (detail.estimation) {
+    await db.insert(questionEstimation).values({
+      questionId: newId,
+      correctValue: detail.estimation.correctValue,
+      toleranceType: detail.estimation.toleranceType,
+      toleranceValue: detail.estimation.toleranceValue,
+      unit: detail.estimation.unit,
+    });
   }
 
   revalidatePath("/creer");

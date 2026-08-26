@@ -47,12 +47,22 @@ export interface GradableSortQuestion {
   correctOrder: string[];
 }
 
+export interface GradableEstimationQuestion {
+  type: "estimation";
+  correctValue: number;
+  toleranceType: "absolute" | "percentage";
+  /** Same unit as correctValue when "absolute"; a 0-100 percentage of |correctValue| when
+   *  "percentage". Always positive. */
+  toleranceValue: number;
+}
+
 export type GradableQuestion =
   | GradableOpenQuestion
   | GradableMcqQuestion
   | GradableImageQuestion
   | GradableGeoQuestion
-  | GradableSortQuestion;
+  | GradableSortQuestion
+  | GradableEstimationQuestion;
 
 export interface OpenAnswerPayload {
   text: string;
@@ -67,13 +77,28 @@ export interface GeoAnswerPayload {
 export interface SortAnswerPayload {
   order: string[];
 }
+export interface EstimationAnswerPayload {
+  value: number;
+}
 export type AnswerPayload =
-  OpenAnswerPayload | McqAnswerPayload | GeoAnswerPayload | SortAnswerPayload;
+  | OpenAnswerPayload
+  | McqAnswerPayload
+  | GeoAnswerPayload
+  | SortAnswerPayload
+  | EstimationAnswerPayload;
 
 export interface GradeResult {
   isCorrect: boolean;
   /** Which accepted variant matched, for debugging — undefined for MCQ/iso3 grading. */
   matchedOn?: string;
+  /** 0-1: how much of full credit the grader itself suggests, before the correction phase's
+   *  human review. Every type but estimation is binary, so omitting this is the same as
+   *  `isCorrect ? 1 : 0` (engine.ts's default) — only estimation's distance-based partial credit
+   *  ("nearest earns most points", within the author's own tolerance) needs to set this
+   *  explicitly, scaling linearly from 1 at an exact guess down to 0 right at the tolerance
+   *  boundary. Still a *suggestion*: the correction phase's slider can override it either way,
+   *  same as every other type's binary suggestion. */
+  suggestedFraction?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -236,6 +261,31 @@ export function gradeAnswer(question: GradableQuestion, payload: AnswerPayload):
         order.length === question.correctOrder.length &&
         order.every((id, i) => id === question.correctOrder[i]);
       return { isCorrect };
+    }
+
+    case "estimation": {
+      const raw = "value" in payload ? payload.value : undefined;
+      if (raw === undefined || !Number.isFinite(raw)) return { isCorrect: false };
+
+      const distance = Math.abs(raw - question.correctValue);
+      const toleranceAbs =
+        question.toleranceType === "percentage"
+          ? (Math.abs(question.correctValue) * question.toleranceValue) / 100
+          : question.toleranceValue;
+
+      // A zero-width tolerance (author set 0, or a percentage of a zero correct value) means
+      // only an exact match counts — the fraction math below would otherwise divide by zero.
+      if (toleranceAbs <= 0) {
+        const exact = distance === 0;
+        return { isCorrect: exact, suggestedFraction: exact ? 1 : 0 };
+      }
+
+      const isCorrect = distance <= toleranceAbs;
+      // Linear falloff: an exact guess suggests full credit, a guess right at the tolerance
+      // boundary suggests none — "nearest earns most points" is just what this curve produces,
+      // not a comparison against any other player's guess (each player is scored independently).
+      const suggestedFraction = isCorrect ? Math.max(0, 1 - distance / toleranceAbs) : 0;
+      return { isCorrect, suggestedFraction };
     }
   }
 }

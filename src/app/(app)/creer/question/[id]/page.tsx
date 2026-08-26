@@ -100,6 +100,18 @@ export default async function EditQuestionPage({
             shared,
           }
         : undefined,
+    estimation:
+      detail.type === "estimation" && detail.estimation
+        ? {
+            id: detail.id,
+            prompt: detail.prompt,
+            correctValue: detail.estimation.correctValue,
+            toleranceType: detail.estimation.toleranceType,
+            toleranceValue: detail.estimation.toleranceValue,
+            unit: detail.estimation.unit ?? "",
+            shared,
+          }
+        : undefined,
   };
 
   return (

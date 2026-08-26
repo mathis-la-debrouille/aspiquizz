@@ -125,12 +125,22 @@ export const sortQuestionSchema = questionSharedSchema
     { message: "Les éléments doivent être uniques.", path: ["items"] },
   );
 
+export const estimationQuestionSchema = questionSharedSchema.extend({
+  type: z.literal("estimation"),
+  prompt: z.string().trim().min(3, "La question est trop courte.").max(300),
+  correctValue: z.coerce.number().finite("Doit être un nombre."),
+  toleranceType: z.enum(["absolute", "percentage"]),
+  toleranceValue: z.coerce.number().positive("La tolérance doit être positive."),
+  unit: z.string().trim().max(40).optional().or(z.literal("")),
+});
+
 export const questionFormSchema = z.discriminatedUnion("type", [
   openQuestionSchema,
   mcqQuestionSchema,
   imageQuestionSchema,
   geoQuestionSchema,
   sortQuestionSchema,
+  estimationQuestionSchema,
 ]);
 
 export type QuestionFormInput = z.infer<typeof questionFormSchema>;
@@ -139,6 +149,7 @@ export type McqQuestionInput = z.infer<typeof mcqQuestionSchema>;
 export type ImageQuestionInput = z.infer<typeof imageQuestionSchema>;
 export type GeoQuestionInput = z.infer<typeof geoQuestionSchema>;
 export type SortQuestionInput = z.infer<typeof sortQuestionSchema>;
+export type EstimationQuestionInput = z.infer<typeof estimationQuestionSchema>;
 
 // ---------------------------------------------------------------------------
 // Quiz builder

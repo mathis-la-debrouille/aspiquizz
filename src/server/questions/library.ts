@@ -5,6 +5,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionGeo,
+  questionEstimation,
   questionStats,
   categories,
   users,
@@ -49,6 +50,8 @@ export interface LibraryQuestionItem {
   geoTargetIso3: string | null;
   /** sort only — drives "N éléments à trier". */
   sortItemCount: number;
+  /** estimation only — the question's own unit label (e.g. "bananes"), null if none was set. */
+  estimationUnit: string | null;
 }
 
 export interface LibraryFacets {
@@ -190,12 +193,14 @@ export async function listLibraryQuestions(
         openAnswerCount: sql<number>`(SELECT COUNT(*) FROM question_open_answers WHERE question_id = questions.id)`,
         geoTargetIso3: questionGeo.targetIso3,
         sortItemCount: sql<number>`(SELECT COUNT(*) FROM question_sort_items WHERE question_id = questions.id)`,
+        estimationUnit: questionEstimation.unit,
       })
       .from(questions)
       .innerJoin(categories, eq(questions.categoryId, categories.id))
       .innerJoin(users, eq(questions.authorId, users.id))
       .leftJoin(questionStats, eq(questionStats.questionId, questions.id))
       .leftJoin(questionGeo, eq(questionGeo.questionId, questions.id))
+      .leftJoin(questionEstimation, eq(questionEstimation.questionId, questions.id))
       .where(and(...conditions))
       .orderBy(orderBy, desc(questions.id))
       .limit(PAGE_SIZE + 1)

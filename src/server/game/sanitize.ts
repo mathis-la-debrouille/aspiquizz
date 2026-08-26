@@ -64,6 +64,9 @@ export interface QuestionForSanitizing {
   /** sort only — always in the CORRECT order here; toSanitisedQuestion shuffles before this
    *  reaches SanitisedQuestion, since the array's own order would otherwise just be the answer. */
   sortItems?: { id: string; label: string; mediaId: string | null }[];
+  /** estimation only — `unit` alone: the question's framing ("bananes", "habitants"), never the
+   *  answer-bearing correctValue/tolerance, which stay server-side until reveal. */
+  estimation?: { unit: string | null };
 }
 
 export interface SanitisedChoice {
@@ -97,6 +100,8 @@ export interface SanitisedQuestion {
   showNeighbours?: boolean;
   /** sort only — shuffled here, never the stored (correct) order. */
   sortItems?: SanitisedSortItem[];
+  /** estimation only — the question's framing, never the answer. */
+  estimationUnit?: string | null;
 }
 
 export interface SanitisedSortItem {
@@ -181,5 +186,11 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       // The one place the shuffle happens — every caller downstream (the client, the
       // correction-phase item lookup) only ever sees this scrambled order, never the stored one.
       return { ...base, sortItems: shuffled(q.sortItems ?? []) };
+
+    case "estimation":
+      // correctValue/toleranceType/toleranceValue never appear on `base` or here — they simply
+      // have nowhere to go on SanitisedQuestion, the same structural guarantee sort's correct
+      // order relies on.
+      return { ...base, estimationUnit: q.estimation?.unit ?? null };
   }
 }

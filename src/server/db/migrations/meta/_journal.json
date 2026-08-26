@@ -64,6 +64,13 @@
       "when": 1787696562971,
       "tag": "0008_confused_moon_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1787758393492,
+      "tag": "0009_heavy_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

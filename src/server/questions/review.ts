@@ -14,6 +14,7 @@ import {
   users,
   questionStats,
   questionGeo,
+  questionEstimation,
   type QuestionSource,
 } from "@/server/db/schema";
 import { getSession, type SessionUser } from "@/server/auth/session";
@@ -61,12 +62,14 @@ export async function listReviewQueue(): Promise<LibraryQuestionItem[]> {
       openAnswerCount: sql<number>`(SELECT COUNT(*) FROM question_open_answers WHERE question_id = questions.id)`,
       geoTargetIso3: questionGeo.targetIso3,
       sortItemCount: sql<number>`(SELECT COUNT(*) FROM question_sort_items WHERE question_id = questions.id)`,
+      estimationUnit: questionEstimation.unit,
     })
     .from(questions)
     .innerJoin(categories, eq(questions.categoryId, categories.id))
     .innerJoin(users, eq(questions.authorId, users.id))
     .leftJoin(questionStats, eq(questionStats.questionId, questions.id))
     .leftJoin(questionGeo, eq(questionGeo.questionId, questions.id))
+    .leftJoin(questionEstimation, eq(questionEstimation.questionId, questions.id))
     .where(and(...conditions))
     .orderBy(desc(questions.createdAt));
 

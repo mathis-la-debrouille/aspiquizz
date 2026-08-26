@@ -187,7 +187,7 @@ export function registerMcpTools(server: McpServer, ctx: McpAuthContext): void {
     "creer_question",
     {
       description:
-        "Crée une question, toujours à l'état de brouillon (jamais publiée directement). Types acceptés : open, mcq, geo, sort — pas image, et sort n'accepte que des éléments texte ici (une image doit être téléversée par un humain depuis le formulaire web, pour le type image comme pour les éléments d'une question sort).",
+        "Crée une question, toujours à l'état de brouillon (jamais publiée directement). Types acceptés : open, mcq, geo, sort, estimation — pas image, et sort n'accepte que des éléments texte ici (une image doit être téléversée par un humain depuis le formulaire web, pour le type image comme pour les éléments d'une question sort). estimation attend une réponse numérique (valeur, tolérance en marge fixe ou en pourcentage, unité facultative) — les points sont attribués selon la proximité de la réponse du joueur, pas en tout-ou-rien.",
       inputSchema: questionDraftSchema,
     },
     async (args) =>
@@ -579,7 +579,9 @@ function registerPrompt(server: McpServer): void {
         type: z
           .string()
           .optional()
-          .describe("Type souhaité : open, mcq, geo ou sort — texte seul pour sort (facultatif)."),
+          .describe(
+            "Type souhaité : open, mcq, geo, sort ou estimation — texte seul pour sort (facultatif).",
+          ),
         difficulte: z.string().optional().describe("Difficulté visée, de 1 à 5 (facultatif)."),
       },
     },

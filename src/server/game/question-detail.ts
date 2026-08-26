@@ -6,12 +6,14 @@ import {
   questionOpenAnswers,
   questionGeo,
   questionSortItems,
+  questionEstimation,
   categories,
   users,
   type AnswerMode,
   type ColorToken,
   type QuestionType,
   type QuestionStatus,
+  type EstimationToleranceType,
 } from "@/server/db/schema";
 import { toSanitisedQuestion, type SanitisedQuestion } from "@/server/game/sanitize";
 import { pointsForDifficulty } from "@/server/game/scoring";
@@ -56,6 +58,14 @@ export interface FullQuestionDetail {
   /** sort only — stored/returned in the CORRECT order (position asc). Never handed to a client
    *  that hasn't reached reveal: toSanitised shuffles before it leaves this module. */
   sortItems: { id: string; label: string; mediaId: string | null }[];
+  /** estimation only — null for every other type. Answer-bearing fields (correctValue,
+   *  tolerance*) never reach toSanitised's output; only `unit` does. */
+  estimation: {
+    correctValue: number;
+    toleranceType: EstimationToleranceType;
+    toleranceValue: number;
+    unit: string | null;
+  } | null;
 }
 
 /** Also the read side of edit mode (Addendum A.1's /creer/question/[id]) — one query, not a
@@ -94,7 +104,7 @@ export async function getFullQuestionDetail(
   const row = rows[0];
   if (!row) return null;
 
-  const [choices, openAnswers, geoRows, sortItems] = await Promise.all([
+  const [choices, openAnswers, geoRows, sortItems, estimationRows] = await Promise.all([
     db
       .select({
         id: questionChoices.id,
@@ -118,9 +128,20 @@ export async function getFullQuestionDetail(
       .from(questionSortItems)
       .where(eq(questionSortItems.questionId, questionId))
       .orderBy(asc(questionSortItems.position)),
+    db
+      .select({
+        correctValue: questionEstimation.correctValue,
+        toleranceType: questionEstimation.toleranceType,
+        toleranceValue: questionEstimation.toleranceValue,
+        unit: questionEstimation.unit,
+      })
+      .from(questionEstimation)
+      .where(eq(questionEstimation.questionId, questionId))
+      .limit(1),
   ]);
 
   const geoRow = geoRows[0];
+  const estimationRow = estimationRows[0];
 
   return {
     ...row,
@@ -136,6 +157,7 @@ export async function getFullQuestionDetail(
         }
       : null,
     sortItems,
+    estimation: estimationRow ?? null,
   };
 }
 
@@ -164,6 +186,8 @@ export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): San
     choices: detail.choices,
     geo: detail.geo ?? undefined,
     sortItems: detail.type === "sort" ? detail.sortItems : undefined,
+    estimation:
+      detail.type === "estimation" ? { unit: detail.estimation?.unit ?? null } : undefined,
   });
 }
 
@@ -203,5 +227,15 @@ export function toGradable(detail: FullQuestionDetail): GradableQuestion {
       // sortItems is already ordered by position asc (the query orderBy), i.e. already the
       // correct order — mapping straight to ids is all this needs.
       return { type: "sort", correctOrder: detail.sortItems.map((i) => i.id) };
+    case "estimation":
+      if (!detail.estimation) {
+        throw new Error(`estimation question ${detail.id} has no question_estimation row`);
+      }
+      return {
+        type: "estimation",
+        correctValue: detail.estimation.correctValue,
+        toleranceType: detail.estimation.toleranceType,
+        toleranceValue: detail.estimation.toleranceValue,
+      };
   }
 }

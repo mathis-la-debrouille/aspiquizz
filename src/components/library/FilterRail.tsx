@@ -23,6 +23,7 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   image: "Image",
   geo: "Géographie",
   sort: "Tri",
+  estimation: "Estimation",
 };
 
 const STATUS_LABELS: Record<(typeof LIBRARY_STATUSES)[number], string> = {

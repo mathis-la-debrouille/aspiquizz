@@ -120,6 +120,17 @@ agnostic category mutations — see below), `src/server/questions/ingest.ts`, `m
 `src/components/game` only has the authoring-time `QuestionPreview`. Don't assume a path exists;
 check first.
 
+Question type `estimation` (2026-08-26): the player guesses a number, credit is given within an
+author-set tolerance ("near enough"), and closeness — not just clearing the bar — sets the point
+value. Scored per player, independently, never room-relative (see DECISIONS.md for why that
+distinction mattered enough to confirm with the user up front). `question_estimation` holds one
+row per question (correctValue, toleranceType `"absolute"|"percentage"`, toleranceValue, unit
+nullable); `grading.ts`'s `gradeAnswer` returns an optional `suggestedFraction` (0-1, only
+estimation ever sets it — every other type stays binary) that pre-fills the *existing*
+correction-phase slider via `Math.round(maxPoints * fraction)`, rather than a second scoring path.
+Fully MCP/import-reachable from day one, like `open`/`mcq`/`geo` — a number and a unit carry no
+media, so unlike `sort` or `image` there was never a reason to fork the insert path.
+
 **`server/categories/core.ts` vs `server/categories/actions.ts`** (Addendum C): `core.ts` is a
 plain module — no `"use server"`, no `next/cache`/`next/navigation` import, ever. `actions.ts`
 ("use server") is a thin wrapper that calls into it and adds `revalidatePath`. This split exists

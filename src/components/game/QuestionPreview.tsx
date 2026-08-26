@@ -45,6 +45,12 @@ export type PreviewData =
        *  player gets (sanitize.ts). Confirming the order is right is the point of this preview. */
       items: { label: string; imageUrl: string | null }[];
       hint?: string;
+    }
+  | {
+      type: "estimation";
+      prompt: string;
+      unit?: string;
+      hint?: string;
     };
 
 const GEO_MODE_LABELS: Record<GeoMode, string> = {
@@ -111,6 +117,15 @@ export function QuestionPreview({
       {data.type === "geo" && <GeoPreviewMap data={data} />}
 
       {data.type === "sort" && <SortPreviewList items={data.items} />}
+
+      {data.type === "estimation" && (
+        <div className="flex flex-col gap-1">
+          <div className="h-11 rounded-md border border-border-hard bg-bg-inset px-3 py-2 text-14 text-ink-faint">
+            Estimation du joueur…
+          </div>
+          {data.unit && <p className="text-12 text-ink-faint">Unité : {data.unit}</p>}
+        </div>
+      )}
     </Card>
   );
 }
@@ -209,6 +224,8 @@ function typeLabel(type: PreviewData["type"]): string {
       return "Géographie";
     case "sort":
       return "Tri";
+    case "estimation":
+      return "Estimation";
   }
 }
 

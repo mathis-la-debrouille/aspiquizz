@@ -13,6 +13,9 @@
  * text-only variant here (no mediaId field exists on sortDraftSchema's items at all — same
  * reason image is fully excluded, just narrower), but createSortQuestion/updateSortQuestion in
  * actions.ts remain the only path for a sort question whose items carry uploaded images.
+ * estimation is fully in scope, unlike either of those — a number and an optional unit label
+ * carry no media, so createEstimationQuestion in actions.ts routes through here too rather than
+ * inserting directly.
  */
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
@@ -22,6 +25,7 @@ import {
   questionOpenAnswers,
   questionGeo,
   questionSortItems,
+  questionEstimation,
   countryCapitals,
   categories,
   type QuestionSource,
@@ -287,6 +291,14 @@ export async function createQuestionFromDraft(
           position,
         })),
       );
+    } else if (data.type === "estimation") {
+      await tx.insert(questionEstimation).values({
+        questionId: newId,
+        correctValue: data.valeur,
+        toleranceType: data.typeTolerance,
+        toleranceValue: data.tolerance,
+        unit: data.unite ?? null,
+      });
     }
 
     return newId;

@@ -161,8 +161,31 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     }
   });
 
+  it("estimation: unit is forwarded, correctValue/tolerance never are", () => {
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "estimation",
+      estimation: { unit: "bananes" },
+    };
+    const sanitised = toSanitisedQuestion(input);
+    expect(sanitised.estimationUnit).toBe("bananes");
+    expect(sanitised).not.toHaveProperty("correctValue");
+    expect(sanitised).not.toHaveProperty("toleranceType");
+    expect(sanitised).not.toHaveProperty("toleranceValue");
+  });
+
+  it("estimation: works with no unit set at all", () => {
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "estimation",
+      estimation: { unit: null },
+    };
+    const sanitised = toSanitisedQuestion(input);
+    expect(sanitised.estimationUnit).toBeNull();
+  });
+
   it("preserves author credit and shared metadata for every type", () => {
-    for (const type of ["open", "mcq", "image", "geo", "sort"] as const) {
+    for (const type of ["open", "mcq", "image", "geo", "sort", "estimation"] as const) {
       const input: QuestionForSanitizing = {
         ...baseFields,
         type,
@@ -173,6 +196,7 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
             ? { mode: "name_country", targetIso3: "XXX", showLabels: true, showNeighbours: true }
             : undefined,
         sortItems: type === "sort" ? [{ id: "a", label: "Un", mediaId: null }] : undefined,
+        estimation: type === "estimation" ? { unit: "km" } : undefined,
       };
       const sanitised = toSanitisedQuestion(input);
       expect(sanitised.authorUsername).toBe("auteur");

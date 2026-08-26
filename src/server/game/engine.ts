@@ -448,10 +448,16 @@ async function runGameLoop(io: GameIo, room: RoomState): Promise<void> {
       if (player.isSpectator) continue;
       const pending = room.pendingAnswers.get(player.userId);
       const msTaken = pending ? pending.submittedAt - startedAt : frozen.timeLimitS * 1000;
-      const accepted = pending ? gradeAnswer(gradable, pending.payload).isCorrect : false;
-      // The grader can only say yes or no, so its suggestion is all-or-nothing.
-      // Partial marks are a human judgement, which is the point of the slider.
-      const suggested = accepted ? maxPointsFor(detail.difficulty) : 0;
+      const graded = pending ? gradeAnswer(gradable, pending.payload) : { isCorrect: false };
+      const accepted = graded.isCorrect;
+      // The grader is all-or-nothing for every type but estimation ("nearest earns most
+      // points" — grading.ts's distance-based suggestedFraction), so this defaults to the old
+      // binary behaviour (1 when accepted) and only estimation ever supplies something between.
+      // Partial marks are still a human judgement in the end, which is the point of the slider —
+      // this only decides where it starts.
+      const suggested = accepted
+        ? Math.round(maxPointsFor(detail.difficulty) * (graded.suggestedFraction ?? 1))
+        : 0;
       const payload = pending?.payload ?? { text: "" };
 
       ledger.set(player.userId, { payload, msTaken, suggested, awarded: suggested });
@@ -577,6 +583,7 @@ export function buildCorrectionPayload(
       iso3?: string;
       choiceIds?: string[];
       order?: string[];
+      value?: number;
     };
     return {
       userId,
@@ -584,6 +591,7 @@ export function buildCorrectionPayload(
       text: payload.text ?? "",
       iso3: payload.iso3,
       orderedLabels: payload.order?.map((id) => sortLabelById.get(id) ?? "?"),
+      value: payload.value,
       suggested: entry.suggested,
       awarded: entry.awarded,
       msTaken: entry.msTaken,
@@ -784,6 +792,14 @@ function describeCorrectAnswer(detail: FullQuestionDetail): string {
     case "sort":
       // detail.sortItems is already position-asc, i.e. already the correct order.
       return detail.sortItems.map((item, i) => `${i + 1}. ${item.label}`).join(" → ");
+    case "estimation": {
+      if (!detail.estimation) return "";
+      const { correctValue, toleranceType, toleranceValue, unit } = detail.estimation;
+      const value = `${correctValue}${unit ? ` ${unit}` : ""}`;
+      const tolerance =
+        toleranceType === "percentage" ? `± ${toleranceValue} %` : `± ${toleranceValue}`;
+      return `${value} (${tolerance})`;
+    }
   }
 }
 

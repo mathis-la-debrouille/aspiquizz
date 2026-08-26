@@ -1390,3 +1390,62 @@ generator was never updated for its own new data file
   after both fixes. Did not run a live end-to-end drag-drop game session or a real MCP tool
   call — the user asked not to run end-to-end tests earlier in this same day's work.
 
+
+## 2026-08-26 — New question type: `estimation` (guess a number, closeness scores)
+
+- **The ask**: "how many bananas to eat before you die? 400" — the player answers with a single
+  number, credit is given when they're "near enough" (a margin the author sets per question),
+  and being nearer earns more than just scraping inside that margin. Scoped up front with the
+  user via two explicit choices, since either could have meant a materially different build:
+  **(1) per-player distance curve, not room-relative** — a player's score depends only on how
+  close *their own* guess is to the true value, never on what anyone else in the room guessed.
+  The alternative (closest player in the room wins outright, others scored by how much farther
+  off they were) would have made every player's score depend on the whole room's answers landing
+  first — a real dependency this app's scoring has never had, for any type. **(2) tolerance unit
+  picked per question, not fixed app-wide** — the author chooses "±50" (absolute) or "±10 %"
+  (percentage of the correct value) per question, since a small answer (bananas: 400) and a large
+  one (population: 8,000,000) don't share a sane fixed margin.
+- **New table, correction-phase integration reused wholesale, not forked.** `question_estimation`
+  (id, questionId — unique, one row per question, not a position-ordered list like
+  `question_sort_items`; correctValue real, toleranceType "absolute"|"percentage", toleranceValue
+  real, unit text nullable). The genuinely new piece wasn't a new scoring engine — it was
+  `GradeResult` growing an optional `suggestedFraction` (0-1, defaults to `isCorrect ? 1 : 0` when
+  omitted, so every other type's behaviour is bit-for-bit unchanged). `engine.ts`'s existing
+  correction-phase slider (0..`maxPointsFor(difficulty)`, already there for every type's human
+  review) reads that fraction to pre-fill its suggestion — `Math.round(maxPoints * fraction)` —
+  so "nearest earns most points" *is* the pre-filled suggestion on the same slider a host already
+  uses to override anything, not a second scoring path bolted on next to it. No engine.ts
+  cross-player logic exists or was needed.
+- **Grading is a clean linear falloff, computed in grading.ts (pure, no I/O, same discipline as
+  every other type there).** `distance = |guess - correctValue|`; `toleranceAbs` resolves
+  percentage against `|correctValue|` or is used as-is for absolute; `isCorrect = distance <=
+  toleranceAbs`; `suggestedFraction = isCorrect ? max(0, 1 - distance/toleranceAbs) : 0` — exact
+  guess suggests full credit, a guess right at the boundary suggests none (still "correct" for
+  streak/correctCount purposes per `applyCorrectionForQuestion`'s existing `awarded > 0` rule, just
+  not worth anything unless the host overrides it). A zero-width tolerance (author set 0, or a
+  percentage of a zero correct value) requires an exact match rather than dividing by zero.
+- **Fully in scope for MCP/import, unlike `sort` or `image` before it.** A number and an optional
+  unit label carry no media, so there was never a reason to fork the insert path the way sort's
+  image-carrying items or image itself do — `estimationDraftSchema` joined
+  `questionDraftSchema`'s discriminated union directly (French fields: `valeur`, `typeTolerance`,
+  `tolerance`, `unite` optional), `createEstimationQuestion` in `actions.ts` routes through
+  `createQuestionFromDraft` like `open`/`mcq`/`geo` do (not a direct insert like
+  `createSortQuestion`), and `register.ts` needed only its two human-facing description strings
+  updated — same one-file MCP cost sort's text-only variant had, this time with no variant-level
+  caveat at all.
+- **Edit mode built in from the start, not left as a gap.** Unlike `sort`/`geo` when they first
+  shipped, `/creer/question/[id]` got its `estimation:` branch of `EditingQuestion` in the same
+  pass as everything else — no follow-up commit needed to close it.
+- **Sanitize.ts whitelist**: `estimation?: { unit: string | null }` on `QuestionForSanitizing`,
+  `estimationUnit?: string | null` on `SanitisedQuestion` — `correctValue`/`toleranceType`/
+  `toleranceValue` simply have nowhere to go on the sanitised shape, the same structural
+  guarantee sort's correct order relies on. `unit` alone is safe pre-answer: it's the question's
+  own framing ("bananes", "habitants"), never the answer.
+- **New answer surface** (`EstimationAnswerSurface.tsx`) is a near-verbatim copy of
+  `OpenAnswerSurface.tsx` — a debounced numeric draft plus a commit-on-Valider, same "what's on
+  screen when time runs out is the answer" philosophy as every other type since the
+  uninterrupted-run/correction redesign. The one difference: a numeric `<input type="number">`
+  and `Number()`/`Number.isFinite()` in place of trimmed text.
+- **Verification**: `pnpm typecheck`/`lint`/`test` (160 tests, +11 for estimation) and a real
+  `pnpm build` all pass. Did not run a live end-to-end game session or a real MCP tool call — per
+  this same day's standing instruction not to run end-to-end tests.

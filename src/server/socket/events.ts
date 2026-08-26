@@ -142,6 +142,8 @@ export interface CorrectionAnswer {
   /** sort only — the player's submitted order, already resolved from item ids to labels
    *  server-side, so the correction UI needs no separate item lookup. */
   orderedLabels?: string[];
+  /** estimation only — the player's numeric guess. */
+  value?: number;
   /** What the grader concluded, used to pre-fill the host's ruling. A suggestion,
    *  never the verdict: 40 questions times six players is too many decisions to
    *  make from scratch, and the machine is right most of the time. Full marks when

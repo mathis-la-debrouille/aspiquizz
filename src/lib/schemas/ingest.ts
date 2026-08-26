@@ -60,11 +60,27 @@ export const sortDraftSchema = questionDraftCommonSchema.extend({
     .max(6, "Six éléments maximum."),
 });
 
+/** No image variant to route around here (unlike sort) — an estimation question is a number and
+ *  an optional unit label, nothing that could ever carry uploaded media. So, unlike sort, this
+ *  type is *entirely* in scope for MCP/import, with no separate web-only path for anything. */
+export const estimationDraftSchema = questionDraftCommonSchema.extend({
+  type: z.literal("estimation"),
+  valeur: z.number().finite(),
+  /** "absolute": tolerance is in the same unit as valeur (e.g. ±50). "percentage": tolerance is
+   *  a 0-100 percentage of |valeur| (e.g. ±10%) — picked per question, not a fixed convention,
+   *  since a small answer like a banana count and a large one like a population need different
+   *  scales of "near enough". */
+  typeTolerance: z.enum(["absolute", "percentage"]),
+  tolerance: z.number().positive(),
+  unite: z.string().trim().max(40).optional(),
+});
+
 export const questionDraftSchema = z.discriminatedUnion("type", [
   openDraftSchema,
   mcqDraftSchema,
   geoDraftSchema,
   sortDraftSchema,
+  estimationDraftSchema,
 ]);
 
 export type QuestionDraft = z.infer<typeof questionDraftSchema>;
@@ -72,3 +88,4 @@ export type OpenQuestionDraft = z.infer<typeof openDraftSchema>;
 export type McqQuestionDraft = z.infer<typeof mcqDraftSchema>;
 export type GeoQuestionDraft = z.infer<typeof geoDraftSchema>;
 export type SortQuestionDraft = z.infer<typeof sortDraftSchema>;
+export type EstimationQuestionDraft = z.infer<typeof estimationDraftSchema>;

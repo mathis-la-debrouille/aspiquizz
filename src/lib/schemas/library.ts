@@ -8,7 +8,7 @@ import { z } from "zod";
  * which already does).
  */
 
-export const QUESTION_TYPES = ["open", "mcq", "image", "geo", "sort"] as const;
+export const QUESTION_TYPES = ["open", "mcq", "image", "geo", "sort", "estimation"] as const;
 export const LIBRARY_STATUSES = ["published", "draft", "archived", "all"] as const;
 export const LIBRARY_SCOPES = ["all", "mine", "drafts"] as const;
 export const LIBRARY_SORTS = [

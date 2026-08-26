@@ -12,6 +12,7 @@ import { McqAnswerSurface } from "@/components/room/answer-surfaces/McqAnswerSur
 import { ImageAnswerSurface } from "@/components/room/answer-surfaces/ImageAnswerSurface";
 import { GeoAnswerSurface } from "@/components/room/answer-surfaces/GeoAnswerSurface";
 import { SortAnswerSurface } from "@/components/room/answer-surfaces/SortAnswerSurface";
+import { EstimationAnswerSurface } from "@/components/room/answer-surfaces/EstimationAnswerSurface";
 import { toSanitisedQuestion } from "@/server/game/sanitize";
 import {
   getPreviewData,
@@ -196,6 +197,8 @@ function PreviewContent({
     choices: detail.choices,
     geo: detail.geo ?? undefined,
     sortItems: detail.type === "sort" ? detail.sortItems : undefined,
+    estimation:
+      detail.type === "estimation" ? { unit: detail.estimation?.unit ?? null } : undefined,
   });
 
   return (
@@ -249,6 +252,15 @@ function PreviewContent({
             onDraft={noop}
           />
         )}
+        {detail.type === "estimation" && (
+          <EstimationAnswerSurface
+            question={sanitised}
+            disabled
+            committed={false}
+            onSubmit={noop}
+            onDraft={noop}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-2 border-t border-border-soft pt-4">
@@ -287,6 +299,16 @@ function PreviewContent({
               </li>
             ))}
           </ol>
+        )}
+        {detail.type === "estimation" && detail.estimation && (
+          <p className="text-16 text-moss-glow">
+            {detail.estimation.correctValue}
+            {detail.estimation.unit ? ` ${detail.estimation.unit}` : ""}
+            {" · tolérance "}
+            {detail.estimation.toleranceType === "percentage"
+              ? `± ${detail.estimation.toleranceValue} %`
+              : `± ${detail.estimation.toleranceValue}`}
+          </p>
         )}
         {detail.explanation && <p className="text-14 text-ink-mid">{detail.explanation}</p>}
       </div>

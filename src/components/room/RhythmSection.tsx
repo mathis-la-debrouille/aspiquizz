@@ -22,6 +22,7 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   image: "Image",
   geo: "Géographie",
   sort: "Tri",
+  estimation: "Estimation",
 };
 
 /**

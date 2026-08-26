@@ -170,7 +170,8 @@ export const media = sqliteTable(
 // Questions
 // ---------------------------------------------------------------------------
 
-export type QuestionType = "open" | "mcq" | "image" | "geo" | "sort";
+export type QuestionType = "open" | "mcq" | "image" | "geo" | "sort" | "estimation";
+export type EstimationToleranceType = "absolute" | "percentage";
 export type QuestionStatus = "draft" | "published" | "archived";
 export type AnswerMode = "mcq" | "open";
 /** Addendum C.1 — 'manual' is the web form, 'import' is reserved for a future bulk-JSON path
@@ -305,6 +306,33 @@ export const questionSortItems = sqliteTable(
     index("question_sort_items_question_id_idx").on(t.questionId),
     index("question_sort_items_media_id_idx").on(t.mediaId),
   ],
+);
+
+/**
+ * One row per estimation question — "how many bananas would kill you? 400" — never more than
+ * one, hence the unique index on questionId rather than a position-ordered list like
+ * question_sort_items. `correctValue` and both tolerance fields are answer-bearing and must
+ * never reach a client before reveal (sanitize.ts); `unit` (e.g. "bananes", "habitants") is safe
+ * to send immediately, since it's the question's own framing, not the answer. `toleranceType`
+ * is picked per question by the author (not a fixed app-wide convention) — "±50" reads naturally
+ * for a small answer like the banana count, "±10%" scales sanely for a country's population.
+ */
+export const questionEstimation = sqliteTable(
+  "question_estimation",
+  {
+    id: id(),
+    questionId: text("question_id")
+      .notNull()
+      .unique()
+      .references(() => questions.id, { onDelete: "cascade" }),
+    correctValue: real("correct_value").notNull(),
+    toleranceType: text("tolerance_type").$type<EstimationToleranceType>().notNull(),
+    /** Same unit as correctValue when toleranceType is "absolute"; a 0-100 percentage of
+     *  |correctValue| when "percentage". Always positive — enforced by the Zod schema, not here. */
+    toleranceValue: real("tolerance_value").notNull(),
+    unit: text("unit"),
+  },
+  (t) => [index("question_estimation_question_id_idx").on(t.questionId)],
 );
 
 // ---------------------------------------------------------------------------

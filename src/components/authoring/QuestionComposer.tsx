@@ -10,13 +10,15 @@ import { McqForm, type McqFormInitial } from "@/components/authoring/McqForm";
 import { ImageForm, type ImageFormInitial } from "@/components/authoring/ImageForm";
 import { GeoForm } from "@/components/authoring/GeoForm";
 import { SortForm, type SortFormInitial } from "@/components/authoring/SortForm";
+import { EstimationForm, type EstimationFormInitial } from "@/components/authoring/EstimationForm";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuestionType } from "@/server/db/schema";
 
 /** Present only in edit mode (/creer/question/[id]) — geo isn't supported here yet, its editor
  *  is being rebuilt from the ground up (Addendum B.3) and gains edit support as part of that,
  *  rather than wiring it twice against a form about to be replaced. sort has the same gap,
- *  new rather than rebuilt: /creer/question/[id] isn't wired for it yet either. */
+ *  new rather than rebuilt: /creer/question/[id] isn't wired for it yet either. estimation has
+ *  no such gap — it was built with edit support from the start. */
 export interface EditingQuestion {
   id: string;
   type: QuestionType;
@@ -24,6 +26,7 @@ export interface EditingQuestion {
   mcq?: McqFormInitial;
   image?: ImageFormInitial;
   sort?: SortFormInitial;
+  estimation?: EstimationFormInitial;
 }
 
 export function QuestionComposer({
@@ -119,6 +122,14 @@ export function QuestionComposer({
           onCategoriesChange={setCategories}
           onCreated={setCreatedId}
           initial={editing?.sort}
+        />
+      )}
+      {type === "estimation" && (
+        <EstimationForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+          initial={editing?.estimation}
         />
       )}
     </div>

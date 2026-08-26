@@ -8,6 +8,7 @@ import {
   questionChoices,
   questionOpenAnswers,
   questionSortItems,
+  questionEstimation,
   quizzes,
   quizQuestions,
 } from "@/server/db/schema";
@@ -18,12 +19,14 @@ import {
   imageQuestionSchema,
   geoQuestionSchema,
   sortQuestionSchema,
+  estimationQuestionSchema,
   quizFormSchema,
   type OpenQuestionInput,
   type McqQuestionInput,
   type ImageQuestionInput,
   type GeoQuestionInput,
   type SortQuestionInput,
+  type EstimationQuestionInput,
   type QuizFormInput,
 } from "@/lib/schemas/questions";
 import { createQuestionFromDraft } from "@/server/questions/ingest";
@@ -407,6 +410,81 @@ export async function updateSortQuestion(
       position,
     })),
   );
+
+  revalidatePath("/creer");
+  revalidatePath(`/creer/question/${questionId}`);
+  return { ok: true, id: questionId };
+}
+
+/** Unlike createSortQuestion, this goes through the single insert path (ingest.ts) — an
+ *  estimation question carries no media, so there's no reason for it to bypass
+ *  createQuestionFromDraft the way sort's image-carrying items force it to. */
+export async function createEstimationQuestion(input: EstimationQuestionInput): Promise<ActionResult> {
+  const user = await requireUser();
+  const parsed = estimationQuestionSchema.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
+  const data = parsed.data;
+
+  const draft: QuestionDraft = {
+    type: "estimation",
+    enonce: data.prompt,
+    categorie: data.categoryId,
+    difficulte: data.difficulty as 1 | 2 | 3 | 4 | 5,
+    indice: data.hint || undefined,
+    explication: data.explanation || undefined,
+    valeur: data.correctValue,
+    typeTolerance: data.toleranceType,
+    tolerance: data.toleranceValue,
+    unite: data.unit || undefined,
+  };
+  const result = await createQuestionFromDraft(draft, {
+    authorId: user.id,
+    source: "manual",
+    initialStatus: data.status,
+  });
+  if (!result.ok) {
+    return { ok: false, error: result.errors[0]?.message ?? "Formulaire invalide." };
+  }
+
+  revalidatePath("/creer");
+  return { ok: true, id: result.questionId };
+}
+
+export async function updateEstimationQuestion(
+  questionId: string,
+  input: EstimationQuestionInput,
+): Promise<ActionResult> {
+  const user = await requireUser();
+  const denied = await requireEditAccess(questionId, user);
+  if (denied) return denied;
+  const parsed = estimationQuestionSchema.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
+  const data = parsed.data;
+
+  await db
+    .update(questions)
+    .set({
+      prompt: data.prompt,
+      hint: data.hint || null,
+      explanation: data.explanation || null,
+      categoryId: data.categoryId,
+      difficulty: data.difficulty,
+      status: data.status,
+      updatedAt: new Date(),
+    })
+    .where(eq(questions.id, questionId));
+
+  await db
+    .update(questionEstimation)
+    .set({
+      correctValue: data.correctValue,
+      toleranceType: data.toleranceType,
+      toleranceValue: data.toleranceValue,
+      unit: data.unit || null,
+    })
+    .where(eq(questionEstimation.questionId, questionId));
 
   revalidatePath("/creer");
   revalidatePath(`/creer/question/${questionId}`);

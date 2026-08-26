@@ -20,6 +20,7 @@ const timeLimitByTypeSchema = z
     image: z.number().int().min(5).max(120),
     geo: z.number().int().min(5).max(120),
     sort: z.number().int().min(5).max(120),
+    estimation: z.number().int().min(5).max(120),
   })
   .partial()
   .optional();
@@ -84,6 +85,8 @@ const answerPayloadSchema = z.object({
   iso3: z.string().length(3).optional(),
   /** sort — item ids in the order the player currently has them, top to bottom. */
   order: z.array(z.string()).max(6).optional(),
+  /** estimation — the player's numeric guess. */
+  value: z.number().finite().optional(),
 });
 
 export const answerSubmitSchema = z.object({
