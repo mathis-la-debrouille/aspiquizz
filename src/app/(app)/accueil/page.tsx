@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { desc } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { getSession } from "@/server/auth/session";
 import { db } from "@/server/db";
-import { categories } from "@/server/db/schema";
+import { categories, questions } from "@/server/db/schema";
 import { listPublishedQuizzes } from "@/server/questions/queries";
 import { LobbyClient } from "@/components/lobby/LobbyClient";
 
@@ -15,7 +15,23 @@ export default async function AccueilPage() {
   const displayName = session?.user.displayName ?? "";
 
   const [categoryRows, quizzes] = await Promise.all([
-    db.select().from(categories).orderBy(desc(categories.position)),
+    // The published count per category drives which categories a host may pick — a category
+    // under MIN_QUESTIONS_PER_CATEGORY is shown disabled, not hidden, so it's obvious that it
+    // exists and why it can't be used yet.
+    db
+      .select({
+        id: categories.id,
+        name: categories.name,
+        colorToken: categories.colorToken,
+        questionCount: sql<number>`count(${questions.id})`,
+      })
+      .from(categories)
+      .leftJoin(
+        questions,
+        and(eq(questions.categoryId, categories.id), eq(questions.status, "published")),
+      )
+      .groupBy(categories.id)
+      .orderBy(desc(categories.position)),
     listPublishedQuizzes(),
   ]);
 
@@ -27,6 +43,7 @@ export default async function AccueilPage() {
       </div>
       <LobbyClient
         categories={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
+        questionCounts={Object.fromEntries(categoryRows.map((c) => [c.id, c.questionCount]))}
         quizzes={quizzes}
       />
     </div>
