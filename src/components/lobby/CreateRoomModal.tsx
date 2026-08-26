@@ -46,6 +46,7 @@ export function CreateRoomModal({
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [showDifficulty, setShowDifficulty] = useState(true);
+  const [mcqAsOpen, setMcqAsOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,6 +80,7 @@ export function CreateRoomModal({
           maxPlayers,
           revealDurationS: 6,
           showDifficulty,
+          mcqAsOpen,
           manualAdvance: false,
         },
       },
@@ -209,6 +211,19 @@ export function CreateRoomModal({
             options={[
               { value: "public", label: "Public", hint: "Visible dans la liste des salons." },
               { value: "private", label: "Privé", hint: "Accessible uniquement avec le code." },
+            ]}
+          />
+          <SegmentedControl
+            label="QCM"
+            value={mcqAsOpen ? "open" : "choices"}
+            onChange={(v) => setMcqAsOpen(v === "open")}
+            options={[
+              { value: "choices", label: "À choix", hint: "Les options sont affichées." },
+              {
+                value: "open",
+                label: "Réponse libre",
+                hint: "Aucune option : il faut trouver la réponse et la taper.",
+              },
             ]}
           />
           <SegmentedControl

@@ -9,6 +9,10 @@ import type { AnswerMode, ColorToken, GeoMode, QuestionType } from "@/server/db/
  * structurally has nowhere to put the ones that don't belong. See
  * tests/unit/sanitize.test.ts.
  *
+ * Both `mcq` choices and `sort` items are shuffled here. Their stored order is the author's,
+ * and the author writes the right answer first — so passing the stored order through is a
+ * straight answer leak, just a less obvious one than sending `isCorrect`.
+ *
  * Geo is the one type with a real subtlety: for the three "visual
  * identification" modes (name_country, find_capital, name_from_shape,
  * name_from_flag) the
@@ -35,6 +39,10 @@ export interface RawChoice {
 }
 
 export interface QuestionForSanitizing {
+  /** Room setting (config.mcqAsOpen): present an mcq question as a free-text one. The choices
+   *  are then omitted entirely rather than merely unused — sending four options a client could
+   *  read is most of the answer. */
+  asFreeText?: boolean;
   id: string;
   type: QuestionType;
   prompt: string;
@@ -102,6 +110,9 @@ export interface SanitisedQuestion {
   sortItems?: SanitisedSortItem[];
   /** estimation only — the question's framing, never the answer. */
   estimationUnit?: string | null;
+  /** mcq / image(mcq) in the room's free-text mode: `choices` is absent entirely and the
+   *  client renders a text input. */
+  asFreeText?: boolean;
 }
 
 export interface SanitisedSortItem {
@@ -152,20 +163,33 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       return base;
 
     case "mcq":
+      // In the room's free-text mode the choices don't travel at all. Omitting them is the
+      // point: four options on screen is most of the answer, so "hidden by the client" would
+      // be no protection whatsoever.
+      if (q.asFreeText) return { ...base, asFreeText: true };
+      // Shuffled, for the same reason sort's items are: `question_choices.position` is the
+      // order the author wrote them in, and every importer writes the correct one first
+      // ("First entry is the correct one" — seed-imported-questions.ts). Sending that order
+      // straight through meant the answer sat in slot 1 on all 2000-odd questions, and the
+      // game was "always click top-left". Grading is by choice id, so the display order is
+      // free to move.
       return {
         ...base,
-        choices: (q.choices ?? []).map(stripChoice),
+        choices: shuffled((q.choices ?? []).map(stripChoice)),
         multiSelect: isMultiSelect(q.choices ?? []),
       };
 
     case "image":
+      if (q.asFreeText && q.answerMode === "mcq") {
+        return { ...base, mediaId: q.mediaId, answerMode: "open", asFreeText: true };
+      }
       return {
         ...base,
         mediaId: q.mediaId,
         answerMode: q.answerMode,
         ...(q.answerMode === "mcq"
           ? {
-              choices: (q.choices ?? []).map(stripChoice),
+              choices: shuffled((q.choices ?? []).map(stripChoice)),
               multiSelect: isMultiSelect(q.choices ?? []),
             }
           : {}),

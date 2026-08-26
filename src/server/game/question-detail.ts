@@ -164,8 +164,13 @@ export async function getFullQuestionDetail(
 /** `timeLimitS` is the room's resolved value (room_questions.time_limit_s), not a property of
  *  the question itself — passed in explicitly by the caller (engine.ts, from `frozen.timeLimitS`)
  *  rather than read off `detail`, which no longer carries one at all (Addendum B.2). */
-export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): SanitisedQuestion {
+export function toSanitised(
+  detail: FullQuestionDetail,
+  timeLimitS: number,
+  asFreeText = false,
+): SanitisedQuestion {
   return toSanitisedQuestion({
+    asFreeText,
     id: detail.id,
     type: detail.type,
     prompt: detail.prompt,
@@ -191,16 +196,30 @@ export function toSanitised(detail: FullQuestionDetail, timeLimitS: number): San
   });
 }
 
-export function toGradable(detail: FullQuestionDetail): GradableQuestion {
+/**
+ * `asFreeText` is the room's mcqAsOpen setting. An mcq question then grades as an open one
+ * against the labels of its correct choices — which is also why the fuzzy matcher matters here:
+ * a player typing "glock 18" for "Le Glock-18" is right, and only normalizeAnswer knows that.
+ */
+export function toGradable(detail: FullQuestionDetail, asFreeText = false): GradableQuestion {
+  const correctLabels = () => detail.choices.filter((c) => c.isCorrect).map((c) => c.label);
   switch (detail.type) {
     case "open":
       return { type: "open", strict: detail.strict, acceptedAnswers: detail.openAnswers };
     case "mcq":
+      if (asFreeText) {
+        // Never strict: the choice labels were written to be *read*, not typed, so they carry
+        // articles and punctuation a player has no reason to reproduce.
+        return { type: "open", strict: false, acceptedAnswers: correctLabels() };
+      }
       return {
         type: "mcq",
         correctChoiceIds: detail.choices.filter((c) => c.isCorrect).map((c) => c.id),
       };
     case "image":
+      if (asFreeText && detail.answerMode === "mcq") {
+        return { type: "open", strict: false, acceptedAnswers: correctLabels() };
+      }
       return detail.answerMode === "mcq"
         ? {
             type: "image",

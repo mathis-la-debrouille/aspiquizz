@@ -102,7 +102,7 @@ export function QuestionScreen({
         </div>
         <div className="flex items-center gap-3">
           <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
-          <FlagQuestionButton questionId={q.id} roomCode={code} />
+          <FlagQuestionButton key={q.id} questionId={q.id} roomCode={code} />
         </div>
       </div>
 
@@ -119,7 +119,19 @@ export function QuestionScreen({
             onDraft={draft}
           />
         )}
-        {q.type === "mcq" && (
+        {/* The room's mcqAsOpen setting: the server sent no choices at all, so this renders
+            the same text field an `open` question uses. Nothing here decides the mode — if
+            `asFreeText` came back there is genuinely nothing to display as options. */}
+        {q.type === "mcq" && q.asFreeText && (
+          <OpenAnswerSurface
+            key={surfaceKey}
+            disabled={locked}
+            committed={submitted}
+            onSubmit={submit}
+            onDraft={draft}
+          />
+        )}
+        {q.type === "mcq" && !q.asFreeText && (
           <McqAnswerSurface
             key={surfaceKey}
             choices={q.choices ?? []}

@@ -142,6 +142,10 @@ export interface CorrectionAnswer {
   /** sort only — the player's submitted order, already resolved from item ids to labels
    *  server-side, so the correction UI needs no separate item lookup. */
   orderedLabels?: string[];
+  /** mcq / image(mcq) only — the labels the player picked, resolved server-side for the same
+   *  reason. Without this the correction screen printed "pas de réponse" for every answered
+   *  multiple-choice question, since only `text` was read and mcq payloads carry ids. */
+  choiceLabels?: string[];
   /** estimation only — the player's numeric guess. */
   value?: number;
   /** What the grader concluded, used to pre-fill the host's ruling. A suggestion,

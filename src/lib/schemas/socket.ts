@@ -31,6 +31,8 @@ export const roomConfigSchema = z.object({
   timeLimitByType: timeLimitByTypeSchema,
   /** Defaulted, not required: an older client that never sends it still gets the badge. */
   showDifficulty: z.boolean().default(true),
+  /** Off by default — it makes every mcq question dramatically harder, so it's opt-in. */
+  mcqAsOpen: z.boolean().default(false),
   categoryIds: z.array(z.string()).default([]),
   difficultyMin: z.number().int().min(1).max(5),
   difficultyMax: z.number().int().min(1).max(5),
