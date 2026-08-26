@@ -10,9 +10,12 @@ import type { QuizListItem } from "@/server/questions/queries";
 
 export function LobbyClient({
   categories,
+  questionCounts,
   quizzes,
 }: {
   categories: CategoryOption[];
+  /** Published questions per category id, for the selectability threshold. */
+  questionCounts: Record<string, number>;
   quizzes: QuizListItem[];
 }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,6 +36,7 @@ export function LobbyClient({
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         categories={categories}
+        questionCounts={questionCounts}
         quizzes={quizzes}
       />
     </div>

@@ -8,10 +8,12 @@ import { Select } from "@/components/ui/Select";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { RadioCard } from "@/components/ui/RadioCard";
 import { RhythmSection, type RhythmValue } from "@/components/room/RhythmSection";
 import { NewCategoryButton } from "@/components/categories/NewCategoryButton";
 import { useSocket } from "@/lib/socket/client";
+import { MIN_QUESTIONS_PER_CATEGORY } from "@/lib/game-rules";
 import type { CategoryOption } from "@/components/authoring/types";
 import type { QuizListItem } from "@/server/questions/queries";
 
@@ -19,11 +21,15 @@ export function CreateRoomModal({
   open,
   onClose,
   categories: initialCategories,
+  questionCounts,
   quizzes,
 }: {
   open: boolean;
   onClose: () => void;
   categories: CategoryOption[];
+  /** Published questions per category id. A category absent from the map counts as zero — which
+   *  is what a category created inline from this very modal genuinely has. */
+  questionCounts: Record<string, number>;
   quizzes: QuizListItem[];
 }) {
   const router = useRouter();
@@ -43,6 +49,8 @@ export function CreateRoomModal({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isSelectable = (id: string) => (questionCounts[id] ?? 0) >= MIN_QUESTIONS_PER_CATEGORY;
+
   function toggleCategory(id: string) {
     setCategoryIds((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
   }
@@ -61,7 +69,10 @@ export function CreateRoomModal({
           questionCount,
           timeLimitS: rhythm.timeLimitS,
           timeLimitByType: rhythm.timeLimitByType,
-          categoryIds: source === "random" ? categoryIds : [],
+          // Filtered again here, not just in the checkbox list: a category can fall under the
+          // threshold between the page render and this click (someone archives a question), and
+          // sending it would quietly reintroduce the over-served thin category.
+          categoryIds: source === "random" ? categoryIds.filter(isSelectable) : [],
           difficultyMin: 1,
           difficultyMax: 5,
           allowLateJoin: true,
@@ -140,14 +151,31 @@ export function CreateRoomModal({
               <NewCategoryButton categories={categories} onCategoriesChange={setCategories} />
             </div>
             <div className="flex flex-wrap gap-3">
-              {categories.map((c) => (
-                <Checkbox
-                  key={c.id}
-                  label={c.name}
-                  checked={categoryIds.includes(c.id)}
-                  onChange={() => toggleCategory(c.id)}
-                />
-              ))}
+              {categories.map((c) => {
+                const count = questionCounts[c.id] ?? 0;
+                const selectable = isSelectable(c.id);
+                const checkbox = (
+                  <Checkbox
+                    label={c.name}
+                    checked={selectable && categoryIds.includes(c.id)}
+                    disabled={!selectable}
+                    onChange={() => toggleCategory(c.id)}
+                  />
+                );
+                return (
+                  <span key={c.id}>
+                    {selectable ? (
+                      checkbox
+                    ) : (
+                      <Tooltip
+                        content={`Pas assez de questions — ${count}/${MIN_QUESTIONS_PER_CATEGORY}`}
+                      >
+                        {checkbox}
+                      </Tooltip>
+                    )}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}

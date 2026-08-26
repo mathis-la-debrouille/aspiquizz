@@ -2,6 +2,7 @@ import { sql, eq, and, gte, lte, inArray, asc } from "drizzle-orm";
 import { db } from "@/server/db";
 import { questions, quizQuestions, type QuestionType } from "@/server/db/schema";
 import type { RoomConfigInput } from "@/lib/schemas/socket";
+import { MIN_QUESTIONS_PER_CATEGORY } from "@/lib/game-rules";
 
 export interface SelectedQuestion {
   questionId: string;
@@ -90,6 +91,26 @@ export async function selectQuestionsForRoom(
   ];
   if (config.categoryIds.length > 0) {
     conditions.push(inArray(questions.categoryId, config.categoryIds));
+  } else {
+    // "No category chosen" means every category, but a category too thin to be *pickable* in the
+    // lobby must not sneak in through the default either — otherwise the one question in
+    // Mythologie would still turn up in every single game. Same threshold, same count (published,
+    // ignoring the difficulty window) as the lobby's greyed-out checkboxes.
+    const eligible = await db
+      .select({ id: questions.categoryId })
+      .from(questions)
+      .where(eq(questions.status, "published" as const))
+      .groupBy(questions.categoryId)
+      .having(gte(sql<number>`count(*)`, MIN_QUESTIONS_PER_CATEGORY));
+    // On a young database no category clears the bar yet; a playable game beats an empty one.
+    if (eligible.length > 0) {
+      conditions.push(
+        inArray(
+          questions.categoryId,
+          eligible.map((row) => row.id),
+        ),
+      );
+    }
   }
 
   // Randomise inside each category in SQL and keep at most `questionCount` per category: that is
