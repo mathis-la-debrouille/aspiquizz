@@ -2,17 +2,12 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
 import { Sparkles, CheckCircle2, XCircle } from "lucide-react";
+import { PodiumStage } from "@/components/room/PodiumStage";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useSfx } from "@/lib/sound/useSfx";
 import type { RoomFinishedPayload, RoomStateView } from "@/server/socket/events";
-
-const PLATFORM_HEIGHTS: Record<number, string> = { 1: "h-32", 2: "h-24", 3: "h-16" };
-const PLATFORM_ORDER = [2, 1, 3]; // visual left-to-right: 2nd, 1st, 3rd
-const STAGGER_ORDER: Record<number, number> = { 3: 0, 2: 1, 1: 2 }; // rise 3rd -> 2nd -> 1st
 
 export function Podium({
   payload,
@@ -22,9 +17,7 @@ export function Podium({
   state: RoomStateView;
 }) {
   const router = useRouter();
-  const reducedMotion = useReducedMotion();
   const playSfx = useSfx();
-  const podiumByRank = new Map(payload.podium.map((p) => [p.rank, p]));
   const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
   // The between-questions scoreboard only shows every SCOREBOARD_INTERVAL-th question now, so
   // this is the one place left to see the full per-question record — one lookup per (question,
@@ -44,36 +37,7 @@ export function Podium({
     <div className="flex flex-col gap-8">
       <h1 className="text-center font-display text-34 text-ink-high">Partie terminée</h1>
 
-      <div className="flex items-end justify-center gap-4">
-        {PLATFORM_ORDER.map((rank) => {
-          const entry = podiumByRank.get(rank);
-          if (!entry) return null;
-          return (
-            <motion.div
-              key={rank}
-              initial={reducedMotion ? undefined : { y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{
-                delay: STAGGER_ORDER[rank]! * 0.15,
-                duration: 0.3,
-                ease: [0.2, 0.8, 0.2, 1],
-              }}
-              className="flex flex-col items-center gap-2"
-            >
-              <Avatar seed={entry.avatarSeed} size={rank === 1 ? "xl" : "lg"} />
-              <p className="max-w-[8rem] truncate text-14 font-medium text-ink-high">
-                {entry.displayName}
-              </p>
-              <p className="font-numeral text-16 tabular-nums text-gold">{entry.score}</p>
-              <div
-                className={`flex w-24 items-start justify-center rounded-t-md border border-border-hard bg-bg-raised pt-2 ${PLATFORM_HEIGHTS[rank]}`}
-              >
-                <span className="font-display text-26 text-gold">{rank}</span>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+      <PodiumStage podium={payload.podium} />
 
       {payload.highlights.length > 0 && (
         <div className="flex flex-col gap-2 rounded-md border border-gold-deep/60 bg-gold-deep/10 p-4">

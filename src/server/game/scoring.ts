@@ -17,6 +17,29 @@ export function maxPointsFor(difficulty: number): number {
   return Math.max(1, Math.min(5, Math.round(difficulty)));
 }
 
+/**
+ * Competition ranking: equal scores share a rank, and the next distinct score skips the ranks
+ * the tie consumed — 13, 13, 12 is 1st, 1st, 3rd, not 1st, 2nd, 3rd.
+ *
+ * Ranking by array index called one of two players on 13 points the winner and the other the
+ * runner-up, on nothing but map iteration order. A tie is a real result; the podium shows it
+ * as one.
+ *
+ * Input need not be sorted — this sorts a copy and returns it in ranked order.
+ */
+export function assignRanks<T extends { score: number }>(rows: readonly T[]): (T & { rank: number })[] {
+  const sorted = [...rows].sort((a, b) => b.score - a.score);
+  let rank = 0;
+  let lastScore: number | null = null;
+  return sorted.map((row, index) => {
+    if (lastScore === null || row.score !== lastScore) {
+      rank = index + 1;
+      lastScore = row.score;
+    }
+    return { ...row, rank };
+  });
+}
+
 function clamp01(n: number): number {
   return Math.max(0, Math.min(1, n));
 }

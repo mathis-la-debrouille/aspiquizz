@@ -13,7 +13,7 @@ import {
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
-import { maxPointsFor } from "@/server/game/scoring";
+import { assignRanks, maxPointsFor } from "@/server/game/scoring";
 import { resolveTimeLimitS } from "@/lib/game-rules";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import {
@@ -800,13 +800,15 @@ function describeCorrectAnswer(detail: FullQuestionDetail): string {
 }
 
 function buildScoreboard(room: RoomState): ScoreboardEntry[] {
-  const sorted = [...room.players.values()]
-    .filter((p) => !p.isSpectator)
-    .sort((a, b) => b.score - a.score);
-  return sorted.map((p, i) => ({
+  const ranked = assignRanks(
+    [...room.players.values()]
+      .filter((p) => !p.isSpectator)
+      .map((p) => ({ userId: p.userId, score: p.score, streak: p.streak })),
+  );
+  return ranked.map((p) => ({
     userId: p.userId,
     score: p.score,
-    rank: i + 1,
+    rank: p.rank,
     delta: 0,
     streak: p.streak,
   }));
@@ -818,41 +820,47 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
   room.currentDetail = null;
   room.deadlineMs = null;
 
-  const sorted = [...room.players.values()]
-    .filter((p) => !p.isSpectator)
-    .sort((a, b) => b.score - a.score);
+  // Ranked, not merely sorted: two players on the same score share a rank, in the database and
+  // on the podium alike.
+  const sorted = assignRanks([...room.players.values()].filter((p) => !p.isSpectator));
 
-  for (let i = 0; i < sorted.length; i++) {
+  for (const player of sorted) {
     await db
       .update(roomPlayers)
-      .set({ finalRank: i + 1 })
-      .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, sorted[i]!.userId)));
+      .set({ finalRank: player.rank })
+      .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, player.userId)));
   }
   await db
     .update(roomsTable)
     .set({ status: "finished", endedAt: new Date() })
     .where(eq(roomsTable.code, room.code));
 
-  const podium: PodiumEntry[] = sorted.slice(0, 3).map((p, i) => ({
-    userId: p.userId,
-    displayName: p.displayName,
-    avatarSeed: p.avatarSeed,
-    score: p.score,
-    rank: i + 1,
-  }));
+  // Everyone in the top three *ranks*, which can be more than three people: a three-way tie for
+  // first is three first places, not a first, a second and a third.
+  const podium: PodiumEntry[] = sorted
+    .filter((p) => p.rank <= 3)
+    .map((p) => ({
+      userId: p.userId,
+      displayName: p.displayName,
+      avatarSeed: p.avatarSeed,
+      score: p.score,
+      rank: p.rank,
+    }));
 
   // Cross-game stats/XP/badges — a real, if 0-question, game (i.e. someone stuck around long
   // enough to be non-spectator) still counts toward gamesPlayed, so this runs even for `sorted`
   // entries with questionsSeen === 0 rather than being skipped.
   const highlights = await awardProgression(
-    sorted.map((p, i) => ({
+    sorted.map((p) => ({
       userId: p.userId,
       displayName: p.displayName,
       score: p.score,
       correctCount: p.correctCount,
       totalQuestions: p.questionsSeen,
       bestStreakThisGame: p.bestStreak,
-      isWinner: i === 0 && p.score > 0,
+      // Rank, not array position: two players tied on top both won, and only one of them was
+      // getting the badge for it.
+      isWinner: p.rank === 1 && p.score > 0,
     })),
   );
 

@@ -82,6 +82,22 @@ export const sfx = {
       { freq: 783.99, durationMs: 110 },
       { freq: 1046.5, durationMs: 280 },
     ]),
+  /** Podium — one hit per place as its score reel stops, so the three landings are heard as
+   *  three separate events rather than read off the screen. Short and dry on purpose: it fires
+   *  up to four times in two seconds. */
+  podiumLock: () =>
+    playSequence([
+      { freq: 392, durationMs: 60, type: "square", gain: 0.06 },
+      { freq: 587.33, durationMs: 120, type: "square", gain: 0.07 },
+    ]),
+  /** Podium — the crown landing on first place, after the last reel has stopped. */
+  podiumCrown: () =>
+    playSequence([
+      { freq: 659.25, durationMs: 90 },
+      { freq: 783.99, durationMs: 90 },
+      { freq: 987.77, durationMs: 90 },
+      { freq: 1318.51, durationMs: 420, gain: 0.08 },
+    ]),
   /** SoundToggle — a small confirmation blip played once, right as sound gets turned on. Called
    *  directly (not via useSfx()) since the enabled state that gate checks is, at that instant,
    *  still the pre-toggle value. */
