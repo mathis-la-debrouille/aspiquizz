@@ -9,10 +9,19 @@
  * with Anglo-centric ones ("What is dabbing?") and outright bad ones ("What is
  * H2O?" offering "None" as a distractor).
  *
- * Two API constraints, both handled here rather than discovered in production:
+ * Three API constraints, all handled here rather than discovered in production:
  *   - one request per 5 seconds per IP, so requests are spaced deliberately;
  *   - a session token is required to avoid being served the same questions again
- *     across requests, and it expires after 6 hours of inactivity.
+ *     across requests, and it expires after 6 hours of inactivity;
+ *   - asking for more questions than a (category, difficulty) actually holds
+ *     returns response_code 1 — *nothing at all*, not "here's what there is".
+ *     A flat --per-batch 50 therefore silently returned zero for every small
+ *     tier, which is why Mythology (71 questions) and Books (120) once looked
+ *     like they had nothing usable in them. So the available count is read from
+ *     api_count.php first and each tier is drained in batches sized to fit —
+ *     and because that count includes true/false questions while this script
+ *     only asks for multiple-choice, even the exact count can over-ask, so an
+ *     empty response halves the request and retries instead of giving up.
  *
  * Run: pnpm tsx scripts/fetch-opentdb.ts [--per-batch 50] [--categories 9,17,23]
  */
@@ -25,6 +34,8 @@ const repoRoot = path.resolve(__dirname, "..");
 const DEST = path.join(repoRoot, "scripts/data/opentdb-raw.json");
 
 const RATE_LIMIT_MS = 5_200; // the documented limit is 5s; a little margin
+/** api_count.php isn't subject to the same throttle in practice, but it isn't free either. */
+const COUNT_RATE_LIMIT_MS = 1_200;
 const API = "https://opentdb.com";
 
 /**
@@ -196,6 +207,24 @@ async function getSessionToken(): Promise<string> {
   return json.token;
 }
 
+/** How many questions the source actually holds per difficulty, so we never over-ask. */
+async function fetchCounts(category: number): Promise<Record<"easy" | "medium" | "hard", number>> {
+  const res = await fetch(`${API}/api_count.php?category=${category}`);
+  const json = (await res.json()) as {
+    category_question_count?: {
+      total_easy_question_count: number;
+      total_medium_question_count: number;
+      total_hard_question_count: number;
+    };
+  };
+  const c = json.category_question_count;
+  return {
+    easy: c?.total_easy_question_count ?? 0,
+    medium: c?.total_medium_question_count ?? 0,
+    hard: c?.total_hard_question_count ?? 0,
+  };
+}
+
 async function fetchBatch(
   category: number,
   difficulty: string,
@@ -236,38 +265,53 @@ async function main() {
   for (const category of categories) {
     const target = CATEGORY_MAP[category];
     if (!target) continue;
+    await sleep(COUNT_RATE_LIMIT_MS);
+    const available = await fetchCounts(category);
     for (const difficulty of ["easy", "medium", "hard"] as const) {
-      await sleep(RATE_LIMIT_MS);
-      let batch: RawResult[] | "exhausted";
-      try {
-        batch = await fetchBatch(category, difficulty, perBatch, token);
-      } catch (err) {
-        console.log(`[warn] cat ${category}/${difficulty}: ${(err as Error).message}`);
-        continue;
-      }
-      if (batch === "exhausted") {
-        console.log(`[info] cat ${category}/${difficulty}: nothing new`);
-        continue;
-      }
+      // Drain the tier instead of taking one bite of it: `remaining` is what the API says
+      // exists, and every request asks for no more than that — over-asking returns nothing.
+      let remaining = available[difficulty];
       let added = 0;
-      for (const r of batch) {
-        const key = normaliseKey(r.question);
-        if (!key || seen.has(key)) continue;
-        seen.add(key);
-        staged.push({
-          key,
-          opentdbCategory: category,
-          categorie: target,
-          difficulte: DIFFICULTY_MAP[r.difficulty] ?? 2,
-          en: {
-            question: decodeEntities(r.question),
-            correct: decodeEntities(r.correct_answer),
-            incorrect: r.incorrect_answers.map(decodeEntities),
-          },
-        });
-        added += 1;
+      // Shrinks on refusal: api_count.php counts true/false questions too, so even the
+      // exact reported count can be more multiple-choice questions than exist. Halving
+      // beats bisecting for real — one or two extra requests finds the ceiling.
+      let ask = Math.min(perBatch, remaining);
+      while (remaining > 0 && ask >= 1) {
+        await sleep(RATE_LIMIT_MS);
+        let batch: RawResult[] | "exhausted";
+        try {
+          batch = await fetchBatch(category, difficulty, ask, token);
+        } catch (err) {
+          console.log(`[warn] cat ${category}/${difficulty}: ${(err as Error).message}`);
+          break;
+        }
+        if (batch === "exhausted" || batch.length === 0) {
+          ask = ask > 1 ? Math.floor(ask / 2) : 0;
+          continue;
+        }
+        remaining -= batch.length;
+        ask = Math.min(ask, remaining);
+        for (const r of batch) {
+          const key = normaliseKey(r.question);
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          staged.push({
+            key,
+            opentdbCategory: category,
+            categorie: target,
+            difficulte: DIFFICULTY_MAP[r.difficulty] ?? 2,
+            en: {
+              question: decodeEntities(r.question),
+              correct: decodeEntities(r.correct_answer),
+              incorrect: r.incorrect_answers.map(decodeEntities),
+            },
+          });
+          added += 1;
+        }
       }
-      console.log(`[info] cat ${category}/${difficulty}: +${added} (total ${staged.length})`);
+      console.log(
+        `[info] cat ${category}/${difficulty}: +${added} of ${available[difficulty]} (total ${staged.length})`,
+      );
     }
   }
 

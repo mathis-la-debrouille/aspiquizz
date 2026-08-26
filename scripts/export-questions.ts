@@ -38,6 +38,8 @@ interface Exported {
   categorie: string;
   difficulte: number;
   enonce: string;
+  /** Only present when it isn't "published" — see the comment at the assignment. */
+  statut?: "draft" | "archived";
   choix?: Array<{ texte: string; correct: boolean }>;
   reponses?: string[];
   explication?: string;
@@ -49,6 +51,7 @@ function canonical(q: Exported): string {
     difficulte: q.difficulte,
     enonce: q.enonce,
   };
+  if (q.statut) ordered.statut = q.statut;
   if (q.choix) ordered.choix = q.choix.map((c) => ({ texte: c.texte, correct: c.correct }));
   if (q.reponses) ordered.reponses = q.reponses;
   if (q.explication) ordered.explication = q.explication;
@@ -76,11 +79,16 @@ async function main() {
   const exported: Exported[] = [];
   for (const row of rows) {
     // Archived questions are kept in the export: they were authored work, and
-    // dropping them here would mean a restore silently loses them.
+    // dropping them here would mean a restore silently loses them. Their status
+    // travels with them, though — without it, a restore would republish something
+    // a human had deliberately taken out of rotation, and the archiving would look
+    // like it had silently reverted itself. Omitted when published, which is the
+    // overwhelming majority, so the file stays quiet.
     const base: Exported = {
       categorie: row.category,
       difficulte: row.difficulty,
       enonce: row.prompt,
+      ...(row.status === "published" ? {} : { statut: row.status }),
     };
     if (row.type === "mcq") {
       const choices = await db

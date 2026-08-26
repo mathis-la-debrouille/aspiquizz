@@ -23,6 +23,9 @@ interface ImportedQuestion {
   categorie: string;
   difficulte: 1 | 2 | 3 | 4 | 5;
   enonce: string;
+  /** Absent means published. Present only for a question somebody took out of rotation —
+   *  honoured here so a restore doesn't quietly republish it. */
+  statut?: "draft" | "archived";
   /** First entry is the correct one; order is shuffled at play time by the engine. */
   choix: Array<{ texte: string; correct: boolean }>;
   explication?: string;
@@ -102,7 +105,7 @@ async function main() {
         choix: q.choix,
         ...(q.explication ? { explication: q.explication } : {}),
       },
-      { authorId: author.id, source: "manual", initialStatus: "published" },
+      { authorId: author.id, source: "manual", initialStatus: q.statut ?? "published" },
     );
     if (result.ok) created += 1;
     else failures.push(`${q.enonce} :: ${result.errors.map((e) => e.message).join("; ")}`);
