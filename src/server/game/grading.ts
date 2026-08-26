@@ -120,6 +120,52 @@ export function normalizeAnswer(input: string): string {
   return s;
 }
 
+/**
+ * Extra accepted spellings derived from an answer that was written to be *read*, not typed.
+ *
+ * A multiple-choice label is prose: "5 semaines", "Le Glock-18", "Sucre ou La Paz",
+ * "L'hyperinflation (1923)". Read off a button that is exactly right. Typed into a blank field,
+ * nobody reproduces the unit or the parenthetical — the room's answer to "combien de semaines
+ * de congés payés" is "5", and the grader marking all three players wrong made the host
+ * override every one of them by hand.
+ *
+ * So each of these is accepted as well as the label itself:
+ *   - the bare number, when the label is a number followed by a unit ("5 semaines" -> "5")
+ *   - the label without a trailing parenthetical ("L'hyperinflation (1923)")
+ *   - each alternative, when the label offers several ("Sucre ou La Paz", "Bombay / Mumbai")
+ *
+ * Articles and accents need no entry here: normalizeAnswer already strips both.
+ *
+ * Deliberately additive and never subtractive — this only ever widens what counts as right, so
+ * a derived variant cannot make a correct answer wrong. The correction round is still where a
+ * genuinely arguable answer gets settled.
+ */
+export function expandTypedVariants(labels: string[]): string[] {
+  const out = new Set<string>();
+
+  const add = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) out.add(trimmed);
+  };
+
+  for (const label of labels) {
+    add(label);
+
+    const withoutParenthetical = label.replace(/\s*\([^)]*\)\s*$/, "");
+    if (withoutParenthetical !== label) add(withoutParenthetical);
+
+    for (const part of withoutParenthetical.split(/\s+ou\s+|\s*\/\s*/i)) {
+      if (part !== withoutParenthetical) add(part);
+    }
+
+    // "5 semaines", "40 jours", "1,5 million d'habitants" — the leading number on its own.
+    const leadingNumber = /^(\d+(?:[.,]\d+)?)\s+\S/.exec(withoutParenthetical);
+    if (leadingNumber) add(leadingNumber[1]!);
+  }
+
+  return [...out];
+}
+
 // ---------------------------------------------------------------------------
 // Damerau-Levenshtein (optimal string alignment variant — single adjacent
 // transposition allowed). Pure DP, no dependency.

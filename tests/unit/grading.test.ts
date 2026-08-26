@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
   damerauLevenshtein,
+  expandTypedVariants,
   gradeAnswer,
   matchesAnyVariant,
   normalizeAnswer,
+  type GradableEstimationQuestion,
   type GradableGeoQuestion,
   type GradableImageQuestion,
   type GradableMcqQuestion,
   type GradableOpenQuestion,
   type GradableSortQuestion,
-  type GradableEstimationQuestion,
 } from "@/server/game/grading";
 
 // ---------------------------------------------------------------------------
@@ -479,5 +480,48 @@ describe("gradeAnswer — estimation", () => {
     };
     expect(gradeAnswer(question, { value: 10 }).isCorrect).toBe(true);
     expect(gradeAnswer(question, { value: 11 }).isCorrect).toBe(false);
+  });
+});
+
+describe("expandTypedVariants — a label read off a button, typed into a field", () => {
+  it("accepts the bare number when the label carries a unit", () => {
+    // The case that made a host override three players by hand: everyone typed "5".
+    const variants = expandTypedVariants(["5 semaines"]);
+    expect(variants).toContain("5 semaines");
+    expect(variants).toContain("5");
+    expect(matchesAnyVariant("5", variants, false).isCorrect).toBe(true);
+    expect(matchesAnyVariant("5 semaines", variants, false).isCorrect).toBe(true);
+  });
+
+  it("handles a decimal comma the French way", () => {
+    expect(expandTypedVariants(["1,5 million d'habitants"])).toContain("1,5");
+  });
+
+  it("drops a trailing parenthetical", () => {
+    const variants = expandTypedVariants(["L'hyperinflation (1923)"]);
+    expect(matchesAnyVariant("hyperinflation", variants, false).isCorrect).toBe(true);
+  });
+
+  it("splits a label that offers several answers", () => {
+    const variants = expandTypedVariants(["Sucre ou La Paz", "Bombay / Mumbai"]);
+    for (const typed of ["Sucre", "La Paz", "Bombay", "Mumbai"]) {
+      expect(matchesAnyVariant(typed, variants, false).isCorrect).toBe(true);
+    }
+  });
+
+  it("leaves a plain label alone and never invents an empty variant", () => {
+    expect(expandTypedVariants(["Le Glock-18"])).toEqual(["Le Glock-18"]);
+    expect(expandTypedVariants(["", "   "])).toEqual([]);
+  });
+
+  it("does not widen a number that is the whole answer", () => {
+    // "1958" must not also accept some prefix of itself.
+    expect(expandTypedVariants(["1958"])).toEqual(["1958"]);
+  });
+
+  it("still rejects a wrong answer", () => {
+    const variants = expandTypedVariants(["5 semaines"]);
+    expect(matchesAnyVariant("8", variants, false).isCorrect).toBe(false);
+    expect(matchesAnyVariant("trois", variants, false).isCorrect).toBe(false);
   });
 });
