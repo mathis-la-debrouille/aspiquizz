@@ -106,13 +106,15 @@ export function CorrectionScreen({
                      *  the French name it was asked about. */}
                     {a.text
                       ? `« ${a.text} »`
-                      : a.iso3
-                        ? `a cliqué ${COUNTRY_NAME_FR[a.iso3] ?? a.iso3}`
-                        : a.orderedLabels && a.orderedLabels.length > 0
-                          ? a.orderedLabels.join(" → ")
-                          : a.value !== undefined
-                            ? a.value.toString()
-                            : "— pas de réponse"}
+                      : a.choiceLabels && a.choiceLabels.length > 0
+                        ? `« ${a.choiceLabels.join(" + ")} »`
+                        : a.iso3
+                          ? `a cliqué ${COUNTRY_NAME_FR[a.iso3] ?? a.iso3}`
+                          : a.orderedLabels && a.orderedLabels.length > 0
+                            ? a.orderedLabels.join(" → ")
+                            : a.value !== undefined
+                              ? a.value.toString()
+                              : "— pas de réponse"}
                   </span>
                   <span className="font-numeral text-12 tabular-nums text-ink-faint">
                     {(a.msTaken / 1000).toFixed(1)}s

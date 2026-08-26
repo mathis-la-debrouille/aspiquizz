@@ -102,7 +102,7 @@ export function QuestionScreen({
         </div>
         <div className="flex items-center gap-3">
           <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
-          <FlagQuestionButton questionId={q.id} roomCode={code} />
+          <FlagQuestionButton key={q.id} questionId={q.id} roomCode={code} />
         </div>
       </div>
 

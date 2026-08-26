@@ -9,6 +9,10 @@ import type { AnswerMode, ColorToken, GeoMode, QuestionType } from "@/server/db/
  * structurally has nowhere to put the ones that don't belong. See
  * tests/unit/sanitize.test.ts.
  *
+ * Both `mcq` choices and `sort` items are shuffled here. Their stored order is the author's,
+ * and the author writes the right answer first — so passing the stored order through is a
+ * straight answer leak, just a less obvious one than sending `isCorrect`.
+ *
  * Geo is the one type with a real subtlety: for the three "visual
  * identification" modes (name_country, find_capital, name_from_shape,
  * name_from_flag) the
@@ -152,9 +156,15 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
       return base;
 
     case "mcq":
+      // Shuffled, for the same reason sort's items are: `question_choices.position` is the
+      // order the author wrote them in, and every importer writes the correct one first
+      // ("First entry is the correct one" — seed-imported-questions.ts). Sending that order
+      // straight through meant the answer sat in slot 1 on all 2000-odd questions, and the
+      // game was "always click top-left". Grading is by choice id, so the display order is
+      // free to move.
       return {
         ...base,
-        choices: (q.choices ?? []).map(stripChoice),
+        choices: shuffled((q.choices ?? []).map(stripChoice)),
         multiSelect: isMultiSelect(q.choices ?? []),
       };
 
@@ -165,7 +175,7 @@ export function toSanitisedQuestion(q: QuestionForSanitizing): SanitisedQuestion
         answerMode: q.answerMode,
         ...(q.answerMode === "mcq"
           ? {
-              choices: (q.choices ?? []).map(stripChoice),
+              choices: shuffled((q.choices ?? []).map(stripChoice)),
               multiSelect: isMultiSelect(q.choices ?? []),
             }
           : {}),

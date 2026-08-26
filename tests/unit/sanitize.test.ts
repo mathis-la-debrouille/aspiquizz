@@ -43,10 +43,14 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     const sanitised = toSanitisedQuestion(input);
     const json = JSON.stringify(sanitised);
     expect(json).not.toContain("isCorrect");
-    expect(sanitised.choices).toEqual([
-      { id: "a", label: "Paris" },
-      { id: "b", label: "Lyon" },
-    ]);
+    // Same members, any order — the order itself is shuffled (see the shuffle test below).
+    expect(sanitised.choices).toHaveLength(2);
+    expect(sanitised.choices).toEqual(
+      expect.arrayContaining([
+        { id: "a", label: "Paris" },
+        { id: "b", label: "Lyon" },
+      ]),
+    );
     expect(sanitised.multiSelect).toBe(false);
   });
 
@@ -62,11 +66,54 @@ describe("toSanitisedQuestion — no answer leakage, per type (brief §14)", () 
     };
     const sanitised = toSanitisedQuestion(input);
     expect(sanitised.multiSelect).toBe(true);
-    expect(sanitised.choices).toEqual([
-      { id: "a", label: "Paris" },
-      { id: "b", label: "Lyon" },
-      { id: "c", label: "Nice" },
-    ]);
+    expect(sanitised.choices?.map((c) => c.id).sort()).toEqual(["a", "b", "c"]);
+    expect(JSON.stringify(sanitised)).not.toContain("isCorrect");
+  });
+
+  it("mcq: the stored choice order is not the order sent — the answer is written first", () => {
+    // Every importer writes the correct choice at position 0 (seed-imported-questions.ts says
+    // so in as many words), so forwarding `position` order put the answer in slot 1 on every
+    // question in the database. The game was "always click top-left".
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "mcq",
+      choices: [
+        { id: "a", label: "1958", isCorrect: true },
+        { id: "b", label: "1946", isCorrect: false },
+        { id: "c", label: "1962", isCorrect: false },
+        { id: "d", label: "1968", isCorrect: false },
+      ],
+    };
+
+    const firstIds = new Set<string>();
+    for (let i = 0; i < 200; i += 1) {
+      const sanitised = toSanitisedQuestion(input);
+      // Never loses or duplicates a choice, however it lands.
+      expect(sanitised.choices?.map((c) => c.id).sort()).toEqual(["a", "b", "c", "d"]);
+      firstIds.add(sanitised.choices![0]!.id);
+    }
+    // Over 200 draws every position should have been first at least once; the odds of the
+    // correct choice sticking to slot 0 by chance are (1/4)^200.
+    expect(firstIds.size).toBe(4);
+  });
+
+  it("image(mcq): its choices are shuffled too — same leak, same fix", () => {
+    const input: QuestionForSanitizing = {
+      ...baseFields,
+      type: "image",
+      answerMode: "mcq",
+      mediaId: "m1",
+      choices: [
+        { id: "a", label: "Renault", isCorrect: true },
+        { id: "b", label: "Peugeot", isCorrect: false },
+        { id: "c", label: "Citroën", isCorrect: false },
+      ],
+    };
+    const firstIds = new Set<string>();
+    for (let i = 0; i < 200; i += 1) {
+      firstIds.add(toSanitisedQuestion(input).choices![0]!.id);
+    }
+    expect(firstIds.size).toBe(3);
   });
 
   it("image (mcq mode): choices forwarded without isCorrect", () => {

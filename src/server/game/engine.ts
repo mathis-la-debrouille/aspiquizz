@@ -577,6 +577,11 @@ export function buildCorrectionPayload(
   // sort only — id -> label, so a submitted `order` (item ids) resolves to something the room
   // can actually read without also shipping the whole item list down this payload.
   const sortLabelById = new Map(detail.sortItems.map((i) => [i.id, i.label]));
+  // mcq/image(mcq) — same problem, and it was worse: a multiple-choice answer showed as
+  // "— pas de réponse" in the correction screen, because only `payload.text` was ever read and
+  // an mcq payload carries `choiceIds`. The host was ruling on questions with no idea what
+  // anybody had actually picked.
+  const choiceLabelById = new Map(detail.choices.map((c) => [c.id, c.label]));
 
   const answersView = [...ledger.entries()].map(([userId, entry]) => {
     const player = room.players.get(userId);
@@ -593,6 +598,7 @@ export function buildCorrectionPayload(
       text: payload.text ?? "",
       iso3: payload.iso3,
       orderedLabels: payload.order?.map((id) => sortLabelById.get(id) ?? "?"),
+      choiceLabels: payload.choiceIds?.map((id) => choiceLabelById.get(id) ?? "?"),
       value: payload.value,
       suggested: entry.suggested,
       awarded: entry.awarded,
