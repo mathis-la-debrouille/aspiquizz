@@ -17,7 +17,7 @@ import {
 } from "@/server/db/schema";
 import { toSanitisedQuestion, type SanitisedQuestion } from "@/server/game/sanitize";
 import { maxPointsFor } from "@/server/game/scoring";
-import type { GradableQuestion } from "@/server/game/grading";
+import { expandTypedVariants, type GradableQuestion } from "@/server/game/grading";
 
 export interface FullQuestionDetail {
   id: string;
@@ -202,7 +202,10 @@ export function toSanitised(
  * a player typing "glock 18" for "Le Glock-18" is right, and only normalizeAnswer knows that.
  */
 export function toGradable(detail: FullQuestionDetail, asFreeText = false): GradableQuestion {
-  const correctLabels = () => detail.choices.filter((c) => c.isCorrect).map((c) => c.label);
+  // Widened, because a choice label is prose read off a button, not something anyone types —
+  // see expandTypedVariants.
+  const correctLabels = () =>
+    expandTypedVariants(detail.choices.filter((c) => c.isCorrect).map((c) => c.label));
   switch (detail.type) {
     case "open":
       return { type: "open", strict: detail.strict, acceptedAnswers: detail.openAnswers };
