@@ -105,7 +105,14 @@ export interface GradeResult {
 // Text normalisation — brief §7, exact pipeline order matters.
 // ---------------------------------------------------------------------------
 
-const LEADING_ARTICLE = /^(le |la |les |l['’]|the )/;
+/**
+ * Leading determiners, stripped from both sides before comparison. The list used to be
+ * le/la/les/l'/the only, which meant "Mexique" did not match "Du Mexique" and "Synonyme" did not
+ * match "Un synonyme" — both typed in a real game, both marked wrong, both obviously right.
+ * Symmetric, so widening it can never make a right answer wrong.
+ */
+const LEADING_ARTICLE =
+  /^(le |la |les |l['’]|un |une |des |du |de |d['’]|au |aux |mon |ma |mes |ton |ta |tes |son |sa |ses |notre |nos |votre |vos |leur |leurs |the )/;
 const PUNCT_TO_SPACE = /[-'’.]/g;
 const TRAILING_PUNCT = /[!?,;:]+$/;
 const COMBINING_MARKS = /[\u0300-\u036f]/g;
@@ -200,9 +207,60 @@ export function expandTypedVariants(labels: string[]): string[] {
     // "5 semaines", "40 jours", "1,5 million d'habitants" — the leading number on its own.
     const leadingNumber = /^(\d+(?:[.,]\d+)?)\s+\S/.exec(withoutParenthetical);
     if (leadingNumber) add(leadingNumber[1]!);
+
+    // "Le théorème de Pythagore" -> "Pythagore". "La bataille de Verdun" -> "Verdun". Labels are
+    // written to be read in full, and nobody types the category word — both of those were typed
+    // bare by both players in one game and marked wrong. Only from a known head noun, so
+    // "L'Amérique du Sud" keeps its "du Sud" instead of collapsing to "Sud".
+    const head = HEAD_NOUN_PREFIX.exec(withoutParenthetical);
+    if (head) add(head[2]!);
+
+    // "Fiodor Dostoïevski" -> "Dostoïevski". A surname alone is how people answer. Guarded to
+    // what looks like a person's name — every word capitalised, bar the particles — so a phrase
+    // like "Amérique du Sud" never reaches it.
+    const surname = lastNameOf(withoutParenthetical);
+    if (surname) add(surname);
   }
 
   return [...out];
+}
+
+/**
+ * The generic noun a French answer label often leads with, followed by its preposition. A closed
+ * list rather than "drop everything before the last 'de'", which would turn "L'Amérique du Sud"
+ * into "Sud" and accept a wrong answer.
+ */
+const HEAD_NOUN_PREFIX = new RegExp(
+  "^(?:le |la |les |l['’])?" +
+    "(théorème|bataille|guerre|loi|traité|prix|musée|place|rue|avenue|boulevard|pont|gare|" +
+    "station|ligne|opéra|palais|château|basilique|cathédrale|église|roman|film|série|groupe|" +
+    "album|chanson|ville|pays|région|île|mont|fleuve|rivière|lac|mer|océan|dieu|déesse|" +
+    "syndrome|effet|principe|constante|nombre|suite|conjecture|hypothèse|paradoxe|équation)" +
+    "\\s+(?:de |du |des |d['’]|)(.+)$",
+  "i",
+);
+
+/** Particles that stay lowercase inside a French or European name. */
+const NAME_PARTICLES = new Set(["de", "du", "des", "d", "von", "van", "der", "della", "di", "la", "le"]);
+
+function lastNameOf(label: string): string | null {
+  // "L'Amérique du Sud" passed every other test here — three words, all capitalised bar the
+  // particle — and yielded "Sud", which is not an acceptable answer for South America. A
+  // person's name does not begin with a definite article; a place description often does.
+  if (/^(le |la |les |l['’])/i.test(label.trim())) return null;
+  const words = label.trim().split(/\s+/);
+  if (words.length < 2 || words.length > 4) return null;
+  const isName = words.every((w, i) => {
+    const bare = w.replace(/['’]/g, "");
+    if (NAME_PARTICLES.has(bare.toLowerCase()) && i > 0) return true;
+    const first = bare[0];
+    return first !== undefined && first === first.toUpperCase() && first !== first.toLowerCase();
+  });
+  if (!isName) return null;
+  const last = words[words.length - 1]!;
+  // A one-letter or numeric last word ("Henri IV", "Louis XIV") is not a surname.
+  if (last.length < 3 || /^[IVXLC]+$/.test(last)) return null;
+  return last;
 }
 
 // ---------------------------------------------------------------------------
@@ -243,6 +301,11 @@ export function damerauLevenshtein(a: string, b: string): number {
   return d[al]![bl]!;
 }
 
+/** Digits and separators only — "1999", "3 5", "42". */
+function isNumericAnswer(normalized: string): boolean {
+  return /^[0-9]+([ ,.][0-9]+)*$/.test(normalized);
+}
+
 /** Brief §7: exact match under 4 chars, else a length-scaled edit-distance tolerance. */
 function fuzzyThreshold(length: number): number {
   if (length < 4) return 0;
@@ -274,6 +337,10 @@ export function matchesAnyVariant(
 
   for (const variant of normalizedVariants) {
     if (variant.normalized.length === 0) continue;
+    // A number is never a near-miss. Edit distance let "1997" through for a question whose
+    // answer was 1999, and "1025" for 1024 — one character apart, and completely wrong. The
+    // fuzzy pass exists for spelling, and a digit is not a spelling.
+    if (isNumericAnswer(variant.normalized) || isNumericAnswer(input)) continue;
     const threshold = fuzzyThreshold(variant.normalized.length);
     if (threshold === 0) continue;
     if (damerauLevenshtein(input, variant.normalized) <= threshold) {

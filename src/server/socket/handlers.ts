@@ -35,8 +35,10 @@ import {
   cancelLoop,
   setCorrectionAward,
   advanceCorrection,
+  buildCorrectionPayload,
   type RoomState,
 } from "@/server/game/engine";
+import { getFullQuestionDetail } from "@/server/game/question-detail";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -120,6 +122,27 @@ function addOrReconnectPlayer(room: RoomState, socket: GameSocket): void {
   });
 }
 
+/**
+ * Sends the current correction round to one socket, if there is one.
+ *
+ * `room:state` carries `phase: "correction"` but no payload, so a client that joins or
+ * reconnects mid-correction had nothing to render. Harmless when it was only a reconnect race;
+ * load-bearing now that an interrupted game comes back in this phase with nobody connected.
+ */
+async function sendCorrectionStateIfAny(
+  socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<string, never>, SocketData>,
+  room: RoomState,
+): Promise<void> {
+  if (room.phase !== "correction" || !room.correction) return;
+  const position = room.correction.index;
+  const frozen = room.frozenQuestions.find((f) => f.position === position);
+  const ledger = room.correction.entries.get(position);
+  if (!frozen || !ledger) return;
+  const detail = room.currentDetail ?? (await getFullQuestionDetail(frozen.questionId));
+  if (!detail) return;
+  socket.emit("correction:show", buildCorrectionPayload(room, frozen, detail, ledger));
+}
+
 export function registerSocketHandlers(io: GameServer, socket: GameSocket): void {
   const user = socket.data.user;
   socket.join(LOBBY_CHANNEL);
@@ -196,7 +219,14 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
       if (room.status === "finished" || room.status === "abandoned") {
         return ack({ error: "Cette partie est terminée." });
       }
-      if (room.status === "running" && !room.config.allowLateJoin) {
+      // "Late join" means *new* players. Somebody already in this room coming back is a
+      // reconnect, and refusing it locked a player out of their own game after a dropped
+      // connection — or, now, after the server restarted under them.
+      if (
+        room.status === "running" &&
+        !room.config.allowLateJoin &&
+        !room.players.has(user.id)
+      ) {
         return ack({ error: "La partie a déjà commencé." });
       }
       if (!room.players.has(user.id) && room.players.size >= room.config.maxPlayers) {
@@ -219,6 +249,11 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
       socket.join(roomChannel(code));
       ack({ ok: true });
       socket.emit("room:state", toRoomStateView(room));
+      // `room:state` carries the phase but not the correction payload, so a client joining or
+      // reconnecting during a correction round knew it was correcting and had nothing to show.
+      // It mattered before (a mid-correction reconnect) and matters more now that a recovered
+      // game starts in this phase with nobody connected yet.
+      await sendCorrectionStateIfAny(socket, room);
       // A concurrent room:leave (e.g. a fast reconnect race) can remove this player between the
       // await above and here — never assume a Map lookup still holds after an await.
       const player = room.players.get(user.id);
