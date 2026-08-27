@@ -31,6 +31,11 @@ export interface RoomPlayerView {
   connected: boolean;
   score: number;
   streak: number;
+  /** Joined after the game had already started, so their answers are not recorded and they
+   *  don't count toward "everyone has answered". Surfaced so the client can say so out loud —
+   *  it used to be invisible, and a player typing into a field that would never count had no
+   *  way of knowing. */
+  isSpectator: boolean;
 }
 
 export type RoomPhase =

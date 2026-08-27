@@ -33,6 +33,7 @@ export function QuestionScreen({
   locked,
   clockOffset,
   showDifficulty,
+  isSpectator,
 }: {
   socket: GameSocket;
   code: string;
@@ -43,6 +44,10 @@ export function QuestionScreen({
   clockOffset: number;
   /** Room setting — the host can turn the difficulty badge off in the salon. */
   showDifficulty: boolean;
+  /** Joined after the game started: answers aren't recorded and don't count. Said out loud
+   *  here, because it used to be invisible — you could type a whole answer into a field that
+   *  would never be read. */
+  isSpectator: boolean;
 }) {
   const [submitted, setSubmitted] = useState(false);
 
@@ -110,6 +115,16 @@ export function QuestionScreen({
         <h1 className="font-display text-26 text-ink-high">{q.prompt}</h1>
         {q.hint && <p className="text-12 text-ink-faint">Indice : {q.hint}</p>}
 
+        {isSpectator ? (
+          <div
+            role="status"
+            className="rounded-md border border-gold-deep/60 bg-gold-deep/10 px-4 py-3 text-14 text-gold-soft"
+          >
+            Vous êtes spectateur pour cette partie — vous l&apos;avez rejointe après son début,
+            donc vos réponses ne sont pas comptées. Vous verrez la correction avec tout le monde.
+          </div>
+        ) : (
+          <>
         {q.type === "open" && (
           <OpenAnswerSurface
             key={surfaceKey}
@@ -183,7 +198,10 @@ export function QuestionScreen({
           />
         )}
 
-        {!submitted && !locked && (
+          </>
+        )}
+
+        {!isSpectator && !submitted && !locked && (
           <p className="text-12 text-ink-faint">
             Ta réponse compte sans valider : c&apos;est ce qui est à l&apos;écran à la fin du
             temps qui est pris. Valider la verrouille et fait passer à la suite dès que tout le
@@ -191,7 +209,7 @@ export function QuestionScreen({
           </p>
         )}
 
-        {submitted && !locked && (
+        {!isSpectator && submitted && !locked && (
           <p className="text-14 text-moss-glow" role="status">
             Réponse envoyée — en attente des autres joueurs…
           </p>

@@ -94,7 +94,23 @@ function emitError(socket: GameSocket, code: string, messageFr: string): void {
   socket.emit("error", { code, messageFr });
 }
 
-function addOrReconnectPlayer(room: RoomState, socket: GameSocket): void {
+/**
+ * `wasAlreadyInThisRoom` is the difference between a late joiner and someone coming back.
+ *
+ * Spectator status was decided purely on `room.status === "running"`, so anyone whose socket
+ * dropped during a game — a flaky connection, a server restart — came back as a spectator. Their
+ * answers were then silently discarded (the run skips spectators) and, worse, they stopped
+ * counting toward "everyone has committed": the question ended the instant the *other* player
+ * validated, so they could not answer at all. That is exactly what happened in room U4YGFD:
+ * twenty answers for one player, zero for the other, who had been there from the start.
+ *
+ * A `room_players` row for this room is proof of participation, and it survives the process.
+ */
+function addOrReconnectPlayer(
+  room: RoomState,
+  socket: GameSocket,
+  wasAlreadyInThisRoom = false,
+): void {
   const user = socket.data.user;
   // Someone's here — the empty-room deletion countdown (Addendum B.4), if one was running,
   // no longer applies.
@@ -102,9 +118,12 @@ function addOrReconnectPlayer(room: RoomState, socket: GameSocket): void {
   const existing = room.players.get(user.id);
   if (existing) {
     existing.socketIds.add(socket.id);
+    // A reconnect can also be the moment we learn they belong here (in-memory state rebuilt by
+    // recoverInterruptedGames, or a first join that raced the DB read).
+    if (wasAlreadyInThisRoom) existing.isSpectator = false;
     return;
   }
-  const isSpectator = room.status === "running";
+  const isSpectator = room.status === "running" && !wasAlreadyInThisRoom;
   room.players.set(user.id, {
     userId: user.id,
     username: user.username,
@@ -219,14 +238,23 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
       if (room.status === "finished" || room.status === "abandoned") {
         return ack({ error: "Cette partie est terminée." });
       }
+
+      // Read before anything else decides how to treat them: the durable record of who belongs
+      // in this room. `room.players` alone is not enough — it is rebuilt from scratch by
+      // recoverInterruptedGames, and a first join can race this very read.
+      const priorRow = (
+        await db
+          .select({ userId: roomPlayers.userId })
+          .from(roomPlayers)
+          .where(and(eq(roomPlayers.roomId, room.id), eq(roomPlayers.userId, user.id)))
+          .limit(1)
+      )[0];
+      const wasAlreadyInThisRoom = Boolean(priorRow) || room.players.has(user.id);
+
       // "Late join" means *new* players. Somebody already in this room coming back is a
       // reconnect, and refusing it locked a player out of their own game after a dropped
       // connection — or, now, after the server restarted under them.
-      if (
-        room.status === "running" &&
-        !room.config.allowLateJoin &&
-        !room.players.has(user.id)
-      ) {
+      if (room.status === "running" && !room.config.allowLateJoin && !wasAlreadyInThisRoom) {
         return ack({ error: "La partie a déjà commencé." });
       }
       if (!room.players.has(user.id) && room.players.size >= room.config.maxPlayers) {
@@ -237,7 +265,7 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
         clearTimeout(room.emptyTimer);
         room.emptyTimer = null;
       }
-      addOrReconnectPlayer(room, socket);
+      addOrReconnectPlayer(room, socket, wasAlreadyInThisRoom);
       await db
         .insert(roomPlayers)
         .values({ roomId: room.id, userId: user.id })
@@ -268,6 +296,7 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
         connected: true,
         score: player.score,
         streak: player.streak,
+        isSpectator: player.isSpectator,
       });
       await broadcastRoomUpdated(io, room);
     })();
