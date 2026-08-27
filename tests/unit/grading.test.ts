@@ -4,6 +4,7 @@ import {
   expandTypedVariants,
   gradeAnswer,
   matchesAnyVariant,
+  promptRequiresChoices,
   normalizeAnswer,
   type GradableEstimationQuestion,
   type GradableGeoQuestion,
@@ -523,5 +524,49 @@ describe("expandTypedVariants — a label read off a button, typed into a field"
     const variants = expandTypedVariants(["5 semaines"]);
     expect(matchesAnyVariant("8", variants, false).isCorrect).toBe(false);
     expect(matchesAnyVariant("trois", variants, false).isCorrect).toBe(false);
+  });
+});
+
+describe("promptRequiresChoices — questions that make no sense without their options", () => {
+  it("catches a prompt that points at the options", () => {
+    for (const prompt of [
+      "Laquelle de ces phrases n'est PAS une règle du « Fight Club » ?",
+      "Lequel de ces sports ne fait PAS partie du triathlon ?",
+      "Parmi ces propositions, laquelle est vraie ?",
+      "Quelle est la bonne réponse parmi les suivantes ?",
+      "Lequel des noms suivants est un vrai élément chimique ?",
+      "Laquelle des affirmations ci-dessous est exacte ?",
+    ]) {
+      expect(promptRequiresChoices(prompt)).toBe(true);
+    }
+  });
+
+  it("catches an odd-one-out, whose answer set is unbounded without a list", () => {
+    for (const prompt of [
+      "Quel roman n'a PAS été écrit par Fiodor Dostoïevski ?",
+      "Quel pays ne faisait pas partie des Empires centraux ?",
+      "Quelle épreuve n'est pas au décathlon ?",
+      "Tous ces métaux sont liquides à température ambiante, sauf lequel ?",
+    ]) {
+      expect(promptRequiresChoices(prompt)).toBe(true);
+    }
+  });
+
+  it("leaves a question that stands on its own", () => {
+    for (const prompt of [
+      "Quel est le premier film de James Bond, sorti en 1962 ?",
+      "En quelle année la Ve République a-t-elle été instaurée ?",
+      "Qui a écrit « Les Misérables » ?",
+      "Quel est le pistolet de départ des terroristes dans « Counter-Strike » ?",
+      // "des" without a demonstrative: answerable, the four Grand Slams are common knowledge.
+      "Lequel des quatre tournois du Grand Chelem se dispute en dernier ?",
+    ]) {
+      expect(promptRequiresChoices(prompt)).toBe(false);
+    }
+  });
+
+  it("is insensitive to case and to the typographic apostrophe", () => {
+    expect(promptRequiresChoices("Laquelle de CES villes est la plus peuplée ?")).toBe(true);
+    expect(promptRequiresChoices("Quel fruit n’est pas une baie ?")).toBe(true);
   });
 });
