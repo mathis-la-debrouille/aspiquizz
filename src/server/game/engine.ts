@@ -1,4 +1,4 @@
-import { eq, and, sql, inArray } from "drizzle-orm";
+import { eq, and, asc, sql, inArray } from "drizzle-orm";
 import type { Server } from "socket.io";
 import { db } from "@/server/db";
 import {
@@ -9,6 +9,7 @@ import {
   userCategoryStats,
   questionStats,
   questions as questionsTable,
+  users,
 } from "@/server/db/schema";
 import type { RoomStatus, RoomVisibility } from "@/server/db/schema";
 import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
@@ -313,16 +314,177 @@ export function sweepEmptyRooms(io: GameIo): void {
   }
 }
 
-/** Rooms left 'lobby' or 'running' at process boot are stale — the in-memory `rooms` Map that
- *  made them real is gone with the previous process, so their DB row is now just orphaned
- *  bookkeeping (brief §11.3). Covers both statuses, not just 'running': a 'lobby' room the
- *  previous process crashed before anyone started is exactly as stale, even though it never
- *  had a running game loop to interrupt. */
+/** Rooms left 'lobby' at process boot are stale — the in-memory `rooms` Map that made them real
+ *  is gone with the previous process, so their DB row is now just orphaned bookkeeping. A
+ *  'running' room is a different matter entirely: see recoverInterruptedGames. */
 export async function abandonStaleRooms(): Promise<void> {
   await db
     .update(roomsTable)
     .set({ status: "abandoned", endedAt: new Date() })
     .where(inArray(roomsTable.status, ["lobby", "running"]));
+}
+
+/**
+ * Picks a game back up after the process it was running in went away.
+ *
+ * A deploy landed in the middle of a game once: thirty-eight questions of forty answered, and
+ * every one of those answers already durably in `answers` — the run writes them at lock time —
+ * yet the room was marked abandoned at boot and the evening was gone. Nothing was missing except
+ * the code to read it back.
+ *
+ * What is rebuilt: the room, its players and their scores, the frozen question list, and the
+ * correction ledger, straight from `answers`. What is not: a half-elapsed question timer. So a
+ * game interrupted mid-run resumes **at the correction phase**, covering every question that has
+ * answers, and the unreached questions are dropped. That is a deliberate trade — resuming a live
+ * countdown means deciding how much time a player who was disconnected deserves, and there is no
+ * answer to that which is fair to everybody. Correcting what was actually answered is.
+ *
+ * A running room with no answers at all (interrupted on the very first question) has nothing to
+ * correct and is abandoned, same as before.
+ */
+export async function recoverInterruptedGames(io: GameIo): Promise<void> {
+  const candidates = await db
+    .select()
+    .from(roomsTable)
+    .where(eq(roomsTable.status, "running"));
+
+  for (const row of candidates) {
+    try {
+      const recovered = await rebuildRoomForCorrection(row);
+      if (!recovered) {
+        await db
+          .update(roomsTable)
+          .set({ status: "abandoned", endedAt: new Date() })
+          .where(eq(roomsTable.id, row.id));
+        continue;
+      }
+      rooms.set(recovered.code, recovered);
+      console.log(
+        JSON.stringify({
+          event: "game_recovered",
+          code: recovered.code,
+          questions: recovered.frozenQuestions.length,
+          players: recovered.players.size,
+        }),
+      );
+      // Same tail as a normal run: correct, then finish. Parks on the host's first advance, so
+      // nobody has to be connected yet.
+      void (async () => {
+        await runCorrectionPhase(io, recovered);
+        await finishGame(io, recovered);
+      })();
+    } catch (err) {
+      console.error(
+        JSON.stringify({ event: "game_recovery_failed", code: row.code, error: String(err) }),
+      );
+      await db
+        .update(roomsTable)
+        .set({ status: "abandoned", endedAt: new Date() })
+        .where(eq(roomsTable.id, row.id));
+    }
+  }
+}
+
+async function rebuildRoomForCorrection(
+  row: typeof roomsTable.$inferSelect,
+): Promise<RoomState | null> {
+  const [frozen, playerRows, answerRows] = await Promise.all([
+    db
+      .select({
+        position: roomQuestions.position,
+        questionId: roomQuestions.questionId,
+        timeLimitS: roomQuestions.timeLimitS,
+      })
+      .from(roomQuestions)
+      .where(eq(roomQuestions.roomId, row.id))
+      .orderBy(asc(roomQuestions.position)),
+    db
+      .select({
+        userId: roomPlayers.userId,
+        username: users.username,
+        displayName: users.displayName,
+        avatarSeed: users.avatarSeed,
+      })
+      .from(roomPlayers)
+      .innerJoin(users, eq(roomPlayers.userId, users.id))
+      .where(eq(roomPlayers.roomId, row.id)),
+    db
+      .select({
+        position: answers.position,
+        userId: answers.userId,
+        payload: answers.payload,
+        msTaken: answers.msTaken,
+      })
+      .from(answers)
+      .where(eq(answers.roomId, row.id)),
+  ]);
+
+  const answeredPositions = new Set(answerRows.map((a) => a.position));
+  if (answeredPositions.size === 0) return null;
+
+  const players = new Map<string, ConnectedPlayer>();
+  for (const p of playerRows) {
+    players.set(p.userId, {
+      userId: p.userId,
+      username: p.username,
+      displayName: p.displayName,
+      avatarSeed: p.avatarSeed,
+      socketIds: new Set<string>(),
+      ready: false,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      correctCount: 0,
+      questionsSeen: 0,
+      joinedAt: Date.now(),
+      isSpectator: false,
+    });
+  }
+
+  // Only the questions that were actually reached. Correcting a question nobody saw would show
+  // the room an empty ruling screen for it.
+  const reached = frozen.filter((f) => answeredPositions.has(f.position));
+
+  const entries = new Map<number, Map<string, CorrectionEntry>>();
+  for (const f of reached) {
+    const ledger = new Map<string, CorrectionEntry>();
+    for (const a of answerRows.filter((x) => x.position === f.position)) {
+      if (!players.has(a.userId)) continue;
+      // suggested/awarded are left at 0 and recomputed by the correction phase's own grader run
+      // — re-deriving them here would duplicate that logic in a second place.
+      ledger.set(a.userId, {
+        payload: a.payload as AnswerPayloadInput,
+        msTaken: a.msTaken ?? f.timeLimitS * 1000,
+        suggested: 0,
+        awarded: 0,
+      });
+    }
+    if (ledger.size > 0) entries.set(f.position, ledger);
+  }
+
+  return {
+    id: row.id,
+    code: row.code,
+    name: row.name,
+    hostId: row.hostId,
+    quizId: row.quizId,
+    source: row.source,
+    visibility: row.visibility,
+    config: row.config as RoomConfigInput,
+    status: "running",
+    players,
+    frozenQuestions: reached,
+    currentIndex: reached[reached.length - 1]?.position ?? -1,
+    phase: "correction",
+    deadlineMs: null,
+    currentDetail: null,
+    pendingAnswers: new Map(),
+    emptyTimer: null,
+    emptyDeadlineMs: null,
+    loopCancelled: false,
+    createdAt: row.createdAt?.getTime() ?? Date.now(),
+    correction: { index: reached[0]?.position ?? 0, entries, advance: null },
+  };
 }
 
 /** Graceful-shutdown counterpart to abandonStaleRooms — called once, deliberately, instead of
@@ -336,9 +498,15 @@ export async function prepareForShutdown(io: GameIo): Promise<void> {
   }
   io.emit("error", {
     code: "server_shutdown",
-    messageFr: "Le serveur redémarre — reconnectez-vous dans un instant.",
+    messageFr:
+      "Le serveur redémarre — la partie reprend à la correction dans un instant, vos réponses sont enregistrées.",
   });
-  await abandonStaleRooms();
+  // Deliberately NOT abandoning 'running' rooms any more: leaving the row as 'running' is what
+  // lets recoverInterruptedGames find it on the next boot. Only lobbies, which hold nothing.
+  await db
+    .update(roomsTable)
+    .set({ status: "abandoned", endedAt: new Date() })
+    .where(eq(roomsTable.status, "lobby"));
 }
 
 // ---------------------------------------------------------------------------

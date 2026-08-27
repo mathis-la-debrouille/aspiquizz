@@ -2,7 +2,14 @@ import { Server } from "socket.io";
 import type { Server as HttpServer } from "node:http";
 import { authenticateHandshake } from "@/server/socket/auth";
 import { registerSocketHandlers } from "@/server/socket/handlers";
-import { abandonStaleRooms, sweepEmptyRooms, SWEEP_INTERVAL_MS } from "@/server/game/engine";
+import {
+  recoverInterruptedGames,
+  sweepEmptyRooms,
+  SWEEP_INTERVAL_MS,
+} from "@/server/game/engine";
+import { db } from "@/server/db";
+import { rooms as roomsTable } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -10,8 +17,13 @@ import type {
 } from "@/server/socket/events";
 
 export async function attachSocketServer(httpServer: HttpServer): Promise<Server> {
-  // Rooms left 'lobby'/'running' from a previous process (crash/redeploy) are stale — brief §11.3.
-  await abandonStaleRooms();
+  // A 'lobby' room from a previous process holds nothing, so it goes. A 'running' one holds an
+  // evening's worth of answers, so it gets picked up instead — but only once `io` exists, since
+  // the recovered game needs somewhere to broadcast.
+  await db
+    .update(roomsTable)
+    .set({ status: "abandoned", endedAt: new Date() })
+    .where(eq(roomsTable.status, "lobby"));
 
   const io = new Server<
     ClientToServerEvents,
@@ -36,10 +48,15 @@ export async function attachSocketServer(httpServer: HttpServer): Promise<Server
     registerSocketHandlers(io, socket);
   });
 
+  // After `io` exists and handlers are registered, so a recovered game can broadcast and the
+  // players reconnecting into it are handled normally. Fire-and-forget: a game that fails to
+  // come back must not stop the server from starting.
+  void recoverInterruptedGames(io);
+
   // Addendum B.4's "sweeper on boot and every 60s" — a safety net for the (in normal operation,
   // never-hit) case of a room's own per-room deletion timer not firing. Boot-time orphans from a
-  // previous process are abandonStaleRooms()'s job above, not this: the in-memory `rooms` Map
-  // this sweep reads is always empty at this exact point in a fresh process.
+  // previous process are handled above (abandoned if a lobby, recovered if a running game), not
+  // by this sweep, which reads an in-memory Map that is empty at this exact point.
   sweepEmptyRooms(io);
   setInterval(() => sweepEmptyRooms(io), SWEEP_INTERVAL_MS);
 
