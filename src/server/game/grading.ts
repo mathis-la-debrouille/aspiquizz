@@ -121,6 +121,45 @@ export function normalizeAnswer(input: string): string {
 }
 
 /**
+ * Whether a prompt is unanswerable without its options in front of you.
+ *
+ * The room's free-text mode turns "Quel est le premier film de James Bond ?" into a fair, harder
+ * question. It turns "Laquelle de ces phrases n'est PAS une règle du Fight Club ?" into nonsense:
+ * *which* phrases? The question was written about a list that is no longer on screen. Four
+ * players stared at that one and none of them could answer.
+ *
+ * Two shapes need their list, and both are detected from the prompt itself rather than from a
+ * column somebody would have to backfill across two thousand questions:
+ *
+ *   1. It points at the options — "laquelle de ces", "parmi ces", "ci-dessous", "suivantes".
+ *   2. It asks which one is the odd one out — "n'est PAS", "ne fait pas partie", "sauf". Without
+ *      a list the answer set is unbounded: infinitely many novels were not written by
+ *      Dostoevsky, and any of them would be a correct answer to the question as typed.
+ *
+ * A heuristic, and deliberately a generous one: a false positive leaves a question as multiple
+ * choice, which is merely the old behaviour, while a false negative puts an unanswerable question
+ * on screen mid-game. When in doubt it keeps the choices.
+ */
+const PROMPT_NEEDS_CHOICES = [
+  // 1. Points at the options.
+  /\b(lequel|laquelle|lesquels|lesquelles)\s+(de\s+)?ces\b/i,
+  /\bparmi\s+(ces|les\s+(propositions|réponses|suivant))/i,
+  /\bci-dessous\b/i,
+  /\b(propositions?|réponses?|affirmations?|phrases?|noms?)\s+suivant(e)?s?\b/i,
+  /\bde\s+la\s+liste\b/i,
+  // 2. Odd one out — unbounded answer set without a list. Both negation shapes are matched
+  //    loosely across the verb rather than by listing conjugations: the first draft spelled out
+  //    "ne fait pas" and let "ne faisait pas partie des Empires centraux" straight through.
+  /\bne\s+\S+\s+pas\b/i,
+  /\bn['’]\S+\s+(jamais\s+)?pas\b/i,
+  /\bsauf\b/i,
+];
+
+export function promptRequiresChoices(prompt: string): boolean {
+  return PROMPT_NEEDS_CHOICES.some((pattern) => pattern.test(prompt));
+}
+
+/**
  * Extra accepted spellings derived from an answer that was written to be *read*, not typed.
  *
  * A multiple-choice label is prose: "5 semaines", "Le Glock-18", "Sucre ou La Paz",

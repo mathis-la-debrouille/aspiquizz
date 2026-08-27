@@ -17,7 +17,11 @@ import {
 } from "@/server/db/schema";
 import { toSanitisedQuestion, type SanitisedQuestion } from "@/server/game/sanitize";
 import { maxPointsFor } from "@/server/game/scoring";
-import { expandTypedVariants, type GradableQuestion } from "@/server/game/grading";
+import {
+  expandTypedVariants,
+  promptRequiresChoices,
+  type GradableQuestion,
+} from "@/server/game/grading";
 
 export interface FullQuestionDetail {
   id: string;
@@ -170,7 +174,9 @@ export function toSanitised(
   asFreeText = false,
 ): SanitisedQuestion {
   return toSanitisedQuestion({
-    asFreeText,
+    // A prompt that points at its own options ("laquelle de ces…") stays multiple choice even
+    // when the room asked for free text — see promptRequiresChoices.
+    asFreeText: asFreeText && !promptRequiresChoices(detail.prompt),
     id: detail.id,
     type: detail.type,
     prompt: detail.prompt,
@@ -202,6 +208,9 @@ export function toSanitised(
  * a player typing "glock 18" for "Le Glock-18" is right, and only normalizeAnswer knows that.
  */
 export function toGradable(detail: FullQuestionDetail, asFreeText = false): GradableQuestion {
+  // Must agree with toSanitised: grading a question as free text while the player was shown
+  // buttons (or the reverse) would mark a right answer wrong.
+  const freeText = asFreeText && !promptRequiresChoices(detail.prompt);
   // Widened, because a choice label is prose read off a button, not something anyone types —
   // see expandTypedVariants.
   const correctLabels = () =>
@@ -210,7 +219,7 @@ export function toGradable(detail: FullQuestionDetail, asFreeText = false): Grad
     case "open":
       return { type: "open", strict: detail.strict, acceptedAnswers: detail.openAnswers };
     case "mcq":
-      if (asFreeText) {
+      if (freeText) {
         // Never strict: the choice labels were written to be *read*, not typed, so they carry
         // articles and punctuation a player has no reason to reproduce.
         return { type: "open", strict: false, acceptedAnswers: correctLabels() };
@@ -220,7 +229,7 @@ export function toGradable(detail: FullQuestionDetail, asFreeText = false): Grad
         correctChoiceIds: detail.choices.filter((c) => c.isCorrect).map((c) => c.id),
       };
     case "image":
-      if (asFreeText && detail.answerMode === "mcq") {
+      if (freeText && detail.answerMode === "mcq") {
         return { type: "open", strict: false, acceptedAnswers: correctLabels() };
       }
       return detail.answerMode === "mcq"

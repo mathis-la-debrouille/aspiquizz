@@ -5,9 +5,19 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import type { AnswerPayload } from "@/components/room/QuestionScreen";
 
-/** Long enough that a word isn't sent letter by letter, short enough that the
- *  server always holds something recent when the timer expires. */
-const DRAFT_DEBOUNCE_MS = 400;
+/**
+ * Drafts are throttled, not debounced, and the difference is a real bug.
+ *
+ * A 400ms trailing debounce meant that changing your mind in the last 400ms of a question sent
+ * nothing at all: the timer never fired, and the server graded the *previous* text. Rewriting an
+ * answer at the last second silently kept the old one — which is exactly what happened in game.
+ *
+ * A throttle sends the first keystroke of a burst immediately and guarantees a trailing send, so
+ * the server is never more than this far behind the field. The debounce existed because
+ * `submittedAt` moved with every edit and speed used to score; speed no longer scores, so there
+ * is nothing left to protect.
+ */
+const DRAFT_THROTTLE_MS = 120;
 
 /**
  * Free-text answer. What you have typed when time runs out IS your answer —
@@ -33,6 +43,7 @@ export function OpenAnswerSurface({
   const [text, setText] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latest = useRef("");
+  const lastSentAt = useRef(0);
 
   // Clear the pending draft timer on unmount, and on the way to the next question:
   // firing a stale draft after the question changed would attach this text to the
@@ -48,11 +59,24 @@ export function OpenAnswerSurface({
     setText(value);
     latest.current = value;
     if (committed || disabled) return;
+
+    // Sent even when empty: clearing the field is a decision. Skipping the empty case left the
+    // server holding the answer you had just deleted, which then scored.
+    const send = () => {
+      lastSentAt.current = Date.now();
+      onDraft({ text: latest.current.trim() });
+    };
+
+    const since = Date.now() - lastSentAt.current;
+    if (since >= DRAFT_THROTTLE_MS) {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = null;
+      send();
+      return;
+    }
+    // Inside the window: make sure the last keystroke of the burst still gets through.
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const draft = latest.current.trim();
-      if (draft) onDraft({ text: draft });
-    }, DRAFT_DEBOUNCE_MS);
+    timerRef.current = setTimeout(send, DRAFT_THROTTLE_MS - since);
   }
 
   function commit() {
