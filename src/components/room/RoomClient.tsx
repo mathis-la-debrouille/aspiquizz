@@ -317,6 +317,9 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               locked={phase === "locked"}
               clockOffset={clockOffset}
               showDifficulty={state.config.showDifficulty}
+              isSpectator={
+                state.players.find((p) => p.userId === currentUserId)?.isSpectator ?? false
+              }
             />
           ) : viewKey === "correction" && correction ? (
             <CorrectionScreen

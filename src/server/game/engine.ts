@@ -205,6 +205,7 @@ function toPlayerView(room: RoomState, player: ConnectedPlayer): RoomPlayerView 
     connected: player.socketIds.size > 0,
     score: player.score,
     streak: player.streak,
+    isSpectator: player.isSpectator,
   };
 }
 
