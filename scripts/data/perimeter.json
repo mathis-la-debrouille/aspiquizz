@@ -8,25 +8,9 @@
   },
   "extra": [
     { "iso3": "VAT", "status": "un_observer", "note": "Holy See — UN permanent observer state" },
-    {
-      "iso3": "PSE",
-      "status": "un_observer",
-      "note": "State of Palestine — UN permanent observer state"
-    },
-    {
-      "iso3": "TWN",
-      "status": "other",
-      "note": "Taiwan — lost UN seat in 1971; retains ISO 3166-1 TWN and M49 158"
-    },
-    {
-      "iso3": "COK",
-      "status": "associated_state",
-      "note": "Cook Islands — self-governing state in free association with New Zealand; WHO/UNESCO member"
-    },
-    {
-      "iso3": "NIU",
-      "status": "associated_state",
-      "note": "Niue — self-governing state in free association with New Zealand; WHO/UNESCO member"
-    }
+    { "iso3": "PSE", "status": "un_observer", "note": "State of Palestine — UN permanent observer state" },
+    { "iso3": "TWN", "status": "other", "note": "Taiwan — lost UN seat in 1971; retains ISO 3166-1 TWN and M49 158" },
+    { "iso3": "COK", "status": "associated_state", "note": "Cook Islands — self-governing state in free association with New Zealand; WHO/UNESCO member" },
+    { "iso3": "NIU", "status": "associated_state", "note": "Niue — self-governing state in free association with New Zealand; WHO/UNESCO member" }
   ]
 }

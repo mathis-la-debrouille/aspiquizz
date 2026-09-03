@@ -7,3 +7,6 @@ pnpm-lock.yaml
 public/geo/*.json
 *.db
 .uploads
+# Generated or one-record-per-line by design (see CLAUDE.md, "Data files under scripts/data/")
+scripts/data/*.json
+src/server/db/migrations/meta/
