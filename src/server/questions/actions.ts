@@ -42,13 +42,21 @@ async function requireUser() {
 
 /** The credited author never changes on edit (brief §10.3) — this only checks *who may edit*,
  *  not who gets credited. Used by every updateXQuestion action below. */
-async function requireEditAccess(questionId: string, user: SessionUser): Promise<ActionResult | null> {
+async function requireEditAccess(
+  questionId: string,
+  user: SessionUser,
+): Promise<ActionResult | null> {
   if (user.role === "admin") return null;
   const row = (
-    await db.select({ authorId: questions.authorId }).from(questions).where(eq(questions.id, questionId)).limit(1)
+    await db
+      .select({ authorId: questions.authorId })
+      .from(questions)
+      .where(eq(questions.id, questionId))
+      .limit(1)
   )[0];
   if (!row) return { ok: false, error: "Question introuvable." };
-  if (row.authorId !== user.id) return { ok: false, error: "Vous ne pouvez modifier que vos propres questions." };
+  if (row.authorId !== user.id)
+    return { ok: false, error: "Vous ne pouvez modifier que vos propres questions." };
   return null;
 }
 
@@ -419,7 +427,9 @@ export async function updateSortQuestion(
 /** Unlike createSortQuestion, this goes through the single insert path (ingest.ts) — an
  *  estimation question carries no media, so there's no reason for it to bypass
  *  createQuestionFromDraft the way sort's image-carrying items force it to. */
-export async function createEstimationQuestion(input: EstimationQuestionInput): Promise<ActionResult> {
+export async function createEstimationQuestion(
+  input: EstimationQuestionInput,
+): Promise<ActionResult> {
   const user = await requireUser();
   const parsed = estimationQuestionSchema.safeParse(input);
   if (!parsed.success)

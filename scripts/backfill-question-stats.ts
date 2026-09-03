@@ -50,7 +50,9 @@ if (isMain) {
       return client.close();
     })
     .catch((error: unknown) => {
-      console.error(JSON.stringify({ event: "backfill_question_stats_failed", error: String(error) }));
+      console.error(
+        JSON.stringify({ event: "backfill_question_stats_failed", error: String(error) }),
+      );
       process.exit(1);
     });
 }

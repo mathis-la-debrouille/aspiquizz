@@ -101,7 +101,8 @@ export function FilterRail({
   }
 
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
-  if (query.q) activeChips.push({ key: "q", label: `« ${query.q} »`, clear: () => setScalar("q", "") });
+  if (query.q)
+    activeChips.push({ key: "q", label: `« ${query.q} »`, clear: () => setScalar("q", "") });
   for (const t of query.type) {
     activeChips.push({
       key: `type-${t}`,
@@ -238,7 +239,11 @@ export function FilterRail({
         </div>
       </div>
 
-      <Select label="Auteur" value={query.author} onChange={(e) => setScalar("author", e.target.value)}>
+      <Select
+        label="Auteur"
+        value={query.author}
+        onChange={(e) => setScalar("author", e.target.value)}
+      >
         <option value="">Tous</option>
         <option value="me">Moi</option>
         {authors.map((a) => (

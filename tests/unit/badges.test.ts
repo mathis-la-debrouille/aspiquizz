@@ -42,21 +42,13 @@ describe("evaluateNewBadges", () => {
 
   it("sans-faute: every question answered correctly, at least one question", () => {
     expect(
-      evaluateNewBadges(
-        { ...game, correctCount: 10, totalQuestions: 10 },
-        cumulative,
-        new Set(),
-      ),
+      evaluateNewBadges({ ...game, correctCount: 10, totalQuestions: 10 }, cumulative, new Set()),
     ).toContain("sans-faute");
     expect(
       evaluateNewBadges({ ...game, correctCount: 0, totalQuestions: 0 }, cumulative, new Set()),
     ).not.toContain("sans-faute");
     expect(
-      evaluateNewBadges(
-        { ...game, correctCount: 9, totalQuestions: 10 },
-        cumulative,
-        new Set(),
-      ),
+      evaluateNewBadges({ ...game, correctCount: 9, totalQuestions: 10 }, cumulative, new Set()),
     ).not.toContain("sans-faute");
   });
 
@@ -64,9 +56,9 @@ describe("evaluateNewBadges", () => {
     expect(
       evaluateNewBadges(game, { ...cumulative, fastCorrectAnswers: 4 }, new Set()),
     ).not.toContain("eclair");
-    expect(
-      evaluateNewBadges(game, { ...cumulative, fastCorrectAnswers: 5 }, new Set()),
-    ).toContain("eclair");
+    expect(evaluateNewBadges(game, { ...cumulative, fastCorrectAnswers: 5 }, new Set())).toContain(
+      "eclair",
+    );
 
     expect(evaluateNewBadges(game, { ...cumulative, geoCorrect: 49 }, new Set())).not.toContain(
       "globe-trotteur",
@@ -81,9 +73,9 @@ describe("evaluateNewBadges", () => {
       "cartographe",
     );
 
-    expect(
-      evaluateNewBadges(game, { ...cumulative, bestStreakEver: 9 }, new Set()),
-    ).not.toContain("serie-noire");
+    expect(evaluateNewBadges(game, { ...cumulative, bestStreakEver: 9 }, new Set())).not.toContain(
+      "serie-noire",
+    );
     expect(evaluateNewBadges(game, { ...cumulative, bestStreakEver: 10 }, new Set())).toContain(
       "serie-noire",
     );
@@ -104,16 +96,16 @@ describe("evaluateNewBadges", () => {
     expect(
       evaluateNewBadges(game, { ...cumulative, questionsAnswered: 499 }, new Set()),
     ).not.toContain("erudit");
-    expect(
-      evaluateNewBadges(game, { ...cumulative, questionsAnswered: 500 }, new Set()),
-    ).toContain("erudit");
+    expect(evaluateNewBadges(game, { ...cumulative, questionsAnswered: 500 }, new Set())).toContain(
+      "erudit",
+    );
 
     expect(
       evaluateNewBadges(game, { ...cumulative, questionsCreated: 9 }, new Set()),
     ).not.toContain("artisan");
-    expect(
-      evaluateNewBadges(game, { ...cumulative, questionsCreated: 10 }, new Set()),
-    ).toContain("artisan");
+    expect(evaluateNewBadges(game, { ...cumulative, questionsCreated: 10 }, new Set())).toContain(
+      "artisan",
+    );
   });
 
   it("never re-awards a badge already in alreadyOwned, even if the rule still matches", () => {

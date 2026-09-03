@@ -29,10 +29,30 @@ describe("findPrimaryFeature — one iso3 can tag several separate topology feat
     // Mirrors the real bug: NUMERIC_TO_ISO3 tags Guam, Puerto Rico, American Samoa, the US
     // Virgin Islands AND the mainland+Alaska+Hawaii feature all as "USA" — a plain .find()
     // returned Guam (whichever came first in the topology's own order) instead of the mainland.
-    const guam: TestFeature = { type: "Feature", iso3: "USA", geometry: square(144, 13, 0.1), properties: {} };
-    const mainland: TestFeature = { type: "Feature", iso3: "USA", geometry: square(-100, 30, 20), properties: {} };
-    const puertoRico: TestFeature = { type: "Feature", iso3: "USA", geometry: square(-67, 18, 0.5), properties: {} };
-    const france: TestFeature = { type: "Feature", iso3: "FRA", geometry: square(2, 46, 5), properties: {} };
+    const guam: TestFeature = {
+      type: "Feature",
+      iso3: "USA",
+      geometry: square(144, 13, 0.1),
+      properties: {},
+    };
+    const mainland: TestFeature = {
+      type: "Feature",
+      iso3: "USA",
+      geometry: square(-100, 30, 20),
+      properties: {},
+    };
+    const puertoRico: TestFeature = {
+      type: "Feature",
+      iso3: "USA",
+      geometry: square(-67, 18, 0.5),
+      properties: {},
+    };
+    const france: TestFeature = {
+      type: "Feature",
+      iso3: "FRA",
+      geometry: square(2, 46, 5),
+      properties: {},
+    };
 
     const features = [guam, puertoRico, mainland, france];
     expect(findPrimaryFeature(features, "USA")).toBe(mainland);
@@ -40,7 +60,9 @@ describe("findPrimaryFeature — one iso3 can tag several separate topology feat
   });
 
   it("returns null when the iso3 isn't present at all", () => {
-    const features: TestFeature[] = [{ type: "Feature", iso3: "FRA", geometry: square(2, 46, 5), properties: {} }];
+    const features: TestFeature[] = [
+      { type: "Feature", iso3: "FRA", geometry: square(2, 46, 5), properties: {} },
+    ];
     expect(findPrimaryFeature(features, "USA")).toBeNull();
   });
 });
@@ -74,7 +96,12 @@ describe("largestPolygonFeature — trims a MultiPolygon to its single largest p
     };
     expect(largestPolygonFeature(singlePart)).toBe(singlePart);
 
-    const plain: TestFeature = { type: "Feature", iso3: "FRA", geometry: square(2, 46, 5), properties: {} };
+    const plain: TestFeature = {
+      type: "Feature",
+      iso3: "FRA",
+      geometry: square(2, 46, 5),
+      properties: {},
+    };
     expect(largestPolygonFeature(plain)).toBe(plain);
   });
 });

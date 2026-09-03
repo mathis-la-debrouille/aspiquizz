@@ -10,7 +10,12 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CategoryBadge, DifficultyBadge, QuestionTypeBadge, SourceBadge } from "@/components/ui/Badge";
+import {
+  CategoryBadge,
+  DifficultyBadge,
+  QuestionTypeBadge,
+  SourceBadge,
+} from "@/components/ui/Badge";
 import { PreviewPanel } from "@/components/library/PreviewPanel";
 import {
   publishDraftAction,
@@ -72,8 +77,8 @@ function NudgeModal({
       }
     >
       <p className="text-14 text-ink-mid">
-        Cette question a été rédigée avec l&apos;aide d&apos;un modèle — vérifiez les faits avant
-        de la publier auprès du groupe.
+        Cette question a été rédigée avec l&apos;aide d&apos;un modèle — vérifiez les faits avant de
+        la publier auprès du groupe.
       </p>
     </Modal>
   );
@@ -235,7 +240,11 @@ export function ReviewQueueTab({
             </Button>
             {q.type !== "geo" && (
               <Link href={`/creer/question/${q.id}`}>
-                <Button variant="ghost" size="sm" leadingIcon={<Pencil className="h-4 w-4" strokeWidth={1.5} />}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leadingIcon={<Pencil className="h-4 w-4" strokeWidth={1.5} />}
+                >
                   Modifier
                 </Button>
               </Link>

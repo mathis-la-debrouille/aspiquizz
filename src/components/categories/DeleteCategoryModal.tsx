@@ -91,8 +91,8 @@ export function DeleteCategoryModal({
         {questionCount !== null ? (
           <>
             <p className="text-14 text-ink-mid">
-              {questionCount} question{questionCount > 1 ? "s utilisent" : " utilise"} encore
-              cette catégorie — choisissez où les déplacer avant de la supprimer.
+              {questionCount} question{questionCount > 1 ? "s utilisent" : " utilise"} encore cette
+              catégorie — choisissez où les déplacer avant de la supprimer.
             </p>
             <Select
               label={`Déplacer ${questionCount > 1 ? "les" : "la"} ${questionCount} question${questionCount > 1 ? "s" : ""} vers…`}

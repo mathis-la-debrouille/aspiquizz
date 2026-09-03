@@ -34,9 +34,7 @@ export function ProfileHeader({
         />
       </div>
 
-      {isOwnProfile && (
-        <ProfileActions displayName={profile.displayName} bio={profile.bio ?? ""} />
-      )}
+      {isOwnProfile && <ProfileActions displayName={profile.displayName} bio={profile.bio ?? ""} />}
     </div>
   );
 }

@@ -22,7 +22,9 @@ async function requireUser() {
  *  position directly) for the /admin panel. This is the "quick, inline, from wherever a
  *  category is picked" path. The actual DB work lives in server/categories/core.ts (see that
  *  file for why: it must never import `next/cache`, and this file does). */
-export async function createCategoryAction(input: CreateCategoryInput): Promise<CreateCategoryResult> {
+export async function createCategoryAction(
+  input: CreateCategoryInput,
+): Promise<CreateCategoryResult> {
   await requireUser();
   const result = await createCategoryCore(input);
   revalidatePath("/creer");
@@ -30,8 +32,7 @@ export async function createCategoryAction(input: CreateCategoryInput): Promise<
 }
 
 export type DeleteCategoryResult =
-  | { ok: true }
-  | { ok: false; error: string; questionCount?: number };
+  { ok: true } | { ok: false; error: string; questionCount?: number };
 
 /** Admin only. Unlike the simpler block-only version this replaces in server/admin/actions.ts,
  *  this offers reassignment: called once with no `reassignToId` to discover whether the
@@ -50,12 +51,19 @@ export async function deleteCategoryAction(
 
   if (inUse > 0) {
     if (!reassignToId) {
-      return { ok: false, error: `${inUse} question(s) utilisent encore cette catégorie.`, questionCount: inUse };
+      return {
+        ok: false,
+        error: `${inUse} question(s) utilisent encore cette catégorie.`,
+        questionCount: inUse,
+      };
     }
     if (reassignToId === categoryId) {
       return { ok: false, error: "Choisissez une catégorie différente." };
     }
-    await db.update(questions).set({ categoryId: reassignToId }).where(eq(questions.categoryId, categoryId));
+    await db
+      .update(questions)
+      .set({ categoryId: reassignToId })
+      .where(eq(questions.categoryId, categoryId));
   }
 
   await db.delete(categories).where(eq(categories.id, categoryId));

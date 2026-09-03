@@ -241,7 +241,19 @@ const HEAD_NOUN_PREFIX = new RegExp(
 );
 
 /** Particles that stay lowercase inside a French or European name. */
-const NAME_PARTICLES = new Set(["de", "du", "des", "d", "von", "van", "der", "della", "di", "la", "le"]);
+const NAME_PARTICLES = new Set([
+  "de",
+  "du",
+  "des",
+  "d",
+  "von",
+  "van",
+  "der",
+  "della",
+  "di",
+  "la",
+  "le",
+]);
 
 function lastNameOf(label: string): string | null {
   // "L'Amérique du Sud" passed every other test here — three words, all capitalised bar the

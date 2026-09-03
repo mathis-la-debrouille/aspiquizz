@@ -114,7 +114,11 @@ export function QuestionComposer({
         />
       )}
       {type === "geo" && (
-        <GeoForm categories={categories} onCategoriesChange={setCategories} onCreated={setCreatedId} />
+        <GeoForm
+          categories={categories}
+          onCategoriesChange={setCategories}
+          onCreated={setCreatedId}
+        />
       )}
       {type === "sort" && (
         <SortForm

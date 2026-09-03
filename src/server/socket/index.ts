@@ -2,11 +2,7 @@ import { Server } from "socket.io";
 import type { Server as HttpServer } from "node:http";
 import { authenticateHandshake } from "@/server/socket/auth";
 import { registerSocketHandlers } from "@/server/socket/handlers";
-import {
-  recoverInterruptedGames,
-  sweepEmptyRooms,
-  SWEEP_INTERVAL_MS,
-} from "@/server/game/engine";
+import { recoverInterruptedGames, sweepEmptyRooms, SWEEP_INTERVAL_MS } from "@/server/game/engine";
 import { db } from "@/server/db";
 import { rooms as roomsTable } from "@/server/db/schema";
 import { eq } from "drizzle-orm";

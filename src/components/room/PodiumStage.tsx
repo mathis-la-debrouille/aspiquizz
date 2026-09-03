@@ -69,9 +69,7 @@ export function PodiumStage({ podium }: { podium: PodiumEntry[] }) {
     const lastPopAt = (stageOrder.length - 1) * POP_GAP_MS;
 
     stageOrder.forEach((rank, i) => {
-      timers.push(
-        setTimeout(() => setPopped((prev) => new Set(prev).add(rank)), i * POP_GAP_MS),
-      );
+      timers.push(setTimeout(() => setPopped((prev) => new Set(prev).add(rank)), i * POP_GAP_MS));
       timers.push(
         setTimeout(
           () => {
@@ -122,7 +120,11 @@ export function PodiumStage({ podium }: { podium: PodiumEntry[] }) {
                   <p className="max-w-[7rem] truncate text-14 font-medium text-ink-high">
                     {entry.displayName}
                   </p>
-                  <SlotScore value={entry.score} rolling={isPopped && !isLocked} locked={isLocked} />
+                  <SlotScore
+                    value={entry.score}
+                    rolling={isPopped && !isLocked}
+                    locked={isLocked}
+                  />
                 </div>
               ))}
             </div>
@@ -136,9 +138,7 @@ export function PodiumStage({ podium }: { podium: PodiumEntry[] }) {
             >
               <span className="font-display text-26 text-gold">{rank}</span>
               {tied && (
-                <span className="text-12 tracking-[0.14em] text-gold-soft uppercase">
-                  ex æquo
-                </span>
+                <span className="text-12 tracking-[0.14em] text-gold-soft uppercase">ex æquo</span>
               )}
             </div>
           </motion.div>

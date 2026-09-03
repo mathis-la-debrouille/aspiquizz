@@ -95,7 +95,9 @@ export function QuestionScreen({
           <CategoryBadge name={q.categoryName} colorToken={q.categoryColorToken} />
           {showDifficulty && (
             <>
-              <DifficultyBadge level={Math.max(1, Math.min(5, q.difficulty)) as 1 | 2 | 3 | 4 | 5} />
+              <DifficultyBadge
+                level={Math.max(1, Math.min(5, q.difficulty)) as 1 | 2 | 3 | 4 | 5}
+              />
               <span className="font-numeral text-12 text-gold">
                 {q.pointsBase} {q.pointsBase > 1 ? "points" : "point"}
               </span>
@@ -120,92 +122,91 @@ export function QuestionScreen({
             role="status"
             className="rounded-md border border-gold-deep/60 bg-gold-deep/10 px-4 py-3 text-14 text-gold-soft"
           >
-            Vous êtes spectateur pour cette partie — vous l&apos;avez rejointe après son début,
-            donc vos réponses ne sont pas comptées. Vous verrez la correction avec tout le monde.
+            Vous êtes spectateur pour cette partie — vous l&apos;avez rejointe après son début, donc
+            vos réponses ne sont pas comptées. Vous verrez la correction avec tout le monde.
           </div>
         ) : (
           <>
-        {q.type === "open" && (
-          <OpenAnswerSurface
-            key={surfaceKey}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {/* The room's mcqAsOpen setting: the server sent no choices at all, so this renders
+            {q.type === "open" && (
+              <OpenAnswerSurface
+                key={surfaceKey}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {/* The room's mcqAsOpen setting: the server sent no choices at all, so this renders
             the same text field an `open` question uses. Nothing here decides the mode — if
             `asFreeText` came back there is genuinely nothing to display as options. */}
-        {q.type === "mcq" && q.asFreeText && (
-          <OpenAnswerSurface
-            key={surfaceKey}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {q.type === "mcq" && !q.asFreeText && (
-          <McqAnswerSurface
-            key={surfaceKey}
-            choices={q.choices ?? []}
-            multiSelect={q.multiSelect ?? false}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {q.type === "image" && (
-          <ImageAnswerSurface
-            key={surfaceKey}
-            question={q}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {q.type === "geo" && (
-          <GeoAnswerSurface
-            key={surfaceKey}
-            question={q}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {q.type === "sort" && (
-          <SortAnswerSurface
-            key={surfaceKey}
-            question={q}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-        {q.type === "estimation" && (
-          <EstimationAnswerSurface
-            key={surfaceKey}
-            question={q}
-            disabled={locked}
-            committed={submitted}
-            onSubmit={submit}
-            onDraft={draft}
-          />
-        )}
-
+            {q.type === "mcq" && q.asFreeText && (
+              <OpenAnswerSurface
+                key={surfaceKey}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {q.type === "mcq" && !q.asFreeText && (
+              <McqAnswerSurface
+                key={surfaceKey}
+                choices={q.choices ?? []}
+                multiSelect={q.multiSelect ?? false}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {q.type === "image" && (
+              <ImageAnswerSurface
+                key={surfaceKey}
+                question={q}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {q.type === "geo" && (
+              <GeoAnswerSurface
+                key={surfaceKey}
+                question={q}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {q.type === "sort" && (
+              <SortAnswerSurface
+                key={surfaceKey}
+                question={q}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
+            {q.type === "estimation" && (
+              <EstimationAnswerSurface
+                key={surfaceKey}
+                question={q}
+                disabled={locked}
+                committed={submitted}
+                onSubmit={submit}
+                onDraft={draft}
+              />
+            )}
           </>
         )}
 
         {!isSpectator && !submitted && !locked && (
           <p className="text-12 text-ink-faint">
-            Ta réponse compte sans valider : c&apos;est ce qui est à l&apos;écran à la fin du
-            temps qui est pris. Valider la verrouille et fait passer à la suite dès que tout le
-            monde a validé.
+            Ta réponse compte sans valider : c&apos;est ce qui est à l&apos;écran à la fin du temps
+            qui est pris. Valider la verrouille et fait passer à la suite dès que tout le monde a
+            validé.
           </p>
         )}
 

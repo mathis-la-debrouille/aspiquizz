@@ -243,9 +243,11 @@ export async function createQuestionFromDraft(
     const newId = row!.id;
 
     if (data.type === "open") {
-      await tx.insert(questionOpenAnswers).values(
-        data.reponses.map((value, i) => ({ questionId: newId, value, isPrimary: i === 0 })),
-      );
+      await tx
+        .insert(questionOpenAnswers)
+        .values(
+          data.reponses.map((value, i) => ({ questionId: newId, value, isPrimary: i === 0 })),
+        );
     } else if (data.type === "mcq") {
       await tx.insert(questionChoices).values(
         data.choix.map((c, position) => ({

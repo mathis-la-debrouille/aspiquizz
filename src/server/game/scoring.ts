@@ -27,7 +27,9 @@ export function maxPointsFor(difficulty: number): number {
  *
  * Input need not be sorted — this sorts a copy and returns it in ranked order.
  */
-export function assignRanks<T extends { score: number }>(rows: readonly T[]): (T & { rank: number })[] {
+export function assignRanks<T extends { score: number }>(
+  rows: readonly T[],
+): (T & { rank: number })[] {
   const sorted = [...rows].sort((a, b) => b.score - a.score);
   let rank = 0;
   let lastScore: number | null = null;

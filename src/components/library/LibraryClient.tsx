@@ -118,7 +118,12 @@ export function LibraryClient({
     if (query.groupBy !== "category") return null;
     const groups = new Map<
       string,
-      { categoryId: string; categoryName: string; categoryColorToken: LibraryQuestionItem["categoryColorToken"]; items: LibraryQuestionItem[] }
+      {
+        categoryId: string;
+        categoryName: string;
+        categoryColorToken: LibraryQuestionItem["categoryColorToken"];
+        items: LibraryQuestionItem[];
+      }
     >();
     for (const item of items) {
       const existing = groups.get(item.categoryId);
@@ -231,8 +236,14 @@ export function LibraryClient({
               {groupedByCategory.map((group) => (
                 <details key={group.categoryId} open className="group/details">
                   <summary className="flex cursor-pointer list-none items-center gap-2 py-2">
-                    <ChevronRight className="h-4 w-4 text-ink-faint transition-transform duration-150 group-open/details:rotate-90" strokeWidth={1.5} />
-                    <CategoryBadge name={group.categoryName} colorToken={group.categoryColorToken} />
+                    <ChevronRight
+                      className="h-4 w-4 text-ink-faint transition-transform duration-150 group-open/details:rotate-90"
+                      strokeWidth={1.5}
+                    />
+                    <CategoryBadge
+                      name={group.categoryName}
+                      colorToken={group.categoryColorToken}
+                    />
                     <span className="text-12 text-ink-faint">
                       {group.items.length} question{group.items.length > 1 ? "s" : ""}
                     </span>

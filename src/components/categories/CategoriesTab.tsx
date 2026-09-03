@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryBadge } from "@/components/ui/Badge";
 import { CategoryCreateModal } from "@/components/categories/CategoryCreateModal";
-import { CategoryEditModal, type EditableCategory } from "@/components/categories/CategoryEditModal";
+import {
+  CategoryEditModal,
+  type EditableCategory,
+} from "@/components/categories/CategoryEditModal";
 import { DeleteCategoryModal, type CategoryRef } from "@/components/categories/DeleteCategoryModal";
 import { moveCategoryAction } from "@/server/categories/actions";
 import type { AdminCategoryRow } from "@/server/admin/queries";
@@ -45,7 +48,11 @@ export function CategoriesTab({
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-20 text-ink-high">Catégories</h2>
-        <Button size="sm" leadingIcon={<Plus className="h-4 w-4" strokeWidth={1.5} />} onClick={() => setCreateOpen(true)}>
+        <Button
+          size="sm"
+          leadingIcon={<Plus className="h-4 w-4" strokeWidth={1.5} />}
+          onClick={() => setCreateOpen(true)}
+        >
           Nouvelle catégorie
         </Button>
       </div>
@@ -106,8 +113,17 @@ export function CategoriesTab({
         </div>
       )}
 
-      <CategoryCreateModal open={createOpen} onClose={() => setCreateOpen(false)} onCreated={refresh} />
-      <CategoryEditModal open={editing !== null} onClose={() => setEditing(null)} category={editing} onSaved={refresh} />
+      <CategoryCreateModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={refresh}
+      />
+      <CategoryEditModal
+        open={editing !== null}
+        onClose={() => setEditing(null)}
+        category={editing}
+        onSaved={refresh}
+      />
       <DeleteCategoryModal
         open={deleting !== null}
         onClose={() => setDeleting(null)}

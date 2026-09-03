@@ -113,7 +113,11 @@ export async function getPreviewData(questionId: string): Promise<PreviewData | 
   if (detail.geo) {
     const countryRow = (
       await db
-        .select({ nameFr: countries.nameFr, capitalFr: countries.capitalFr, population: countries.population })
+        .select({
+          nameFr: countries.nameFr,
+          capitalFr: countries.capitalFr,
+          population: countries.population,
+        })
         .from(countries)
         .where(eq(countries.iso3, detail.geo.targetIso3))
         .limit(1)
@@ -185,7 +189,9 @@ export async function duplicateQuestion(questionId: string): Promise<DuplicateRe
   if (detail.openAnswers.length > 0) {
     await db
       .insert(questionOpenAnswers)
-      .values(detail.openAnswers.map((value, i) => ({ questionId: newId, value, isPrimary: i === 0 })));
+      .values(
+        detail.openAnswers.map((value, i) => ({ questionId: newId, value, isPrimary: i === 0 })),
+      );
   }
   if (detail.geo) {
     await db.insert(questionGeo).values({

@@ -79,11 +79,7 @@ export function FlagsPanel({ flagged }: { flagged: FlaggedQuestion[] }) {
            *  the report was mistaken and it stands. Rows are stamped, never deleted,
            *  so a question reported again later still reads as a pattern. */}
           <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              disabled={isPending}
-              onClick={() => resolve(row.questionId, "fixed")}
-            >
+            <Button size="sm" disabled={isPending} onClick={() => resolve(row.questionId, "fixed")}>
               Corrigée
             </Button>
             <Button

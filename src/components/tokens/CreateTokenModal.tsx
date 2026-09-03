@@ -21,7 +21,8 @@ const SCOPE_LABELS: Record<ApiTokenScope, { label: string; description: string }
   },
   "categories:write": {
     label: "Gérer les catégories",
-    description: "Créer une catégorie ; renommer, fusionner ou supprimer nécessite d'être administrateur.",
+    description:
+      "Créer une catégorie ; renommer, fusionner ou supprimer nécessite d'être administrateur.",
   },
 };
 
@@ -48,7 +49,9 @@ export function CreateTokenModal({
   const [pending, setPending] = useState(false);
 
   function toggleScope(scope: ApiTokenScope) {
-    setScopes((prev) => (prev.includes(scope) ? prev.filter((s) => s !== scope) : [...prev, scope]));
+    setScopes((prev) =>
+      prev.includes(scope) ? prev.filter((s) => s !== scope) : [...prev, scope],
+    );
   }
 
   function reset() {
@@ -84,7 +87,11 @@ export function CreateTokenModal({
           <Button variant="ghost" onClick={onClose}>
             Annuler
           </Button>
-          <Button loading={pending} disabled={!name.trim() || scopes.length === 0} onClick={handleSubmit}>
+          <Button
+            loading={pending}
+            disabled={!name.trim() || scopes.length === 0}
+            onClick={handleSubmit}
+          >
             Créer le jeton
           </Button>
         </>

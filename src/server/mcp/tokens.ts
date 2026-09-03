@@ -48,7 +48,9 @@ export type McpAuthResult = { ok: true; ctx: McpAuthContext } | { ok: false };
  * only ever sees `{ ok: false }`, on purpose. Also renews `last_used_at`, throttled to once/minute
  * per token so a busy client doesn't turn every tool call into a write.
  */
-export async function verifyBearerToken(authHeader: string | null | undefined): Promise<McpAuthResult> {
+export async function verifyBearerToken(
+  authHeader: string | null | undefined,
+): Promise<McpAuthResult> {
   if (!authHeader) return { ok: false };
   const match = /^Bearer\s+(\S+)$/.exec(authHeader.trim());
   if (!match) return { ok: false };
@@ -94,7 +96,10 @@ async function touchLastUsed(tokenId: string): Promise<void> {
   if (now - prev < LAST_USED_THROTTLE_MS) return;
   lastTouchWriteMs.set(tokenId, now);
   try {
-    await db.update(apiTokens).set({ lastUsedAt: new Date(now) }).where(eq(apiTokens.id, tokenId));
+    await db
+      .update(apiTokens)
+      .set({ lastUsedAt: new Date(now) })
+      .where(eq(apiTokens.id, tokenId));
   } catch {
     // Best-effort — a failed last_used_at write must never block the actual MCP request.
     lastTouchWriteMs.delete(tokenId);

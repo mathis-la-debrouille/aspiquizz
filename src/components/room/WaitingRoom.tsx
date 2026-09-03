@@ -36,8 +36,8 @@ function EmptyRoomCountdown({ closesAtMs }: { closesAtMs: number }) {
       role="status"
       className="rounded-md border border-clay-deep bg-clay-deep/20 px-4 py-2 text-14 text-clay-soft"
     >
-      Ce salon sera fermé dans {minutes} min {seconds.toString().padStart(2, "0")} s s&apos;il
-      reste vide.
+      Ce salon sera fermé dans {minutes} min {seconds.toString().padStart(2, "0")} s s&apos;il reste
+      vide.
     </p>
   );
 }
@@ -159,8 +159,8 @@ export function WaitingRoom({
                 }
               />
               <p className="mt-1 text-12 text-ink-faint">
-                Les options ne sont pas envoyées du tout : il faut trouver la réponse et la
-                taper. C&apos;est la même question, en beaucoup plus dur.
+                Les options ne sont pas envoyées du tout : il faut trouver la réponse et la taper.
+                C&apos;est la même question, en beaucoup plus dur.
               </p>
             </div>
           </div>

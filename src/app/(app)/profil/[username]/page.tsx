@@ -12,11 +12,7 @@ import { Panel } from "@/components/ui/Panel";
 
 export const metadata: Metadata = { title: "Profil — ASPI Quiz" };
 
-export default async function ProfilePage({
-  params,
-}: {
-  params: Promise<{ username: string }>;
-}) {
+export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
   const [session, profile] = await Promise.all([getSession(), getProfileByUsername(username)]);
   // Same defensive check as every other page here — the (app) layout's redirect is a UX gate,

@@ -31,7 +31,8 @@ const repoRoot = path.resolve(__dirname, "..");
 
 const WIKIDATA_SPARQL = "https://query.wikidata.org/sparql";
 const WORLD_BANK = "https://api.worldbank.org/v2";
-const USER_AGENT = "aspiquizz-country-snapshot/1.0 (https://github.com/mathis-la-debrouille/aspiquizz)";
+const USER_AGENT =
+  "aspiquizz-country-snapshot/1.0 (https://github.com/mathis-la-debrouille/aspiquizz)";
 
 /** A single value plus where it came from — the whole point of this script. */
 interface Sourced<T> {
@@ -404,7 +405,8 @@ function levenshtein(a: string, b: string): number {
 
 const rejectedAliases: string[] = [];
 
-const pctDelta = (a: number, b: number) => Math.round((Math.abs(a - b) / Math.max(a, b)) * 1000) / 10;
+const pctDelta = (a: number, b: number) =>
+  Math.round((Math.abs(a - b) / Math.max(a, b)) * 1000) / 10;
 
 async function main() {
   const perimeter = JSON.parse(
@@ -514,7 +516,9 @@ async function main() {
   const withAliases = out.filter((c) => c.capitals.some((k) => k.aliases.length > 0));
   console.log(`[info] ${withAliases.length} countries have capital spelling variants`);
   if (rejectedAliases.length) {
-    console.log(`[info] ${rejectedAliases.length} altLabels rejected as not-a-spelling-variant (first 12):`);
+    console.log(
+      `[info] ${rejectedAliases.length} altLabels rejected as not-a-spelling-variant (first 12):`,
+    );
     for (const r of rejectedAliases.slice(0, 12)) console.log(`         ${r}`);
   }
   if (noCapital.length) console.log(`[warn] no capital resolved: ${noCapital.join(", ")}`);

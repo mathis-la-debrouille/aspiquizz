@@ -4,7 +4,14 @@ import { and, eq, ne, sql } from "drizzle-orm";
 import { ulid } from "ulid";
 import { revalidatePath } from "next/cache";
 import { db } from "@/server/db";
-import { users, categories, media, questions, type UserRole, type QuestionStatus } from "@/server/db/schema";
+import {
+  users,
+  categories,
+  media,
+  questions,
+  type UserRole,
+  type QuestionStatus,
+} from "@/server/db/schema";
 import { requireAdmin } from "@/server/admin/guard";
 import { hashPassword } from "@/server/auth/password";
 import { deleteUpload } from "@/server/media/storage";
@@ -46,7 +53,10 @@ export async function createUserAction(input: CreateUserInput): Promise<ActionRe
   return { ok: true };
 }
 
-export async function setUserActiveAction(userId: string, isActive: boolean): Promise<ActionResult> {
+export async function setUserActiveAction(
+  userId: string,
+  isActive: boolean,
+): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (userId === admin.id && !isActive) {
     return { ok: false, error: "Vous ne pouvez pas désactiver votre propre compte." };
@@ -80,7 +90,9 @@ export async function createCategoryAction(input: CategoryInput): Promise<Action
   if (clashing.length > 0) {
     return { ok: false, error: "Ce slug existe déjà." };
   }
-  await db.insert(categories).values({ ...parsed.data, description: parsed.data.description ?? null });
+  await db
+    .insert(categories)
+    .values({ ...parsed.data, description: parsed.data.description ?? null });
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -147,7 +159,10 @@ export async function setQuestionStatusAction(
   status: QuestionStatus,
 ): Promise<ActionResult> {
   await requireAdmin();
-  await db.update(questions).set({ status, updatedAt: new Date() }).where(eq(questions.id, questionId));
+  await db
+    .update(questions)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(questions.id, questionId));
   revalidatePath("/admin");
   return { ok: true };
 }

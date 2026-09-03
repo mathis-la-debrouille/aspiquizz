@@ -16,7 +16,11 @@ import {
   categories,
 } from "@/server/db/schema";
 import { xpFromPoints, levelFromXp } from "@/server/game/scoring";
-import { evaluateNewBadges, type GameOutcome, type CumulativeStats } from "@/server/progression/badges";
+import {
+  evaluateNewBadges,
+  type GameOutcome,
+  type CumulativeStats,
+} from "@/server/progression/badges";
 
 const GEOGRAPHY_CATEGORY_SLUG = "geographie";
 
@@ -113,7 +117,10 @@ async function awardForPlayer(
   }
 
   const [ownedRows, geoRows, fastRows, createdRows] = await Promise.all([
-    db.select({ badgeId: userBadges.badgeId }).from(userBadges).where(eq(userBadges.userId, result.userId)),
+    db
+      .select({ badgeId: userBadges.badgeId })
+      .from(userBadges)
+      .where(eq(userBadges.userId, result.userId)),
     geoCategoryId
       ? db
           .select({ correct: userCategoryStats.correct })
@@ -136,7 +143,10 @@ async function awardForPlayer(
           sql`${answers.msTaken} < 3000`,
         ),
       ),
-    db.select({ count: sql<number>`count(*)` }).from(questions).where(eq(questions.authorId, result.userId)),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(questions)
+      .where(eq(questions.authorId, result.userId)),
   ]);
 
   const cumulative: CumulativeStats = {

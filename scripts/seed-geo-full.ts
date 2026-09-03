@@ -22,7 +22,13 @@
 import { readFileSync } from "node:fs";
 import { eq } from "drizzle-orm";
 import { db, client } from "@/server/db";
-import { users, questions, questionGeo, questionOpenAnswers, countryCapitals } from "@/server/db/schema";
+import {
+  users,
+  questions,
+  questionGeo,
+  questionOpenAnswers,
+  countryCapitals,
+} from "@/server/db/schema";
 import { createQuestionFromDraft } from "@/server/questions/ingest";
 
 interface SnapshotFile {
@@ -96,10 +102,7 @@ function isoWithWorldZoomGeometry(): Set<string> {
   const topo = JSON.parse(
     readFileSync(new URL("../public/geo/countries-110m.json", import.meta.url), "utf-8"),
   ) as { objects: { countries: { geometries: Array<{ id?: string | number }> } } };
-  const lookupSrc = readFileSync(
-    new URL("../src/lib/geo/iso-lookup.ts", import.meta.url),
-    "utf-8",
-  );
+  const lookupSrc = readFileSync(new URL("../src/lib/geo/iso-lookup.ts", import.meta.url), "utf-8");
   const numericToIso = new Map<string, string>();
   for (const m of lookupSrc.matchAll(/"(\d+)":\s*"([A-Z]{3})"/g)) {
     numericToIso.set(String(Number(m[1])), m[2]!);
@@ -318,7 +321,9 @@ async function main() {
       realigned += 1;
     }
   }
-  console.log(`[info] realigned ${realigned}/${existingGeo.length} existing geo questions to tiers 1-3`);
+  console.log(
+    `[info] realigned ${realigned}/${existingGeo.length} existing geo questions to tiers 1-3`,
+  );
 
   // Accepted answers are snapshotted into question_open_answers when a question is
   // created, so questions authored before capital spelling variants existed still
@@ -402,7 +407,10 @@ async function main() {
     const existing = byKey.get(`${spec.iso3}|${spec.mode}`);
     if (existing) {
       if (existing.prompt !== spec.enonce) {
-        await db.update(questions).set({ prompt: spec.enonce }).where(eq(questions.id, existing.id));
+        await db
+          .update(questions)
+          .set({ prompt: spec.enonce })
+          .where(eq(questions.id, existing.id));
         console.log(`[info] reworded: « ${existing.prompt} » -> « ${spec.enonce} »`);
         reworded += 1;
       }

@@ -42,14 +42,14 @@ See `.env.example`. Everything has a working local default except `DATABASE_URL`
 `DATABASE_AUTH_TOKEN`, which only need to be set to point the app at a real Turso database
 instead of the local file fallback.
 
-| Variable               | Default            | Notes                                                                             |
-| ----------------------- | ------------------- | ---------------------------------------------------------------------------------- |
-| `DATABASE_URL`          | `file:./local.db`   | A `libsql://...` Turso URL in production.                                        |
-| `DATABASE_AUTH_TOKEN`   | (unset)             | Required alongside a real `DATABASE_URL`.                                        |
-| `SESSION_COOKIE_NAME`   | `aspi_session`      | Rarely worth changing.                                                           |
-| `UPLOAD_DIR`            | `./.uploads`        | Where uploaded question images live — needs to be a persistent volume in prod (a redeploy without one loses every uploaded image, though the DB rows/question text survive). |
-| `PORT`                  | `3000`              |                                                                                    |
-| `NODE_ENV`              | `development`       | `production` disables Next's dev-mode extras and switches cookies to `secure`.    |
+| Variable              | Default           | Notes                                                                                                                                                                        |
+| --------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`        | `file:./local.db` | A `libsql://...` Turso URL in production.                                                                                                                                    |
+| `DATABASE_AUTH_TOKEN` | (unset)           | Required alongside a real `DATABASE_URL`.                                                                                                                                    |
+| `SESSION_COOKIE_NAME` | `aspi_session`    | Rarely worth changing.                                                                                                                                                       |
+| `UPLOAD_DIR`          | `./.uploads`      | Where uploaded question images live — needs to be a persistent volume in prod (a redeploy without one loses every uploaded image, though the DB rows/question text survive). |
+| `PORT`                | `3000`            |                                                                                                                                                                              |
+| `NODE_ENV`            | `development`     | `production` disables Next's dev-mode extras and switches cookies to `secure`.                                                                                               |
 
 ## Commands
 

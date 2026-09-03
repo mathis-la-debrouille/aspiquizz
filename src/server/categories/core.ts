@@ -55,7 +55,10 @@ export async function createCategoryCore(
     .insert(categories)
     .values({
       name,
-      slug: await uniqueSlug(slugify(name), existingRows.map((c) => c.slug)),
+      slug: await uniqueSlug(
+        slugify(name),
+        existingRows.map((c) => c.slug),
+      ),
       colorToken,
       description: description ?? null,
       position: maxPosition + 1,
@@ -75,8 +78,7 @@ export interface UpdateCategoryPatch {
 }
 
 export type UpdateCategoryResult =
-  | { ok: true; before: CategorySnapshot; after: CategorySnapshot }
-  | { ok: false; error: string };
+  { ok: true; before: CategorySnapshot; after: CategorySnapshot } | { ok: false; error: string };
 
 /** Renaming/recolouring never touches `slug` — Addendum C.5: "keeps the id and slug stable so
  *  existing questions are unaffected." */
@@ -84,13 +86,19 @@ export async function updateCategoryCore(
   categoryId: string,
   patch: UpdateCategoryPatch,
 ): Promise<UpdateCategoryResult> {
-  const [existing] = await db.select().from(categories).where(eq(categories.id, categoryId)).limit(1);
+  const [existing] = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.id, categoryId))
+    .limit(1);
   if (!existing) return { ok: false, error: "Catégorie introuvable." };
 
   if (patch.name !== undefined) {
     const normalized = normalizeForComparison(patch.name);
     const all = await db.select({ id: categories.id, name: categories.name }).from(categories);
-    const dup = all.find((c) => c.id !== categoryId && normalizeForComparison(c.name) === normalized);
+    const dup = all.find(
+      (c) => c.id !== categoryId && normalizeForComparison(c.name) === normalized,
+    );
     if (dup) return { ok: false, error: "Une catégorie porte déjà ce nom." };
   }
 
@@ -126,7 +134,10 @@ export async function mergeCategoriesCore(
       .select({ n: sql<number>`count(*)` })
       .from(questions)
       .where(eq(questions.categoryId, sourceId));
-    await tx.update(questions).set({ categoryId: targetId }).where(eq(questions.categoryId, sourceId));
+    await tx
+      .update(questions)
+      .set({ categoryId: targetId })
+      .where(eq(questions.categoryId, sourceId));
     await tx.delete(categories).where(eq(categories.id, sourceId));
     return Number(row?.n ?? 0);
   });
@@ -134,14 +145,19 @@ export async function mergeCategoriesCore(
 }
 
 export type DeleteCategoryStrictResult =
-  | { ok: true }
-  | { ok: false; error: string; questionCount?: number };
+  { ok: true } | { ok: false; error: string; questionCount?: number };
 
 /** Unlike server/categories/actions.ts's deleteCategoryAction, no reassignment offer —
  *  supprimer_categorie succeeds only on an empty category; a non-empty one is pointed at
  *  fusionner_categories instead (C.5). */
-export async function deleteCategoryStrictCore(categoryId: string): Promise<DeleteCategoryStrictResult> {
-  const [existing] = await db.select({ id: categories.id }).from(categories).where(eq(categories.id, categoryId)).limit(1);
+export async function deleteCategoryStrictCore(
+  categoryId: string,
+): Promise<DeleteCategoryStrictResult> {
+  const [existing] = await db
+    .select({ id: categories.id })
+    .from(categories)
+    .where(eq(categories.id, categoryId))
+    .limit(1);
   if (!existing) return { ok: false, error: "Catégorie introuvable." };
 
   const [row] = await db

@@ -51,7 +51,10 @@ export async function seedCountries(): Promise<number> {
   // The 193 UN member states, plus the states carrying an official ISO 3166-1 and
   // UN M49 code that are not UN members — see scripts/data/perimeter.json for the
   // criterion and why Kosovo and Gibraltar are not among them.
-  const extraRaw = readFileSync(new URL("./data/countries.extra.fr.json", import.meta.url), "utf-8");
+  const extraRaw = readFileSync(
+    new URL("./data/countries.extra.fr.json", import.meta.url),
+    "utf-8",
+  );
   const records = [
     ...(JSON.parse(raw) as CountryRecord[]),
     ...(JSON.parse(extraRaw) as CountryRecord[]),

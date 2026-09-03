@@ -117,7 +117,11 @@ export interface DraftPatch {
  *  change (accepted answers, MCQ choices, geo target) isn't exposed here; delete and recreate via
  *  `creer_question` instead. Kept intentionally small: the MCP surface for editing an in-flight
  *  draft is "fix a typo/reclassify", not a full editor. */
-export async function patchDraft(questionId: string, userId: string, patch: DraftPatch): Promise<DraftMutationResult> {
+export async function patchDraft(
+  questionId: string,
+  userId: string,
+  patch: DraftPatch,
+): Promise<DraftMutationResult> {
   const owned = await requireOwnedDraft(questionId, userId);
   if (!owned.ok) return owned;
 
@@ -132,7 +136,10 @@ export async function patchDraft(questionId: string, userId: string, patch: Draf
   return { ok: true };
 }
 
-export async function deleteDraft(questionId: string, userId: string): Promise<DraftMutationResult> {
+export async function deleteDraft(
+  questionId: string,
+  userId: string,
+): Promise<DraftMutationResult> {
   const owned = await requireOwnedDraft(questionId, userId);
   if (!owned.ok) return owned;
 

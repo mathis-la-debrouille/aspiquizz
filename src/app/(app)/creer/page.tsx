@@ -37,7 +37,11 @@ export default async function CreerPage({
       total={result.total}
       facets={result.facets}
       hasMore={result.hasMore}
-      categoryOptions={categoryRows.map((c) => ({ id: c.id, name: c.name, colorToken: c.colorToken }))}
+      categoryOptions={categoryRows.map((c) => ({
+        id: c.id,
+        name: c.name,
+        colorToken: c.colorToken,
+      }))}
       categoryRows={categoryRows}
       authors={authors}
       reviewQueueItems={reviewQueueItems}

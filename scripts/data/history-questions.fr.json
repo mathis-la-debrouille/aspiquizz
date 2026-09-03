@@ -1,135 +1,1331 @@
 {
   "questions": [
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel événement parisien du 14 juillet 1789, prise d'une forteresse symbole de l'arbitraire royal, marque le début de la Révolution française ?","reponses":["prise de la Bastille","la prise de la Bastille"],"explication":"La Bastille ne comptait que sept prisonniers ce jour-là, mais sa prise a une portée avant tout symbolique."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel roi de France a été guillotiné en 1793 pendant la Révolution française ?","choix":[{"texte":"Louis XVI","correct":true},{"texte":"Louis XV","correct":false},{"texte":"Louis XVIII","correct":false},{"texte":"Charles X","correct":false}],"explication":"Louis XVI a été guillotiné place de la Révolution (actuelle place de la Concorde) le 21 janvier 1793."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quelle reine de France, épouse de Louis XVI, a également été guillotinée en 1793 ?","reponses":["Marie-Antoinette"],"explication":"Marie-Antoinette a été guillotinée le 16 octobre 1793, plusieurs mois après son mari."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel texte fondateur de la Révolution française, adopté en août 1789, proclame la liberté et l'égalité de tous les hommes ?","choix":[{"texte":"La Déclaration des droits de l'homme et du citoyen","correct":true},{"texte":"Le Code civil","correct":false},{"texte":"La Constitution de l'an I","correct":false},{"texte":"Le Serment du Jeu de paume","correct":false}],"explication":"Adoptée le 26 août 1789, elle inspire encore aujourd'hui le préambule de la Constitution française."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel instrument, symbole de la Terreur, était utilisé pour les exécutions capitales pendant la Révolution française ?","reponses":["guillotine","la guillotine"],"explication":"Elle doit son nom au docteur Joseph-Ignace Guillotin, qui en proposa l'usage pour rendre l'exécution plus rapide et égalitaire."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quelle prison parisienne, prise d'assaut le 14 juillet 1789, est devenue le symbole de la chute de l'Ancien Régime ?","choix":[{"texte":"La Bastille","correct":true},{"texte":"La Conciergerie","correct":false},{"texte":"Le Temple","correct":false},{"texte":"Vincennes","correct":false}],"explication":"La forteresse a été entièrement démolie dans les mois qui ont suivi sa prise."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quelle assemblée, réunissant les trois ordres du royaume (clergé, noblesse, tiers état), a été convoquée par Louis XVI en mai 1789 ?","reponses":["États généraux","les États généraux"],"explication":"Ils ne s'étaient pas réunis depuis 1614."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quel serment, prêté en juin 1789 par les députés du tiers état, les engage à ne pas se séparer avant d'avoir doté la France d'une Constitution ?","choix":[{"texte":"Le serment du Jeu de paume","correct":true},{"texte":"Le serment de l'An I","correct":false},{"texte":"Le serment civique","correct":false},{"texte":"Le pacte fédératif","correct":false}],"explication":"Prêté le 20 juin 1789 dans une salle de jeu de paume, faute d'accès à leur salle habituelle."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quelle nuit de 1789 l'Assemblée constituante a-t-elle aboli les privilèges féodaux et les droits seigneuriaux ?","reponses":["nuit du 4 août","la nuit du 4 août"],"explication":"Une séance improvisée où nobles et clergé renoncèrent en cascade à leurs privilèges."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"En quelle année la royauté a-t-elle été abolie en France et la Première République proclamée ?","choix":[{"texte":"1792","correct":true},{"texte":"1789","correct":false},{"texte":"1793","correct":false},{"texte":"1799","correct":false}],"explication":"La République est proclamée le 21 septembre 1792, au lendemain de la victoire de Valmy."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel avocat et homme politique, chef de file des Montagnards, a dominé le Comité de salut public pendant la Terreur ?","reponses":["Robespierre","Maximilien Robespierre"],"explication":"Surnommé « l'Incorruptible », il fut lui-même guillotiné le 28 juillet 1794."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle famille royale a tenté de fuir la France en juin 1791, avant d'être arrêtée à Varennes ?","choix":[{"texte":"La famille de Louis XVI","correct":true},{"texte":"La famille d'Orléans","correct":false},{"texte":"La famille de Condé","correct":false},{"texte":"La famille de Provence seule","correct":false}],"explication":"Reconnu à un relais de poste, Louis XVI fut ramené sous escorte à Paris."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel journaliste et homme politique révolutionnaire, ami du peuple, a été assassiné dans sa baignoire par Charlotte Corday en 1793 ?","reponses":["Marat","Jean-Paul Marat"],"explication":"Sa mort est immortalisée par le tableau de David, « La Mort de Marat »."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle bataille de septembre 1792 a permis aux troupes révolutionnaires françaises de repousser l'invasion prussienne ?","choix":[{"texte":"La bataille de Valmy","correct":true},{"texte":"La bataille de Fleurus","correct":false},{"texte":"La bataille de Jemmapes","correct":false},{"texte":"La bataille de Wattignies","correct":false}],"explication":"Goethe, présent parmi les troupes prussiennes, aurait déclaré : « De ce lieu et de ce jour date une ère nouvelle. »"},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel homme d'État, tribun puissant de la Révolution, a présidé le premier Comité de salut public avant d'être guillotiné en 1794 pour modérantisme ?","reponses":["Danton","Georges Danton"],"explication":"On lui prête la formule « De l'audace, encore de l'audace, toujours de l'audace »."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle faction modérée de la Convention, opposée aux Montagnards, tire son nom d'un département du Sud-Ouest ?","choix":[{"texte":"Les Girondins","correct":true},{"texte":"Les Feuillants","correct":false},{"texte":"Les Cordeliers","correct":false},{"texte":"Les Thermidoriens","correct":false}],"explication":"Ils tirent leur nom du département de la Gironde, d'où venaient plusieurs de leurs principaux orateurs."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel jour du calendrier révolutionnaire, correspondant au 27 juillet 1794, a vu la chute et l'arrestation de Robespierre ?","reponses":["9 thermidor","le 9 thermidor"],"explication":"Robespierre fut guillotiné le lendemain, sans procès."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel régime politique a succédé à la Convention en France, de 1795 à 1799, avant le coup d'État de Napoléon ?","choix":[{"texte":"Le Directoire","correct":true},{"texte":"Le Consulat","correct":false},{"texte":"La Restauration","correct":false},{"texte":"Le Triumvirat","correct":false}],"explication":"Il était dirigé collégialement par cinq directeurs."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel coup d'État, en novembre 1799, a porté Napoléon Bonaparte au pouvoir et mis fin au Directoire ?","reponses":["coup d'État du 18 Brumaire","18 Brumaire","le coup d'État du 18 Brumaire"],"explication":"Le nom vient du calendrier révolutionnaire encore en vigueur à cette date."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle loi de la Terreur, adoptée en 1793, permettait d'arrêter et d'emprisonner toute personne jugée suspecte, sans preuve formelle ?","choix":[{"texte":"La loi des suspects","correct":true},{"texte":"La loi du maximum","correct":false},{"texte":"La loi Le Chapelier","correct":false},{"texte":"La loi de prairial","correct":false}],"explication":"Adoptée en septembre 1793, elle a alimenté les prisons de la Terreur."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel homme d'État, orateur brillant issu de la noblesse, a d'abord dominé les débuts de la Révolution avant de mourir en 1791, soupçonné après coup de trahison secrète envers le roi ?","reponses":["Mirabeau","Honoré Gabriel Riqueti de Mirabeau"],"explication":"Ses correspondances secrètes avec la cour ne furent découvertes qu'après sa mort."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle mesure exceptionnelle, décrétée en 1793 face à l'invasion étrangère, a mobilisé massivement la population française pour l'effort de guerre ?","choix":[{"texte":"La levée en masse","correct":true},{"texte":"La conscription","correct":false},{"texte":"Le service militaire obligatoire","correct":false},{"texte":"La garde nationale seule","correct":false}],"explication":"Elle mobilisait en théorie toute la population, civile comme militaire, pour l'effort de guerre."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quelle région de l'ouest de la France s'est soulevée en 1793 contre la Révolution, la conscription et la persécution religieuse ?","reponses":["Vendée","la Vendée"],"explication":"La répression de ce soulèvement fit un très lourd bilan humain."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel document de doléances, rédigé par chaque ordre avant les États généraux de 1789, listait les griefs de la population française ?","choix":[{"texte":"Les cahiers de doléances","correct":true},{"texte":"Les registres paroissiaux","correct":false},{"texte":"Les remontrances","correct":false},{"texte":"Les pétitions civiques","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quelle grande fête nationale, célébrée à Paris le 14 juillet 1790, a marqué le premier anniversaire de la prise de la Bastille dans un esprit d'union nationale ?","reponses":["fête de la Fédération","la fête de la Fédération"],"explication":"Le roi Louis XVI y prêta serment à la nation, dans un climat encore consensuel."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quelle loi de 1791, portant le nom de son auteur, a interdit les corporations et les grèves ouvrières en France ?","choix":[{"texte":"La loi Le Chapelier","correct":true},{"texte":"La loi des suspects","correct":false},{"texte":"La loi du maximum","correct":false},{"texte":"La loi agraire","correct":false}],"explication":"Elle resta en vigueur, sous diverses formes, jusqu'à la légalisation des syndicats en 1884."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel texte de 1790, imposant aux prêtres un serment de fidélité à la nation, a profondément divisé le clergé français pendant la Révolution ?","reponses":["Constitution civile du clergé","la Constitution civile du clergé"],"explication":"Les prêtres réfractaires, qui refusèrent le serment, furent ensuite pourchassés."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel manifeste, publié en juillet 1792 par le commandant des armées austro-prussiennes, menaçait Paris de représailles en cas de mal fait au roi, provoquant l'effet inverse escompté ?","choix":[{"texte":"Le manifeste de Brunswick","correct":true},{"texte":"Le manifeste de Pillnitz","correct":false},{"texte":"L'ultimatum de Coblence","correct":false},{"texte":"La déclaration de Mantoue","correct":false}],"explication":"Loin d'intimider les Parisiens, il contribua à radicaliser la Révolution."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel système de mesures, décimal et universel, a été instauré par la Révolution française pour remplacer les anciennes unités locales ?","reponses":["système métrique","le système métrique"],"explication":"Le mètre fut à l'origine défini comme une fraction du méridien terrestre."},
-    {"type":"mcq","categorie":"Histoire","difficulte":5,"enonce":"Quel abbé, auteur de la brochure « Qu'est-ce que le tiers état ? » en 1789, a ensuite joué un rôle clé dans le coup d'État du 18 Brumaire ?","choix":[{"texte":"L'abbé Sieyès","correct":true},{"texte":"L'abbé Grégoire","correct":false},{"texte":"L'abbé Maury","correct":false},{"texte":"L'abbé Fouché","correct":false}],"explication":"Sa formule « Qu'est-ce que le tiers état ? Tout. » est restée célèbre."},
-    {"type":"open","categorie":"Histoire","difficulte":5,"enonce":"Quel massacre de septembre 1792, perpétré à Paris dans un climat de panique face à l'avancée prussienne, a vu des foules exécuter sommairement des prisonniers ?","reponses":["massacres de Septembre","les massacres de Septembre"]},
-    {"type":"sort","categorie":"Histoire","difficulte":2,"enonce":"Trie ces grands événements de la Révolution française du plus ancien au plus récent.","elements":["Réunion des États généraux","Prise de la Bastille","Abolition de la royauté","Exécution de Louis XVI","Chute de Robespierre","Coup d'État de Bonaparte"],"explication":"Mai 1789, 14 juillet 1789, septembre 1792, janvier 1793, juillet 1794, novembre 1799."},
-    {"type":"sort","categorie":"Histoire","difficulte":3,"enonce":"Trie ces régimes politiques français qui se sont succédé entre 1789 et 1799, du plus ancien au plus récent.","elements":["Monarchie constitutionnelle","Convention nationale","Directoire","Consulat"],"explication":"1791-1792, 1792-1795, 1795-1799, à partir de 1799."},
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel événement parisien du 14 juillet 1789, prise d'une forteresse symbole de l'arbitraire royal, marque le début de la Révolution française ?",
+      "reponses": ["prise de la Bastille", "la prise de la Bastille"],
+      "explication": "La Bastille ne comptait que sept prisonniers ce jour-là, mais sa prise a une portée avant tout symbolique."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel roi de France a été guillotiné en 1793 pendant la Révolution française ?",
+      "choix": [
+        { "texte": "Louis XVI", "correct": true },
+        { "texte": "Louis XV", "correct": false },
+        { "texte": "Louis XVIII", "correct": false },
+        { "texte": "Charles X", "correct": false }
+      ],
+      "explication": "Louis XVI a été guillotiné place de la Révolution (actuelle place de la Concorde) le 21 janvier 1793."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quelle reine de France, épouse de Louis XVI, a également été guillotinée en 1793 ?",
+      "reponses": ["Marie-Antoinette"],
+      "explication": "Marie-Antoinette a été guillotinée le 16 octobre 1793, plusieurs mois après son mari."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel texte fondateur de la Révolution française, adopté en août 1789, proclame la liberté et l'égalité de tous les hommes ?",
+      "choix": [
+        { "texte": "La Déclaration des droits de l'homme et du citoyen", "correct": true },
+        { "texte": "Le Code civil", "correct": false },
+        { "texte": "La Constitution de l'an I", "correct": false },
+        { "texte": "Le Serment du Jeu de paume", "correct": false }
+      ],
+      "explication": "Adoptée le 26 août 1789, elle inspire encore aujourd'hui le préambule de la Constitution française."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel instrument, symbole de la Terreur, était utilisé pour les exécutions capitales pendant la Révolution française ?",
+      "reponses": ["guillotine", "la guillotine"],
+      "explication": "Elle doit son nom au docteur Joseph-Ignace Guillotin, qui en proposa l'usage pour rendre l'exécution plus rapide et égalitaire."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quelle prison parisienne, prise d'assaut le 14 juillet 1789, est devenue le symbole de la chute de l'Ancien Régime ?",
+      "choix": [
+        { "texte": "La Bastille", "correct": true },
+        { "texte": "La Conciergerie", "correct": false },
+        { "texte": "Le Temple", "correct": false },
+        { "texte": "Vincennes", "correct": false }
+      ],
+      "explication": "La forteresse a été entièrement démolie dans les mois qui ont suivi sa prise."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle assemblée, réunissant les trois ordres du royaume (clergé, noblesse, tiers état), a été convoquée par Louis XVI en mai 1789 ?",
+      "reponses": ["États généraux", "les États généraux"],
+      "explication": "Ils ne s'étaient pas réunis depuis 1614."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel serment, prêté en juin 1789 par les députés du tiers état, les engage à ne pas se séparer avant d'avoir doté la France d'une Constitution ?",
+      "choix": [
+        { "texte": "Le serment du Jeu de paume", "correct": true },
+        { "texte": "Le serment de l'An I", "correct": false },
+        { "texte": "Le serment civique", "correct": false },
+        { "texte": "Le pacte fédératif", "correct": false }
+      ],
+      "explication": "Prêté le 20 juin 1789 dans une salle de jeu de paume, faute d'accès à leur salle habituelle."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle nuit de 1789 l'Assemblée constituante a-t-elle aboli les privilèges féodaux et les droits seigneuriaux ?",
+      "reponses": ["nuit du 4 août", "la nuit du 4 août"],
+      "explication": "Une séance improvisée où nobles et clergé renoncèrent en cascade à leurs privilèges."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "En quelle année la royauté a-t-elle été abolie en France et la Première République proclamée ?",
+      "choix": [
+        { "texte": "1792", "correct": true },
+        { "texte": "1789", "correct": false },
+        { "texte": "1793", "correct": false },
+        { "texte": "1799", "correct": false }
+      ],
+      "explication": "La République est proclamée le 21 septembre 1792, au lendemain de la victoire de Valmy."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel avocat et homme politique, chef de file des Montagnards, a dominé le Comité de salut public pendant la Terreur ?",
+      "reponses": ["Robespierre", "Maximilien Robespierre"],
+      "explication": "Surnommé « l'Incorruptible », il fut lui-même guillotiné le 28 juillet 1794."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle famille royale a tenté de fuir la France en juin 1791, avant d'être arrêtée à Varennes ?",
+      "choix": [
+        { "texte": "La famille de Louis XVI", "correct": true },
+        { "texte": "La famille d'Orléans", "correct": false },
+        { "texte": "La famille de Condé", "correct": false },
+        { "texte": "La famille de Provence seule", "correct": false }
+      ],
+      "explication": "Reconnu à un relais de poste, Louis XVI fut ramené sous escorte à Paris."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel journaliste et homme politique révolutionnaire, ami du peuple, a été assassiné dans sa baignoire par Charlotte Corday en 1793 ?",
+      "reponses": ["Marat", "Jean-Paul Marat"],
+      "explication": "Sa mort est immortalisée par le tableau de David, « La Mort de Marat »."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle bataille de septembre 1792 a permis aux troupes révolutionnaires françaises de repousser l'invasion prussienne ?",
+      "choix": [
+        { "texte": "La bataille de Valmy", "correct": true },
+        { "texte": "La bataille de Fleurus", "correct": false },
+        { "texte": "La bataille de Jemmapes", "correct": false },
+        { "texte": "La bataille de Wattignies", "correct": false }
+      ],
+      "explication": "Goethe, présent parmi les troupes prussiennes, aurait déclaré : « De ce lieu et de ce jour date une ère nouvelle. »"
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel homme d'État, tribun puissant de la Révolution, a présidé le premier Comité de salut public avant d'être guillotiné en 1794 pour modérantisme ?",
+      "reponses": ["Danton", "Georges Danton"],
+      "explication": "On lui prête la formule « De l'audace, encore de l'audace, toujours de l'audace »."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle faction modérée de la Convention, opposée aux Montagnards, tire son nom d'un département du Sud-Ouest ?",
+      "choix": [
+        { "texte": "Les Girondins", "correct": true },
+        { "texte": "Les Feuillants", "correct": false },
+        { "texte": "Les Cordeliers", "correct": false },
+        { "texte": "Les Thermidoriens", "correct": false }
+      ],
+      "explication": "Ils tirent leur nom du département de la Gironde, d'où venaient plusieurs de leurs principaux orateurs."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel jour du calendrier révolutionnaire, correspondant au 27 juillet 1794, a vu la chute et l'arrestation de Robespierre ?",
+      "reponses": ["9 thermidor", "le 9 thermidor"],
+      "explication": "Robespierre fut guillotiné le lendemain, sans procès."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel régime politique a succédé à la Convention en France, de 1795 à 1799, avant le coup d'État de Napoléon ?",
+      "choix": [
+        { "texte": "Le Directoire", "correct": true },
+        { "texte": "Le Consulat", "correct": false },
+        { "texte": "La Restauration", "correct": false },
+        { "texte": "Le Triumvirat", "correct": false }
+      ],
+      "explication": "Il était dirigé collégialement par cinq directeurs."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel coup d'État, en novembre 1799, a porté Napoléon Bonaparte au pouvoir et mis fin au Directoire ?",
+      "reponses": ["coup d'État du 18 Brumaire", "18 Brumaire", "le coup d'État du 18 Brumaire"],
+      "explication": "Le nom vient du calendrier révolutionnaire encore en vigueur à cette date."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle loi de la Terreur, adoptée en 1793, permettait d'arrêter et d'emprisonner toute personne jugée suspecte, sans preuve formelle ?",
+      "choix": [
+        { "texte": "La loi des suspects", "correct": true },
+        { "texte": "La loi du maximum", "correct": false },
+        { "texte": "La loi Le Chapelier", "correct": false },
+        { "texte": "La loi de prairial", "correct": false }
+      ],
+      "explication": "Adoptée en septembre 1793, elle a alimenté les prisons de la Terreur."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel homme d'État, orateur brillant issu de la noblesse, a d'abord dominé les débuts de la Révolution avant de mourir en 1791, soupçonné après coup de trahison secrète envers le roi ?",
+      "reponses": ["Mirabeau", "Honoré Gabriel Riqueti de Mirabeau"],
+      "explication": "Ses correspondances secrètes avec la cour ne furent découvertes qu'après sa mort."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle mesure exceptionnelle, décrétée en 1793 face à l'invasion étrangère, a mobilisé massivement la population française pour l'effort de guerre ?",
+      "choix": [
+        { "texte": "La levée en masse", "correct": true },
+        { "texte": "La conscription", "correct": false },
+        { "texte": "Le service militaire obligatoire", "correct": false },
+        { "texte": "La garde nationale seule", "correct": false }
+      ],
+      "explication": "Elle mobilisait en théorie toute la population, civile comme militaire, pour l'effort de guerre."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle région de l'ouest de la France s'est soulevée en 1793 contre la Révolution, la conscription et la persécution religieuse ?",
+      "reponses": ["Vendée", "la Vendée"],
+      "explication": "La répression de ce soulèvement fit un très lourd bilan humain."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel document de doléances, rédigé par chaque ordre avant les États généraux de 1789, listait les griefs de la population française ?",
+      "choix": [
+        { "texte": "Les cahiers de doléances", "correct": true },
+        { "texte": "Les registres paroissiaux", "correct": false },
+        { "texte": "Les remontrances", "correct": false },
+        { "texte": "Les pétitions civiques", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle grande fête nationale, célébrée à Paris le 14 juillet 1790, a marqué le premier anniversaire de la prise de la Bastille dans un esprit d'union nationale ?",
+      "reponses": ["fête de la Fédération", "la fête de la Fédération"],
+      "explication": "Le roi Louis XVI y prêta serment à la nation, dans un climat encore consensuel."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle loi de 1791, portant le nom de son auteur, a interdit les corporations et les grèves ouvrières en France ?",
+      "choix": [
+        { "texte": "La loi Le Chapelier", "correct": true },
+        { "texte": "La loi des suspects", "correct": false },
+        { "texte": "La loi du maximum", "correct": false },
+        { "texte": "La loi agraire", "correct": false }
+      ],
+      "explication": "Elle resta en vigueur, sous diverses formes, jusqu'à la légalisation des syndicats en 1884."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel texte de 1790, imposant aux prêtres un serment de fidélité à la nation, a profondément divisé le clergé français pendant la Révolution ?",
+      "reponses": ["Constitution civile du clergé", "la Constitution civile du clergé"],
+      "explication": "Les prêtres réfractaires, qui refusèrent le serment, furent ensuite pourchassés."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel manifeste, publié en juillet 1792 par le commandant des armées austro-prussiennes, menaçait Paris de représailles en cas de mal fait au roi, provoquant l'effet inverse escompté ?",
+      "choix": [
+        { "texte": "Le manifeste de Brunswick", "correct": true },
+        { "texte": "Le manifeste de Pillnitz", "correct": false },
+        { "texte": "L'ultimatum de Coblence", "correct": false },
+        { "texte": "La déclaration de Mantoue", "correct": false }
+      ],
+      "explication": "Loin d'intimider les Parisiens, il contribua à radicaliser la Révolution."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel système de mesures, décimal et universel, a été instauré par la Révolution française pour remplacer les anciennes unités locales ?",
+      "reponses": ["système métrique", "le système métrique"],
+      "explication": "Le mètre fut à l'origine défini comme une fraction du méridien terrestre."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel abbé, auteur de la brochure « Qu'est-ce que le tiers état ? » en 1789, a ensuite joué un rôle clé dans le coup d'État du 18 Brumaire ?",
+      "choix": [
+        { "texte": "L'abbé Sieyès", "correct": true },
+        { "texte": "L'abbé Grégoire", "correct": false },
+        { "texte": "L'abbé Maury", "correct": false },
+        { "texte": "L'abbé Fouché", "correct": false }
+      ],
+      "explication": "Sa formule « Qu'est-ce que le tiers état ? Tout. » est restée célèbre."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel massacre de septembre 1792, perpétré à Paris dans un climat de panique face à l'avancée prussienne, a vu des foules exécuter sommairement des prisonniers ?",
+      "reponses": ["massacres de Septembre", "les massacres de Septembre"]
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Trie ces grands événements de la Révolution française du plus ancien au plus récent.",
+      "elements": [
+        "Réunion des États généraux",
+        "Prise de la Bastille",
+        "Abolition de la royauté",
+        "Exécution de Louis XVI",
+        "Chute de Robespierre",
+        "Coup d'État de Bonaparte"
+      ],
+      "explication": "Mai 1789, 14 juillet 1789, septembre 1792, janvier 1793, juillet 1794, novembre 1799."
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Trie ces régimes politiques français qui se sont succédé entre 1789 et 1799, du plus ancien au plus récent.",
+      "elements": ["Monarchie constitutionnelle", "Convention nationale", "Directoire", "Consulat"],
+      "explication": "1791-1792, 1792-1795, 1795-1799, à partir de 1799."
+    },
 
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel dernier tsar de Russie a été renversé en 1917 puis exécuté avec sa famille en 1918 ?","reponses":["Nicolas II"],"explication":"Il régnait depuis 1894."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel révolutionnaire a dirigé les Bolcheviks lors de la prise du pouvoir en Russie en octobre 1917 ?","choix":[{"texte":"Vladimir Lénine","correct":true},{"texte":"Joseph Staline","correct":false},{"texte":"Léon Trotski","correct":false},{"texte":"Alexandre Kerenski","correct":false}],"explication":"Lénine dirigea le nouveau gouvernement soviétique jusqu'à sa mort en 1924."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel palais de Petrograd, siège du gouvernement provisoire, a été pris d'assaut par les bolcheviks en octobre 1917 ?","reponses":["palais d'Hiver","le palais d'Hiver"],"explication":"L'assaut, longtemps mythifié par le cinéma soviétique, fut en réalité assez peu sanglant."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel parti politique a pris le pouvoir en Russie lors de la révolution d'Octobre 1917 ?","choix":[{"texte":"Le parti bolchevik","correct":true},{"texte":"Le parti menchevik","correct":false},{"texte":"Le parti social-révolutionnaire","correct":false},{"texte":"Le parti cadet","correct":false}],"explication":"« Bolchevik » signifie « majoritaire » en russe."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel mois de 1917, selon le calendrier occidental (le calendrier julien alors en vigueur en Russie indique un autre mois), le tsar Nicolas II a-t-il abdiqué ?","reponses":["mars","mars 1917"],"explication":"Selon le calendrier julien encore utilisé en Russie, on parle de « révolution de Février »."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quel gouvernement, dirigé notamment par Alexandre Kerenski, a exercé le pouvoir en Russie entre l'abdication du tsar et la révolution d'Octobre ?","choix":[{"texte":"Le gouvernement provisoire","correct":true},{"texte":"Le Soviet suprême","correct":false},{"texte":"Le Politburo","correct":false},{"texte":"Le Conseil des commissaires du peuple","correct":false}],"explication":"Il coexistait avec le Soviet de Petrograd, dans une situation de « double pouvoir »."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Comment appelle-t-on les conseils ouvriers et populaires qui se sont multipliés en Russie dès 1917, donnant plus tard son nom au régime issu de la révolution ?","reponses":["soviet","les soviets"],"explication":"« Soviet » signifie simplement « conseil » en russe."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quel slogan, promettant paix, terre et pain, a été utilisé par les bolcheviks pour rallier la population russe en 1917 ?","choix":[{"texte":"« Paix, terre, pain »","correct":true},{"texte":"« Prolétaires de tous les pays, unissez-vous »","correct":false},{"texte":"« Tout le pouvoir aux tsars »","correct":false},{"texte":"« Terre et liberté »","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel moine mystique, proche de la famille impériale russe, a été assassiné par des nobles en décembre 1916 ?","reponses":["Raspoutine","Grigori Raspoutine"],"explication":"La légende veut qu'il ait résisté au poison et aux balles avant de finalement mourir noyé."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Comment appelle-t-on l'union des républiques socialistes fondée en Russie en décembre 1922 ?","choix":[{"texte":"L'URSS (Union des républiques socialistes soviétiques)","correct":true},{"texte":"La Fédération de Russie","correct":false},{"texte":"La Confédération soviétique","correct":false},{"texte":"L'Internationale communiste","correct":false}],"explication":"Elle a existé jusqu'à sa dissolution en décembre 1991."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel dimanche sanglant de janvier 1905, où l'armée tsariste tira sur des manifestants pacifiques à Saint-Pétersbourg, est considéré comme un prélude à la révolution de 1917 ?","reponses":["dimanche rouge","le dimanche rouge"],"explication":"Les manifestants venaient remettre une pétition pacifique au tsar."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel traité, signé en mars 1918, a acté la sortie de la Russie bolchevique de la Première Guerre mondiale ?","choix":[{"texte":"Le traité de Brest-Litovsk","correct":true},{"texte":"Le traité de Riga","correct":false},{"texte":"Le traité de Tartu","correct":false},{"texte":"Le traité de Rapallo","correct":false}],"explication":"La Russie y cède d'immenses territoires à l'Allemagne, dont l'Ukraine."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel commissaire du peuple à la guerre a organisé et dirigé l'Armée rouge pendant la guerre civile russe ?","reponses":["Trotski","Léon Trotski"],"explication":"Il fut ensuite exilé par Staline puis assassiné au Mexique en 1940."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle police politique, créée dès décembre 1917, a réprimé les opposants au nouveau régime bolchevique ?","choix":[{"texte":"La Tchéka","correct":true},{"texte":"Le NKVD","correct":false},{"texte":"Le KGB","correct":false},{"texte":"L'Okhrana","correct":false}],"explication":"Elle est l'ancêtre directe du futur NKVD puis KGB soviétiques."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quelle politique économique, instaurée par Lénine en 1921, a temporairement réintroduit certains mécanismes de marché après la guerre civile ?","reponses":["Nouvelle politique économique","NEP","la NEP"],"explication":"Elle fut abandonnée par Staline à la fin des années 1920 au profit de la planification."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel parti, plus modéré que les bolcheviks au sein du mouvement social-démocrate russe, s'est séparé de ces derniers dès 1903 ?","choix":[{"texte":"Le parti menchevik","correct":true},{"texte":"Le parti cadet","correct":false},{"texte":"Le parti trudovik","correct":false},{"texte":"Le parti octobriste","correct":false}],"explication":"« Menchevik » signifie « minoritaire » en russe."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quelle politique économique brutale, appliquée par les bolcheviks pendant la guerre civile (1918-1921), reposait sur la réquisition forcée des récoltes paysannes ?","reponses":["communisme de guerre","le communisme de guerre"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel type de wagon a permis à Lénine, exilé en Suisse, de traverser l'Allemagne en guerre pour rentrer en Russie en avril 1917 ?","choix":[{"texte":"Un wagon plombé","correct":true},{"texte":"Un wagon-restaurant","correct":false},{"texte":"Un wagon diplomatique","correct":false},{"texte":"Un wagon de marchandises","correct":false}],"explication":"L'Allemagne espérait ainsi déstabiliser la Russie, alors son ennemie."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quelle crise politique de juillet 1917, marquée par des manifestations réprimées à Petrograd, a temporairement affaibli les bolcheviks et forcé Lénine à se cacher en Finlande ?","reponses":["journées de Juillet","les journées de Juillet"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":5,"enonce":"Quel général, chef d'état-major de l'armée russe, a tenté un coup de force militaire contre le gouvernement provisoire de Kerenski en août-septembre 1917 ?","choix":[{"texte":"Le général Kornilov","correct":true},{"texte":"Le général Broussilov","correct":false},{"texte":"Le général Denikine","correct":false},{"texte":"Le général Wrangel","correct":false}],"explication":"Kerenski dut faire appel aux bolcheviks pour repousser ce coup de force, ce qui les renforça."},
-    {"type":"open","categorie":"Histoire","difficulte":5,"enonce":"Dans quelle ville de l'Oural la famille impériale russe a-t-elle été exécutée en juillet 1918 ?","reponses":["Ekaterinbourg"]},
-    {"type":"sort","categorie":"Histoire","difficulte":2,"enonce":"Trie ces événements de la révolution russe du plus ancien au plus récent.","elements":["Dimanche rouge","Abdication de Nicolas II","Révolution d'Octobre","Traité de Brest-Litovsk","Exécution de la famille impériale","Fondation de l'URSS"],"explication":"Janvier 1905, mars 1917, octobre/novembre 1917, mars 1918, juillet 1918, décembre 1922."},
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel dernier tsar de Russie a été renversé en 1917 puis exécuté avec sa famille en 1918 ?",
+      "reponses": ["Nicolas II"],
+      "explication": "Il régnait depuis 1894."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel révolutionnaire a dirigé les Bolcheviks lors de la prise du pouvoir en Russie en octobre 1917 ?",
+      "choix": [
+        { "texte": "Vladimir Lénine", "correct": true },
+        { "texte": "Joseph Staline", "correct": false },
+        { "texte": "Léon Trotski", "correct": false },
+        { "texte": "Alexandre Kerenski", "correct": false }
+      ],
+      "explication": "Lénine dirigea le nouveau gouvernement soviétique jusqu'à sa mort en 1924."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel palais de Petrograd, siège du gouvernement provisoire, a été pris d'assaut par les bolcheviks en octobre 1917 ?",
+      "reponses": ["palais d'Hiver", "le palais d'Hiver"],
+      "explication": "L'assaut, longtemps mythifié par le cinéma soviétique, fut en réalité assez peu sanglant."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel parti politique a pris le pouvoir en Russie lors de la révolution d'Octobre 1917 ?",
+      "choix": [
+        { "texte": "Le parti bolchevik", "correct": true },
+        { "texte": "Le parti menchevik", "correct": false },
+        { "texte": "Le parti social-révolutionnaire", "correct": false },
+        { "texte": "Le parti cadet", "correct": false }
+      ],
+      "explication": "« Bolchevik » signifie « majoritaire » en russe."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel mois de 1917, selon le calendrier occidental (le calendrier julien alors en vigueur en Russie indique un autre mois), le tsar Nicolas II a-t-il abdiqué ?",
+      "reponses": ["mars", "mars 1917"],
+      "explication": "Selon le calendrier julien encore utilisé en Russie, on parle de « révolution de Février »."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel gouvernement, dirigé notamment par Alexandre Kerenski, a exercé le pouvoir en Russie entre l'abdication du tsar et la révolution d'Octobre ?",
+      "choix": [
+        { "texte": "Le gouvernement provisoire", "correct": true },
+        { "texte": "Le Soviet suprême", "correct": false },
+        { "texte": "Le Politburo", "correct": false },
+        { "texte": "Le Conseil des commissaires du peuple", "correct": false }
+      ],
+      "explication": "Il coexistait avec le Soviet de Petrograd, dans une situation de « double pouvoir »."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Comment appelle-t-on les conseils ouvriers et populaires qui se sont multipliés en Russie dès 1917, donnant plus tard son nom au régime issu de la révolution ?",
+      "reponses": ["soviet", "les soviets"],
+      "explication": "« Soviet » signifie simplement « conseil » en russe."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel slogan, promettant paix, terre et pain, a été utilisé par les bolcheviks pour rallier la population russe en 1917 ?",
+      "choix": [
+        { "texte": "« Paix, terre, pain »", "correct": true },
+        { "texte": "« Prolétaires de tous les pays, unissez-vous »", "correct": false },
+        { "texte": "« Tout le pouvoir aux tsars »", "correct": false },
+        { "texte": "« Terre et liberté »", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel moine mystique, proche de la famille impériale russe, a été assassiné par des nobles en décembre 1916 ?",
+      "reponses": ["Raspoutine", "Grigori Raspoutine"],
+      "explication": "La légende veut qu'il ait résisté au poison et aux balles avant de finalement mourir noyé."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Comment appelle-t-on l'union des républiques socialistes fondée en Russie en décembre 1922 ?",
+      "choix": [
+        { "texte": "L'URSS (Union des républiques socialistes soviétiques)", "correct": true },
+        { "texte": "La Fédération de Russie", "correct": false },
+        { "texte": "La Confédération soviétique", "correct": false },
+        { "texte": "L'Internationale communiste", "correct": false }
+      ],
+      "explication": "Elle a existé jusqu'à sa dissolution en décembre 1991."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel dimanche sanglant de janvier 1905, où l'armée tsariste tira sur des manifestants pacifiques à Saint-Pétersbourg, est considéré comme un prélude à la révolution de 1917 ?",
+      "reponses": ["dimanche rouge", "le dimanche rouge"],
+      "explication": "Les manifestants venaient remettre une pétition pacifique au tsar."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel traité, signé en mars 1918, a acté la sortie de la Russie bolchevique de la Première Guerre mondiale ?",
+      "choix": [
+        { "texte": "Le traité de Brest-Litovsk", "correct": true },
+        { "texte": "Le traité de Riga", "correct": false },
+        { "texte": "Le traité de Tartu", "correct": false },
+        { "texte": "Le traité de Rapallo", "correct": false }
+      ],
+      "explication": "La Russie y cède d'immenses territoires à l'Allemagne, dont l'Ukraine."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel commissaire du peuple à la guerre a organisé et dirigé l'Armée rouge pendant la guerre civile russe ?",
+      "reponses": ["Trotski", "Léon Trotski"],
+      "explication": "Il fut ensuite exilé par Staline puis assassiné au Mexique en 1940."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle police politique, créée dès décembre 1917, a réprimé les opposants au nouveau régime bolchevique ?",
+      "choix": [
+        { "texte": "La Tchéka", "correct": true },
+        { "texte": "Le NKVD", "correct": false },
+        { "texte": "Le KGB", "correct": false },
+        { "texte": "L'Okhrana", "correct": false }
+      ],
+      "explication": "Elle est l'ancêtre directe du futur NKVD puis KGB soviétiques."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle politique économique, instaurée par Lénine en 1921, a temporairement réintroduit certains mécanismes de marché après la guerre civile ?",
+      "reponses": ["Nouvelle politique économique", "NEP", "la NEP"],
+      "explication": "Elle fut abandonnée par Staline à la fin des années 1920 au profit de la planification."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel parti, plus modéré que les bolcheviks au sein du mouvement social-démocrate russe, s'est séparé de ces derniers dès 1903 ?",
+      "choix": [
+        { "texte": "Le parti menchevik", "correct": true },
+        { "texte": "Le parti cadet", "correct": false },
+        { "texte": "Le parti trudovik", "correct": false },
+        { "texte": "Le parti octobriste", "correct": false }
+      ],
+      "explication": "« Menchevik » signifie « minoritaire » en russe."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle politique économique brutale, appliquée par les bolcheviks pendant la guerre civile (1918-1921), reposait sur la réquisition forcée des récoltes paysannes ?",
+      "reponses": ["communisme de guerre", "le communisme de guerre"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel type de wagon a permis à Lénine, exilé en Suisse, de traverser l'Allemagne en guerre pour rentrer en Russie en avril 1917 ?",
+      "choix": [
+        { "texte": "Un wagon plombé", "correct": true },
+        { "texte": "Un wagon-restaurant", "correct": false },
+        { "texte": "Un wagon diplomatique", "correct": false },
+        { "texte": "Un wagon de marchandises", "correct": false }
+      ],
+      "explication": "L'Allemagne espérait ainsi déstabiliser la Russie, alors son ennemie."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle crise politique de juillet 1917, marquée par des manifestations réprimées à Petrograd, a temporairement affaibli les bolcheviks et forcé Lénine à se cacher en Finlande ?",
+      "reponses": ["journées de Juillet", "les journées de Juillet"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel général, chef d'état-major de l'armée russe, a tenté un coup de force militaire contre le gouvernement provisoire de Kerenski en août-septembre 1917 ?",
+      "choix": [
+        { "texte": "Le général Kornilov", "correct": true },
+        { "texte": "Le général Broussilov", "correct": false },
+        { "texte": "Le général Denikine", "correct": false },
+        { "texte": "Le général Wrangel", "correct": false }
+      ],
+      "explication": "Kerenski dut faire appel aux bolcheviks pour repousser ce coup de force, ce qui les renforça."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Dans quelle ville de l'Oural la famille impériale russe a-t-elle été exécutée en juillet 1918 ?",
+      "reponses": ["Ekaterinbourg"]
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Trie ces événements de la révolution russe du plus ancien au plus récent.",
+      "elements": [
+        "Dimanche rouge",
+        "Abdication de Nicolas II",
+        "Révolution d'Octobre",
+        "Traité de Brest-Litovsk",
+        "Exécution de la famille impériale",
+        "Fondation de l'URSS"
+      ],
+      "explication": "Janvier 1905, mars 1917, octobre/novembre 1917, mars 1918, juillet 1918, décembre 1922."
+    },
 
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel archiduc austro-hongrois, dont l'assassinat à Sarajevo en juin 1914 a déclenché la Première Guerre mondiale ?","reponses":["François-Ferdinand","l'archiduc François-Ferdinand"],"explication":"Héritier du trône austro-hongrois, il fut abattu avec son épouse Sophie le 28 juin 1914."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"En quelle année la Première Guerre mondiale a-t-elle commencé ?","choix":[{"texte":"1914","correct":true},{"texte":"1912","correct":false},{"texte":"1916","correct":false},{"texte":"1918","correct":false}],"explication":"La guerre débute officiellement fin juillet-début août 1914, un mois après l'attentat de Sarajevo."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"En quelle année s'est terminée la Première Guerre mondiale, avec la signature de l'armistice le 11 novembre ?","reponses":["1918"],"explication":"L'armistice est signé à 5h du matin dans un wagon à Rethondes, effectif à 11h."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quelle ville bosnienne a été le théâtre de l'attentat déclencheur de la Première Guerre mondiale ?","choix":[{"texte":"Sarajevo","correct":true},{"texte":"Belgrade","correct":false},{"texte":"Zagreb","correct":false},{"texte":"Vienne","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel type de fortification, creusé par les soldats et resté le symbole de l'immobilisme de la Première Guerre mondiale, a donné son nom à cette « guerre de position » ?","reponses":["tranchées","les tranchées"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle très longue bataille de 1916, symbole de la résistance française, s'est déroulée dans l'est de la France ?","choix":[{"texte":"La bataille de Verdun","correct":true},{"texte":"La bataille de la Marne","correct":false},{"texte":"La bataille d'Artois","correct":false},{"texte":"La bataille de Champagne","correct":false}],"explication":"Elle dura près de 10 mois et fit environ 300 000 morts des deux côtés."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quelle alliance militaire réunissait la France, le Royaume-Uni et la Russie au début de la Première Guerre mondiale ?","reponses":["Triple-Entente","la Triple-Entente"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle alliance militaire réunissait l'Allemagne et l'Autriche-Hongrie au début de la Première Guerre mondiale ?","choix":[{"texte":"La Triplice (Triple-Alliance)","correct":true},{"texte":"La Triple-Entente","correct":false},{"texte":"Le pacte tripartite","correct":false},{"texte":"L'Alliance sainte","correct":false}],"explication":"L'Italie, membre initial de la Triplice, a finalement rejoint les Alliés en 1915."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel traité, signé en 1919 dans un célèbre château près de Paris, a officiellement mis fin à la Première Guerre mondiale entre les Alliés et l'Allemagne ?","reponses":["traité de Versailles","le traité de Versailles"],"explication":"Signé dans la galerie des Glaces, là même où l'Empire allemand avait été proclamé en 1871."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quel maréchal français, surnommé « le vainqueur de Verdun », a ensuite dirigé le régime de Vichy pendant la Seconde Guerre mondiale ?","choix":[{"texte":"Philippe Pétain","correct":true},{"texte":"Ferdinand Foch","correct":false},{"texte":"Joseph Joffre","correct":false},{"texte":"Robert Nivelle","correct":false}],"explication":"Il passa du statut de héros national en 1918 à celui de chef d'un régime collaborationniste condamné après la guerre."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel pays a rejoint les Alliés en 1917, à un moment décisif de la Première Guerre mondiale, apportant des ressources considérables ?","reponses":["États-Unis","les États-Unis"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle bataille de 1914, remportée par les Français et les Britanniques, a stoppé l'avancée allemande vers Paris et ouvert la voie à la guerre de tranchées ?","choix":[{"texte":"La bataille de la Marne","correct":true},{"texte":"La bataille de Verdun","correct":false},{"texte":"La bataille de la Somme","correct":false},{"texte":"La bataille des Flandres","correct":false}],"explication":"Des taxis parisiens réquisitionnés y transportèrent des troupes de renfort, épisode resté célèbre."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel maréchal français, commandant en chef des forces alliées en 1918, a mené les offensives victorieuses de la fin de la guerre ?","reponses":["Foch","Ferdinand Foch"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel jeune nationaliste serbe a assassiné l'archiduc François-Ferdinand à Sarajevo en juin 1914 ?","choix":[{"texte":"Gavrilo Princip","correct":true},{"texte":"Nedeljko Čabrinović","correct":false},{"texte":"Danilo Ilić","correct":false},{"texte":"Trifko Grabež","correct":false}],"explication":"Membre de la Main noire, une société secrète nationaliste serbe."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quelle grande bataille de 1916, opposant surtout troupes britanniques et allemandes, a vu l'usage pour la première fois de chars d'assaut ?","reponses":["bataille de la Somme","la bataille de la Somme"],"explication":"Le premier jour de l'offensive britannique, le 1er juillet 1916, reste le jour le plus meurtrier de l'histoire de l'armée britannique."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel empire multiethnique d'Europe centrale a disparu à l'issue de la Première Guerre mondiale, donnant naissance à plusieurs nouveaux États ?","choix":[{"texte":"L'empire austro-hongrois","correct":true},{"texte":"L'empire allemand","correct":false},{"texte":"L'empire russe","correct":false},{"texte":"L'empire britannique","correct":false}],"explication":"Sa disparition donna naissance à la Tchécoslovaquie, la Yougoslavie, l'Autriche et la Hongrie actuelles."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel organisme international, prévu par le traité de Versailles, a été fondé en 1920 pour prévenir de futurs conflits, avant d'être remplacé après la Seconde Guerre mondiale ?","reponses":["Société des Nations","SDN","la Société des Nations"],"explication":"Les États-Unis, malgré le rôle moteur de leur président Wilson dans sa création, n'y adhérèrent jamais."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle arme, jusque-là inédite à cette échelle, a été utilisée pour la première fois massivement lors de la seconde bataille d'Ypres en 1915 ?","choix":[{"texte":"Le gaz de combat (chlore)","correct":true},{"texte":"Le char d'assaut","correct":false},{"texte":"Le lance-flammes","correct":false},{"texte":"L'aviation de chasse","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel plan stratégique allemand, prévoyant une invasion rapide de la France par la Belgique en 1914, a échoué à provoquer une victoire éclair ?","reponses":["plan Schlieffen","le plan Schlieffen"],"explication":"Son échec sur la Marne installa le conflit dans une guerre de position de plusieurs années."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel paquebot britannique, torpillé par un sous-marin allemand en mai 1915 avec des passagers américains à bord, a contribué à retourner l'opinion publique américaine contre l'Allemagne ?","choix":[{"texte":"Le Lusitania","correct":true},{"texte":"Le Titanic","correct":false},{"texte":"Le Britannic","correct":false},{"texte":"Le Mauretania","correct":false}],"explication":"128 citoyens américains périrent dans le naufrage."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel président américain a formulé, en janvier 1918, un programme en 14 points destiné à fonder une paix durable après la guerre ?","reponses":["Woodrow Wilson","Wilson"],"explication":"Le principe du droit des peuples à disposer d'eux-mêmes en est un des points centraux."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel télégramme allemand, intercepté et révélé en 1917, proposait au Mexique une alliance contre les États-Unis, précipitant l'entrée en guerre américaine ?","choix":[{"texte":"Le télégramme Zimmermann","correct":true},{"texte":"Le télégramme Ems","correct":false},{"texte":"Le télégramme Kruger","correct":false},{"texte":"Le pacte Sykes-Picot","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":5,"enonce":"Quel accord secret franco-britannique de 1916 a défini le partage d'influence des puissances alliées au Proche-Orient après la chute prévisible de l'Empire ottoman ?","reponses":["accords Sykes-Picot","les accords Sykes-Picot"],"explication":"Leurs frontières artificielles pèsent encore sur la géopolitique de la région aujourd'hui."},
-    {"type":"mcq","categorie":"Histoire","difficulte":5,"enonce":"Quel surnom fut donné à l'aviateur allemand Manfred von Richthofen, as de l'aviation le plus titré de la Première Guerre mondiale ?","choix":[{"texte":"Le Baron rouge","correct":true},{"texte":"L'Aigle noir","correct":false},{"texte":"Le Faucon de fer","correct":false},{"texte":"Le Diable volant","correct":false}],"explication":"Il doit son surnom à son avion peint en rouge et à son titre de baron."},
-    {"type":"sort","categorie":"Histoire","difficulte":2,"enonce":"Trie ces événements de la Première Guerre mondiale du plus ancien au plus récent.","elements":["Attentat de Sarajevo","Bataille de la Marne","Bataille de Verdun","Entrée en guerre des États-Unis","Armistice du 11 novembre","Traité de Versailles"],"explication":"Juin 1914, septembre 1914, février-décembre 1916, avril 1917, novembre 1918, juin 1919."},
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel archiduc austro-hongrois, dont l'assassinat à Sarajevo en juin 1914 a déclenché la Première Guerre mondiale ?",
+      "reponses": ["François-Ferdinand", "l'archiduc François-Ferdinand"],
+      "explication": "Héritier du trône austro-hongrois, il fut abattu avec son épouse Sophie le 28 juin 1914."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "En quelle année la Première Guerre mondiale a-t-elle commencé ?",
+      "choix": [
+        { "texte": "1914", "correct": true },
+        { "texte": "1912", "correct": false },
+        { "texte": "1916", "correct": false },
+        { "texte": "1918", "correct": false }
+      ],
+      "explication": "La guerre débute officiellement fin juillet-début août 1914, un mois après l'attentat de Sarajevo."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "En quelle année s'est terminée la Première Guerre mondiale, avec la signature de l'armistice le 11 novembre ?",
+      "reponses": ["1918"],
+      "explication": "L'armistice est signé à 5h du matin dans un wagon à Rethondes, effectif à 11h."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quelle ville bosnienne a été le théâtre de l'attentat déclencheur de la Première Guerre mondiale ?",
+      "choix": [
+        { "texte": "Sarajevo", "correct": true },
+        { "texte": "Belgrade", "correct": false },
+        { "texte": "Zagreb", "correct": false },
+        { "texte": "Vienne", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel type de fortification, creusé par les soldats et resté le symbole de l'immobilisme de la Première Guerre mondiale, a donné son nom à cette « guerre de position » ?",
+      "reponses": ["tranchées", "les tranchées"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle très longue bataille de 1916, symbole de la résistance française, s'est déroulée dans l'est de la France ?",
+      "choix": [
+        { "texte": "La bataille de Verdun", "correct": true },
+        { "texte": "La bataille de la Marne", "correct": false },
+        { "texte": "La bataille d'Artois", "correct": false },
+        { "texte": "La bataille de Champagne", "correct": false }
+      ],
+      "explication": "Elle dura près de 10 mois et fit environ 300 000 morts des deux côtés."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle alliance militaire réunissait la France, le Royaume-Uni et la Russie au début de la Première Guerre mondiale ?",
+      "reponses": ["Triple-Entente", "la Triple-Entente"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle alliance militaire réunissait l'Allemagne et l'Autriche-Hongrie au début de la Première Guerre mondiale ?",
+      "choix": [
+        { "texte": "La Triplice (Triple-Alliance)", "correct": true },
+        { "texte": "La Triple-Entente", "correct": false },
+        { "texte": "Le pacte tripartite", "correct": false },
+        { "texte": "L'Alliance sainte", "correct": false }
+      ],
+      "explication": "L'Italie, membre initial de la Triplice, a finalement rejoint les Alliés en 1915."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel traité, signé en 1919 dans un célèbre château près de Paris, a officiellement mis fin à la Première Guerre mondiale entre les Alliés et l'Allemagne ?",
+      "reponses": ["traité de Versailles", "le traité de Versailles"],
+      "explication": "Signé dans la galerie des Glaces, là même où l'Empire allemand avait été proclamé en 1871."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel maréchal français, surnommé « le vainqueur de Verdun », a ensuite dirigé le régime de Vichy pendant la Seconde Guerre mondiale ?",
+      "choix": [
+        { "texte": "Philippe Pétain", "correct": true },
+        { "texte": "Ferdinand Foch", "correct": false },
+        { "texte": "Joseph Joffre", "correct": false },
+        { "texte": "Robert Nivelle", "correct": false }
+      ],
+      "explication": "Il passa du statut de héros national en 1918 à celui de chef d'un régime collaborationniste condamné après la guerre."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel pays a rejoint les Alliés en 1917, à un moment décisif de la Première Guerre mondiale, apportant des ressources considérables ?",
+      "reponses": ["États-Unis", "les États-Unis"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle bataille de 1914, remportée par les Français et les Britanniques, a stoppé l'avancée allemande vers Paris et ouvert la voie à la guerre de tranchées ?",
+      "choix": [
+        { "texte": "La bataille de la Marne", "correct": true },
+        { "texte": "La bataille de Verdun", "correct": false },
+        { "texte": "La bataille de la Somme", "correct": false },
+        { "texte": "La bataille des Flandres", "correct": false }
+      ],
+      "explication": "Des taxis parisiens réquisitionnés y transportèrent des troupes de renfort, épisode resté célèbre."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel maréchal français, commandant en chef des forces alliées en 1918, a mené les offensives victorieuses de la fin de la guerre ?",
+      "reponses": ["Foch", "Ferdinand Foch"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel jeune nationaliste serbe a assassiné l'archiduc François-Ferdinand à Sarajevo en juin 1914 ?",
+      "choix": [
+        { "texte": "Gavrilo Princip", "correct": true },
+        { "texte": "Nedeljko Čabrinović", "correct": false },
+        { "texte": "Danilo Ilić", "correct": false },
+        { "texte": "Trifko Grabež", "correct": false }
+      ],
+      "explication": "Membre de la Main noire, une société secrète nationaliste serbe."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle grande bataille de 1916, opposant surtout troupes britanniques et allemandes, a vu l'usage pour la première fois de chars d'assaut ?",
+      "reponses": ["bataille de la Somme", "la bataille de la Somme"],
+      "explication": "Le premier jour de l'offensive britannique, le 1er juillet 1916, reste le jour le plus meurtrier de l'histoire de l'armée britannique."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel empire multiethnique d'Europe centrale a disparu à l'issue de la Première Guerre mondiale, donnant naissance à plusieurs nouveaux États ?",
+      "choix": [
+        { "texte": "L'empire austro-hongrois", "correct": true },
+        { "texte": "L'empire allemand", "correct": false },
+        { "texte": "L'empire russe", "correct": false },
+        { "texte": "L'empire britannique", "correct": false }
+      ],
+      "explication": "Sa disparition donna naissance à la Tchécoslovaquie, la Yougoslavie, l'Autriche et la Hongrie actuelles."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel organisme international, prévu par le traité de Versailles, a été fondé en 1920 pour prévenir de futurs conflits, avant d'être remplacé après la Seconde Guerre mondiale ?",
+      "reponses": ["Société des Nations", "SDN", "la Société des Nations"],
+      "explication": "Les États-Unis, malgré le rôle moteur de leur président Wilson dans sa création, n'y adhérèrent jamais."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle arme, jusque-là inédite à cette échelle, a été utilisée pour la première fois massivement lors de la seconde bataille d'Ypres en 1915 ?",
+      "choix": [
+        { "texte": "Le gaz de combat (chlore)", "correct": true },
+        { "texte": "Le char d'assaut", "correct": false },
+        { "texte": "Le lance-flammes", "correct": false },
+        { "texte": "L'aviation de chasse", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel plan stratégique allemand, prévoyant une invasion rapide de la France par la Belgique en 1914, a échoué à provoquer une victoire éclair ?",
+      "reponses": ["plan Schlieffen", "le plan Schlieffen"],
+      "explication": "Son échec sur la Marne installa le conflit dans une guerre de position de plusieurs années."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel paquebot britannique, torpillé par un sous-marin allemand en mai 1915 avec des passagers américains à bord, a contribué à retourner l'opinion publique américaine contre l'Allemagne ?",
+      "choix": [
+        { "texte": "Le Lusitania", "correct": true },
+        { "texte": "Le Titanic", "correct": false },
+        { "texte": "Le Britannic", "correct": false },
+        { "texte": "Le Mauretania", "correct": false }
+      ],
+      "explication": "128 citoyens américains périrent dans le naufrage."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel président américain a formulé, en janvier 1918, un programme en 14 points destiné à fonder une paix durable après la guerre ?",
+      "reponses": ["Woodrow Wilson", "Wilson"],
+      "explication": "Le principe du droit des peuples à disposer d'eux-mêmes en est un des points centraux."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel télégramme allemand, intercepté et révélé en 1917, proposait au Mexique une alliance contre les États-Unis, précipitant l'entrée en guerre américaine ?",
+      "choix": [
+        { "texte": "Le télégramme Zimmermann", "correct": true },
+        { "texte": "Le télégramme Ems", "correct": false },
+        { "texte": "Le télégramme Kruger", "correct": false },
+        { "texte": "Le pacte Sykes-Picot", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel accord secret franco-britannique de 1916 a défini le partage d'influence des puissances alliées au Proche-Orient après la chute prévisible de l'Empire ottoman ?",
+      "reponses": ["accords Sykes-Picot", "les accords Sykes-Picot"],
+      "explication": "Leurs frontières artificielles pèsent encore sur la géopolitique de la région aujourd'hui."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel surnom fut donné à l'aviateur allemand Manfred von Richthofen, as de l'aviation le plus titré de la Première Guerre mondiale ?",
+      "choix": [
+        { "texte": "Le Baron rouge", "correct": true },
+        { "texte": "L'Aigle noir", "correct": false },
+        { "texte": "Le Faucon de fer", "correct": false },
+        { "texte": "Le Diable volant", "correct": false }
+      ],
+      "explication": "Il doit son surnom à son avion peint en rouge et à son titre de baron."
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Trie ces événements de la Première Guerre mondiale du plus ancien au plus récent.",
+      "elements": [
+        "Attentat de Sarajevo",
+        "Bataille de la Marne",
+        "Bataille de Verdun",
+        "Entrée en guerre des États-Unis",
+        "Armistice du 11 novembre",
+        "Traité de Versailles"
+      ],
+      "explication": "Juin 1914, septembre 1914, février-décembre 1916, avril 1917, novembre 1918, juin 1919."
+    },
 
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel pays l'Allemagne a-t-elle envahi le 1er septembre 1939, déclenchant la Seconde Guerre mondiale ?","reponses":["Pologne","la Pologne"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel dictateur allemand a déclenché la Seconde Guerre mondiale en 1939 ?","choix":[{"texte":"Adolf Hitler","correct":true},{"texte":"Benito Mussolini","correct":false},{"texte":"Heinrich Himmler","correct":false},{"texte":"Hermann Göring","correct":false}],"explication":"Il se suicide le 30 avril 1945, alors que Berlin tombe aux mains des Soviétiques."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel débarquement allié, survenu le 6 juin 1944 sur les plages de Normandie, a marqué le début de la libération de la France ?","reponses":["débarquement de Normandie","le débarquement de Normandie","D-Day"],"explication":"Plus de 150 000 soldats alliés débarquèrent ce seul jour."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quelles deux villes japonaises ont subi un bombardement atomique américain en août 1945 ?","choix":[{"texte":"Hiroshima et Nagasaki","correct":true},{"texte":"Tokyo et Osaka","correct":false},{"texte":"Kyoto et Kobe","correct":false},{"texte":"Nagoya et Yokohama","correct":false}],"explication":"Les bombardements eurent lieu les 6 et 9 août 1945, précédant la capitulation japonaise."},
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Quel général français a lancé, le 18 juin 1940 depuis Londres, un appel à poursuivre la résistance contre l'occupant allemand ?","reponses":["Charles de Gaulle","de Gaulle"],"explication":"Peu de Français l'entendirent à la radio le jour même, mais l'appel devint fondateur a posteriori."},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"En quelle année a pris fin la Seconde Guerre mondiale en Europe, avec la capitulation allemande de mai ?","choix":[{"texte":"1945","correct":true},{"texte":"1944","correct":false},{"texte":"1946","correct":false},{"texte":"1943","correct":false}],"explication":"La guerre continua ensuite dans le Pacifique jusqu'en août-septembre 1945."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel régime français collaborationniste, dirigé depuis la zone libre, a existé de 1940 à 1944 sous l'autorité du maréchal Pétain ?","reponses":["régime de Vichy","le régime de Vichy"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle opération militaire allemande, lancée en juin 1941, a marqué l'invasion de l'Union soviétique ?","choix":[{"texte":"L'opération Barbarossa","correct":true},{"texte":"L'opération Overlord","correct":false},{"texte":"L'opération Sea Lion","correct":false},{"texte":"L'opération Torch","correct":false}],"explication":"Lancée le 22 juin 1941, elle rompt le pacte de non-agression germano-soviétique de 1939."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quelle attaque surprise japonaise sur une base navale américaine, en décembre 1941, a provoqué l'entrée en guerre des États-Unis ?","reponses":["attaque de Pearl Harbor","Pearl Harbor"],"explication":"L'attaque eut lieu le 7 décembre 1941, un dimanche matin."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle très longue bataille de 1942-1943, en Union soviétique, est considérée comme le tournant de la guerre sur le front de l'Est ?","choix":[{"texte":"La bataille de Stalingrad","correct":true},{"texte":"La bataille de Koursk","correct":false},{"texte":"Le siège de Leningrad","correct":false},{"texte":"La bataille de Moscou","correct":false}],"explication":"L'armée allemande y perdit sa 6e armée tout entière, encerclée."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel Premier ministre britannique a dirigé le Royaume-Uni pendant la majeure partie de la Seconde Guerre mondiale ?","reponses":["Winston Churchill","Churchill"],"explication":"Il devint Premier ministre en mai 1940, au moment le plus critique de la guerre pour son pays."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Comment appelle-t-on l'extermination systématique des Juifs d'Europe par le régime nazi pendant la Seconde Guerre mondiale ?","choix":[{"texte":"La Shoah (Holocauste)","correct":true},{"texte":"La solution provisoire","correct":false},{"texte":"L'épuration ethnique","correct":false},{"texte":"Le grand exil","correct":false}],"explication":"Environ six millions de Juifs furent exterminés."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel mouvement clandestin français, organisé sous l'Occupation pour combattre les nazis et le régime de Vichy, a été fédéré par Jean Moulin en 1943 ?","reponses":["Résistance","la Résistance"],"explication":"Jean Moulin unifia les différents mouvements au sein du Conseil national de la Résistance."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel nom de code portait l'opération alliée de débarquement en Normandie le 6 juin 1944 ?","choix":[{"texte":"Overlord","correct":true},{"texte":"Torch","correct":false},{"texte":"Dragoon","correct":false},{"texte":"Market Garden","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel maréchal soviétique a dirigé la prise de Berlin en 1945, aboutissant à la chute du régime nazi ?","reponses":["Joukov","Gueorgui Joukov"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle conférence de février 1945, réunissant Churchill, Roosevelt et Staline, a défini les grandes lignes de l'Europe d'après-guerre ?","choix":[{"texte":"La conférence de Yalta","correct":true},{"texte":"La conférence de Potsdam","correct":false},{"texte":"La conférence de Téhéran","correct":false},{"texte":"La conférence de Casablanca","correct":false}],"explication":"Elle s'est tenue en Crimée, en Union soviétique."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel camp de concentration et d'extermination, situé en Pologne occupée, est devenu le symbole le plus connu de la Shoah ?","reponses":["Auschwitz","Auschwitz-Birkenau"],"explication":"Il a été libéré par l'Armée rouge le 27 janvier 1945, date aujourd'hui commémorée."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quelle bataille de fin 1944-début 1945, dernière grande offensive allemande à l'ouest, s'est déroulée dans les forêts belges et luxembourgeoises ?","choix":[{"texte":"La bataille des Ardennes","correct":true},{"texte":"La bataille de Normandie","correct":false},{"texte":"La bataille du Rhin","correct":false},{"texte":"La bataille de la Ruhr","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel maréchal allemand, surnommé « le renard du désert », a commandé les forces de l'Axe en Afrique du Nord ?","reponses":["Rommel","Erwin Rommel"],"explication":"Il fut contraint au suicide en 1944 après être soupçonné d'implication dans un complot contre Hitler."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quelle conférence tenue près de Berlin en janvier 1942 a organisé la coordination administrative de l'extermination des Juifs d'Europe ?","choix":[{"texte":"La conférence de Wannsee","correct":true},{"texte":"La conférence de Nuremberg","correct":false},{"texte":"La conférence de Potsdam","correct":false},{"texte":"La conférence de Munich","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quels procès, tenus en Allemagne entre 1945 et 1946, ont jugé les principaux dirigeants nazis pour crimes contre l'humanité ?","reponses":["procès de Nuremberg","les procès de Nuremberg"],"explication":"Douze accusés furent condamnés à mort."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quelle bataille du Pacifique, en juin 1942, a marqué un tournant décisif en faveur des États-Unis contre le Japon ?","choix":[{"texte":"La bataille de Midway","correct":true},{"texte":"La bataille de la mer de Corail","correct":false},{"texte":"La bataille de Guadalcanal","correct":false},{"texte":"La bataille de Leyte","correct":false}],"explication":"Les Américains y détruisirent quatre porte-avions japonais."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel général américain, commandant suprême des forces alliées en Europe, deviendra plus tard président des États-Unis ?","reponses":["Eisenhower","Dwight Eisenhower"],"explication":"Il fut président des États-Unis de 1953 à 1961."},
-    {"type":"mcq","categorie":"Histoire","difficulte":5,"enonce":"Quel plan proposé en 1944 par le secrétaire américain au Trésor prévoyait de désindustrialiser complètement l'Allemagne vaincue, avant d'être largement abandonné ?","choix":[{"texte":"Le plan Morgenthau","correct":true},{"texte":"Le plan Marshall","correct":false},{"texte":"Le plan Dawes","correct":false},{"texte":"Le plan Young","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":5,"enonce":"Quelle île volcanique du Pacifique, symbolisée par une photographie célèbre de soldats hissant un drapeau, a été le théâtre de combats acharnés en 1945 ?","reponses":["Iwo Jima"]},
-    {"type":"sort","categorie":"Histoire","difficulte":2,"enonce":"Trie ces événements de la Seconde Guerre mondiale du plus ancien au plus récent.","elements":["Invasion de la Pologne","Bataille de Stalingrad","Débarquement de Normandie","Libération de Paris","Capitulation de l'Allemagne","Bombardements d'Hiroshima et Nagasaki"],"explication":"Septembre 1939, août 1942-février 1943, juin 1944, août 1944, mai 1945, août 1945."},
-    {"type":"sort","categorie":"Histoire","difficulte":4,"enonce":"Trie ces batailles de la Seconde Guerre mondiale du plus ancien au plus récent.","elements":["Bataille d'Angleterre","Bataille de Midway","Bataille de Stalingrad","Bataille de Koursk","Bataille de Normandie","Bataille des Ardennes"],"explication":"Été-automne 1940, juin 1942, août 1942-février 1943, juillet-août 1943, juin-août 1944, décembre 1944-janvier 1945."},
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel pays l'Allemagne a-t-elle envahi le 1er septembre 1939, déclenchant la Seconde Guerre mondiale ?",
+      "reponses": ["Pologne", "la Pologne"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel dictateur allemand a déclenché la Seconde Guerre mondiale en 1939 ?",
+      "choix": [
+        { "texte": "Adolf Hitler", "correct": true },
+        { "texte": "Benito Mussolini", "correct": false },
+        { "texte": "Heinrich Himmler", "correct": false },
+        { "texte": "Hermann Göring", "correct": false }
+      ],
+      "explication": "Il se suicide le 30 avril 1945, alors que Berlin tombe aux mains des Soviétiques."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel débarquement allié, survenu le 6 juin 1944 sur les plages de Normandie, a marqué le début de la libération de la France ?",
+      "reponses": ["débarquement de Normandie", "le débarquement de Normandie", "D-Day"],
+      "explication": "Plus de 150 000 soldats alliés débarquèrent ce seul jour."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quelles deux villes japonaises ont subi un bombardement atomique américain en août 1945 ?",
+      "choix": [
+        { "texte": "Hiroshima et Nagasaki", "correct": true },
+        { "texte": "Tokyo et Osaka", "correct": false },
+        { "texte": "Kyoto et Kobe", "correct": false },
+        { "texte": "Nagoya et Yokohama", "correct": false }
+      ],
+      "explication": "Les bombardements eurent lieu les 6 et 9 août 1945, précédant la capitulation japonaise."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel général français a lancé, le 18 juin 1940 depuis Londres, un appel à poursuivre la résistance contre l'occupant allemand ?",
+      "reponses": ["Charles de Gaulle", "de Gaulle"],
+      "explication": "Peu de Français l'entendirent à la radio le jour même, mais l'appel devint fondateur a posteriori."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "En quelle année a pris fin la Seconde Guerre mondiale en Europe, avec la capitulation allemande de mai ?",
+      "choix": [
+        { "texte": "1945", "correct": true },
+        { "texte": "1944", "correct": false },
+        { "texte": "1946", "correct": false },
+        { "texte": "1943", "correct": false }
+      ],
+      "explication": "La guerre continua ensuite dans le Pacifique jusqu'en août-septembre 1945."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel régime français collaborationniste, dirigé depuis la zone libre, a existé de 1940 à 1944 sous l'autorité du maréchal Pétain ?",
+      "reponses": ["régime de Vichy", "le régime de Vichy"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle opération militaire allemande, lancée en juin 1941, a marqué l'invasion de l'Union soviétique ?",
+      "choix": [
+        { "texte": "L'opération Barbarossa", "correct": true },
+        { "texte": "L'opération Overlord", "correct": false },
+        { "texte": "L'opération Sea Lion", "correct": false },
+        { "texte": "L'opération Torch", "correct": false }
+      ],
+      "explication": "Lancée le 22 juin 1941, elle rompt le pacte de non-agression germano-soviétique de 1939."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle attaque surprise japonaise sur une base navale américaine, en décembre 1941, a provoqué l'entrée en guerre des États-Unis ?",
+      "reponses": ["attaque de Pearl Harbor", "Pearl Harbor"],
+      "explication": "L'attaque eut lieu le 7 décembre 1941, un dimanche matin."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle très longue bataille de 1942-1943, en Union soviétique, est considérée comme le tournant de la guerre sur le front de l'Est ?",
+      "choix": [
+        { "texte": "La bataille de Stalingrad", "correct": true },
+        { "texte": "La bataille de Koursk", "correct": false },
+        { "texte": "Le siège de Leningrad", "correct": false },
+        { "texte": "La bataille de Moscou", "correct": false }
+      ],
+      "explication": "L'armée allemande y perdit sa 6e armée tout entière, encerclée."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel Premier ministre britannique a dirigé le Royaume-Uni pendant la majeure partie de la Seconde Guerre mondiale ?",
+      "reponses": ["Winston Churchill", "Churchill"],
+      "explication": "Il devint Premier ministre en mai 1940, au moment le plus critique de la guerre pour son pays."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Comment appelle-t-on l'extermination systématique des Juifs d'Europe par le régime nazi pendant la Seconde Guerre mondiale ?",
+      "choix": [
+        { "texte": "La Shoah (Holocauste)", "correct": true },
+        { "texte": "La solution provisoire", "correct": false },
+        { "texte": "L'épuration ethnique", "correct": false },
+        { "texte": "Le grand exil", "correct": false }
+      ],
+      "explication": "Environ six millions de Juifs furent exterminés."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel mouvement clandestin français, organisé sous l'Occupation pour combattre les nazis et le régime de Vichy, a été fédéré par Jean Moulin en 1943 ?",
+      "reponses": ["Résistance", "la Résistance"],
+      "explication": "Jean Moulin unifia les différents mouvements au sein du Conseil national de la Résistance."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel nom de code portait l'opération alliée de débarquement en Normandie le 6 juin 1944 ?",
+      "choix": [
+        { "texte": "Overlord", "correct": true },
+        { "texte": "Torch", "correct": false },
+        { "texte": "Dragoon", "correct": false },
+        { "texte": "Market Garden", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel maréchal soviétique a dirigé la prise de Berlin en 1945, aboutissant à la chute du régime nazi ?",
+      "reponses": ["Joukov", "Gueorgui Joukov"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle conférence de février 1945, réunissant Churchill, Roosevelt et Staline, a défini les grandes lignes de l'Europe d'après-guerre ?",
+      "choix": [
+        { "texte": "La conférence de Yalta", "correct": true },
+        { "texte": "La conférence de Potsdam", "correct": false },
+        { "texte": "La conférence de Téhéran", "correct": false },
+        { "texte": "La conférence de Casablanca", "correct": false }
+      ],
+      "explication": "Elle s'est tenue en Crimée, en Union soviétique."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel camp de concentration et d'extermination, situé en Pologne occupée, est devenu le symbole le plus connu de la Shoah ?",
+      "reponses": ["Auschwitz", "Auschwitz-Birkenau"],
+      "explication": "Il a été libéré par l'Armée rouge le 27 janvier 1945, date aujourd'hui commémorée."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quelle bataille de fin 1944-début 1945, dernière grande offensive allemande à l'ouest, s'est déroulée dans les forêts belges et luxembourgeoises ?",
+      "choix": [
+        { "texte": "La bataille des Ardennes", "correct": true },
+        { "texte": "La bataille de Normandie", "correct": false },
+        { "texte": "La bataille du Rhin", "correct": false },
+        { "texte": "La bataille de la Ruhr", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel maréchal allemand, surnommé « le renard du désert », a commandé les forces de l'Axe en Afrique du Nord ?",
+      "reponses": ["Rommel", "Erwin Rommel"],
+      "explication": "Il fut contraint au suicide en 1944 après être soupçonné d'implication dans un complot contre Hitler."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle conférence tenue près de Berlin en janvier 1942 a organisé la coordination administrative de l'extermination des Juifs d'Europe ?",
+      "choix": [
+        { "texte": "La conférence de Wannsee", "correct": true },
+        { "texte": "La conférence de Nuremberg", "correct": false },
+        { "texte": "La conférence de Potsdam", "correct": false },
+        { "texte": "La conférence de Munich", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quels procès, tenus en Allemagne entre 1945 et 1946, ont jugé les principaux dirigeants nazis pour crimes contre l'humanité ?",
+      "reponses": ["procès de Nuremberg", "les procès de Nuremberg"],
+      "explication": "Douze accusés furent condamnés à mort."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle bataille du Pacifique, en juin 1942, a marqué un tournant décisif en faveur des États-Unis contre le Japon ?",
+      "choix": [
+        { "texte": "La bataille de Midway", "correct": true },
+        { "texte": "La bataille de la mer de Corail", "correct": false },
+        { "texte": "La bataille de Guadalcanal", "correct": false },
+        { "texte": "La bataille de Leyte", "correct": false }
+      ],
+      "explication": "Les Américains y détruisirent quatre porte-avions japonais."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel général américain, commandant suprême des forces alliées en Europe, deviendra plus tard président des États-Unis ?",
+      "reponses": ["Eisenhower", "Dwight Eisenhower"],
+      "explication": "Il fut président des États-Unis de 1953 à 1961."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel plan proposé en 1944 par le secrétaire américain au Trésor prévoyait de désindustrialiser complètement l'Allemagne vaincue, avant d'être largement abandonné ?",
+      "choix": [
+        { "texte": "Le plan Morgenthau", "correct": true },
+        { "texte": "Le plan Marshall", "correct": false },
+        { "texte": "Le plan Dawes", "correct": false },
+        { "texte": "Le plan Young", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quelle île volcanique du Pacifique, symbolisée par une photographie célèbre de soldats hissant un drapeau, a été le théâtre de combats acharnés en 1945 ?",
+      "reponses": ["Iwo Jima"]
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Trie ces événements de la Seconde Guerre mondiale du plus ancien au plus récent.",
+      "elements": [
+        "Invasion de la Pologne",
+        "Bataille de Stalingrad",
+        "Débarquement de Normandie",
+        "Libération de Paris",
+        "Capitulation de l'Allemagne",
+        "Bombardements d'Hiroshima et Nagasaki"
+      ],
+      "explication": "Septembre 1939, août 1942-février 1943, juin 1944, août 1944, mai 1945, août 1945."
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Trie ces batailles de la Seconde Guerre mondiale du plus ancien au plus récent.",
+      "elements": [
+        "Bataille d'Angleterre",
+        "Bataille de Midway",
+        "Bataille de Stalingrad",
+        "Bataille de Koursk",
+        "Bataille de Normandie",
+        "Bataille des Ardennes"
+      ],
+      "explication": "Été-automne 1940, juin 1942, août 1942-février 1943, juillet-août 1943, juin-août 1944, décembre 1944-janvier 1945."
+    },
 
-    {"type":"open","categorie":"Histoire","difficulte":1,"enonce":"Comment appelait-on communément l'Allemagne entre 1919 et 1933, du nom de la ville où sa Constitution fut adoptée ?","reponses":["République de Weimar","la République de Weimar"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":1,"enonce":"Quel phénomène économique extrême, où les prix doublent en quelques jours, a frappé l'Allemagne en 1923 ?","choix":[{"texte":"L'hyperinflation","correct":true},{"texte":"La déflation","correct":false},{"texte":"La stagflation","correct":false},{"texte":"La récession","correct":false}],"explication":"À son pic, les prix doublaient environ toutes les 3-4 jours."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quel traité de paix de 1919 a imposé à l'Allemagne le paiement de lourdes réparations de guerre après la Première Guerre mondiale ?","reponses":["traité de Versailles","le traité de Versailles"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"Quelle nouvelle monnaie, introduite en novembre 1923, a permis de mettre fin à l'hyperinflation allemande ?","choix":[{"texte":"Le Rentenmark","correct":true},{"texte":"Le Reichsmark","correct":false},{"texte":"Le Deutschmark","correct":false},{"texte":"Le Goldmark","correct":false}],"explication":"Il était garanti par un gage sur les terres et les industries, faute d'or disponible."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Quelle crise économique mondiale, débutée par le krach de Wall Street en 1929, a durement frappé l'économie allemande à partir de 1930 ?","reponses":["Grande Dépression","la Grande Dépression"],"explication":"Le chômage en Allemagne atteignit environ six millions de personnes en 1932."},
-    {"type":"mcq","categorie":"Histoire","difficulte":2,"enonce":"En quelle année Adolf Hitler est-il devenu chancelier d'Allemagne, marquant le début du régime nazi ?","choix":[{"texte":"1933","correct":true},{"texte":"1929","correct":false},{"texte":"1936","correct":false},{"texte":"1939","correct":false}],"explication":"Il est nommé chancelier le 30 janvier 1933 par le président Hindenburg."},
-    {"type":"open","categorie":"Histoire","difficulte":2,"enonce":"Sous quel nom allemand connaît-on le grand réseau routier construit dans les années 1930, à la fois projet de prestige et politique de grands travaux du régime nazi ?","reponses":["Autobahn"]},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"En quelle année la France et la Belgique ont-elles occupé la région industrielle de la Ruhr pour forcer l'Allemagne à payer ses réparations, provoquant l'hyperinflation ?","choix":[{"texte":"1923","correct":true},{"texte":"1919","correct":false},{"texte":"1929","correct":false},{"texte":"1933","correct":false}],"explication":"L'Allemagne répondit par une politique de résistance passive, financée en imprimant de la monnaie."},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel plan international de 1924, portant le nom d'un financier américain, a restructuré et échelonné le paiement des réparations allemandes après la crise de 1923 ?","reponses":["plan Dawes","le plan Dawes"],"explication":"Charles Dawes reçut le prix Nobel de la paix en 1925 pour ce plan."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel deuxième plan international, adopté en 1929, a de nouveau réduit et rééchelonné les réparations de guerre allemandes avant la Grande Dépression ?","choix":[{"texte":"Le plan Young","correct":true},{"texte":"Le plan Dawes","correct":false},{"texte":"Le plan Marshall","correct":false},{"texte":"Le plan Schuman","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":3,"enonce":"Quel plan économique nazi, lancé en 1936 sous la responsabilité de Hermann Göring, visait à préparer l'Allemagne à la guerre en quatre ans ?","reponses":["plan de quatre ans","le plan de quatre ans"],"explication":"Il visait notamment l'autosuffisance (autarcie) en matières premières stratégiques."},
-    {"type":"mcq","categorie":"Histoire","difficulte":3,"enonce":"Quel banquier allemand, président de la Reichsbank puis ministre de l'Économie, a orchestré le financement du réarmement nazi dans les années 1930 ?","choix":[{"texte":"Hjalmar Schacht","correct":true},{"texte":"Walther Funk","correct":false},{"texte":"Albert Speer","correct":false},{"texte":"Wilhelm Keitel","correct":false}],"explication":"Il fut plus tard acquitté au procès de Nuremberg, contrairement à d'autres hauts responsables nazis."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quel ministre de l'Armement du régime nazi, à partir de 1942, a réorganisé l'économie de guerre allemande pour maximiser la production militaire ?","reponses":["Albert Speer","Speer"],"explication":"Il fut condamné à 20 ans de prison au procès de Nuremberg."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel plan d'aide économique américain, lancé en 1948, a contribué à la reconstruction de l'Allemagne de l'Ouest après la Seconde Guerre mondiale ?","choix":[{"texte":"Le plan Marshall","correct":true},{"texte":"Le plan Dawes","correct":false},{"texte":"Le plan Young","correct":false},{"texte":"Le plan Morgenthau","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"Quelle réforme monétaire de juin 1948, remplaçant le Reichsmark par une nouvelle monnaie dans les zones occidentales, est considérée comme le point de départ du redressement économique ouest-allemand ?","reponses":["réforme monétaire de 1948","introduction du Deutsche Mark"],"explication":"Elle s'est accompagnée, le même jour, d'une libéralisation des prix par Ludwig Erhard."},
-    {"type":"mcq","categorie":"Histoire","difficulte":4,"enonce":"Quel économiste, ministre de l'Économie ouest-allemand, a libéralisé les prix en 1948 et est considéré comme le père du « miracle économique » allemand ?","choix":[{"texte":"Ludwig Erhard","correct":true},{"texte":"Hjalmar Schacht","correct":false},{"texte":"Konrad Adenauer","correct":false},{"texte":"Walter Eucken","correct":false}],"explication":"Il devint plus tard chancelier de la RFA, de 1963 à 1966."},
-    {"type":"open","categorie":"Histoire","difficulte":4,"enonce":"En quelle année la République fédérale d'Allemagne (RFA) a-t-elle été fondée dans les zones d'occupation occidentales ?","reponses":["1949"],"explication":"La République démocratique allemande (RDA) fut fondée quelques mois plus tard côté soviétique."},
-    {"type":"mcq","categorie":"Histoire","difficulte":5,"enonce":"Quel surnom informel désigne le taux de change extrême atteint par le mark allemand face au dollar en novembre 1923, au plus fort de l'hyperinflation (plusieurs milliers de milliards de marks pour un dollar) ?","choix":[{"texte":"Il n'existe pas de surnom officiel — le taux exact avoisinait 4200 milliards de marks pour un dollar","correct":true},{"texte":"Le « Grand Krach »","correct":false},{"texte":"La « Semaine noire »","correct":false},{"texte":"Le « Mur des billets »","correct":false}]},
-    {"type":"open","categorie":"Histoire","difficulte":5,"enonce":"Quel hiver particulièrement difficile de 1916-1917, marqué par une grave pénurie alimentaire liée au blocus allié, est resté dans les mémoires allemandes sous le nom d'un légume qui remplaçait alors les pommes de terre ?","reponses":["hiver du rutabaga","hiver des navets","l'hiver du rutabaga"]},
-    {"type":"sort","categorie":"Histoire","difficulte":3,"enonce":"Trie ces grandes étapes de l'histoire économique allemande du plus ancien au plus récent.","elements":["Traité de Versailles et réparations","Occupation de la Ruhr et hyperinflation","Plan Dawes","Grande Dépression","Arrivée d'Hitler au pouvoir","Réforme monétaire et Deutsche Mark"],"explication":"1919, 1923, 1924, à partir de 1929, 1933, 1948."}
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Comment appelait-on communément l'Allemagne entre 1919 et 1933, du nom de la ville où sa Constitution fut adoptée ?",
+      "reponses": ["République de Weimar", "la République de Weimar"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 1,
+      "enonce": "Quel phénomène économique extrême, où les prix doublent en quelques jours, a frappé l'Allemagne en 1923 ?",
+      "choix": [
+        { "texte": "L'hyperinflation", "correct": true },
+        { "texte": "La déflation", "correct": false },
+        { "texte": "La stagflation", "correct": false },
+        { "texte": "La récession", "correct": false }
+      ],
+      "explication": "À son pic, les prix doublaient environ toutes les 3-4 jours."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quel traité de paix de 1919 a imposé à l'Allemagne le paiement de lourdes réparations de guerre après la Première Guerre mondiale ?",
+      "reponses": ["traité de Versailles", "le traité de Versailles"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle nouvelle monnaie, introduite en novembre 1923, a permis de mettre fin à l'hyperinflation allemande ?",
+      "choix": [
+        { "texte": "Le Rentenmark", "correct": true },
+        { "texte": "Le Reichsmark", "correct": false },
+        { "texte": "Le Deutschmark", "correct": false },
+        { "texte": "Le Goldmark", "correct": false }
+      ],
+      "explication": "Il était garanti par un gage sur les terres et les industries, faute d'or disponible."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Quelle crise économique mondiale, débutée par le krach de Wall Street en 1929, a durement frappé l'économie allemande à partir de 1930 ?",
+      "reponses": ["Grande Dépression", "la Grande Dépression"],
+      "explication": "Le chômage en Allemagne atteignit environ six millions de personnes en 1932."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "En quelle année Adolf Hitler est-il devenu chancelier d'Allemagne, marquant le début du régime nazi ?",
+      "choix": [
+        { "texte": "1933", "correct": true },
+        { "texte": "1929", "correct": false },
+        { "texte": "1936", "correct": false },
+        { "texte": "1939", "correct": false }
+      ],
+      "explication": "Il est nommé chancelier le 30 janvier 1933 par le président Hindenburg."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 2,
+      "enonce": "Sous quel nom allemand connaît-on le grand réseau routier construit dans les années 1930, à la fois projet de prestige et politique de grands travaux du régime nazi ?",
+      "reponses": ["Autobahn"]
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "En quelle année la France et la Belgique ont-elles occupé la région industrielle de la Ruhr pour forcer l'Allemagne à payer ses réparations, provoquant l'hyperinflation ?",
+      "choix": [
+        { "texte": "1923", "correct": true },
+        { "texte": "1919", "correct": false },
+        { "texte": "1929", "correct": false },
+        { "texte": "1933", "correct": false }
+      ],
+      "explication": "L'Allemagne répondit par une politique de résistance passive, financée en imprimant de la monnaie."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel plan international de 1924, portant le nom d'un financier américain, a restructuré et échelonné le paiement des réparations allemandes après la crise de 1923 ?",
+      "reponses": ["plan Dawes", "le plan Dawes"],
+      "explication": "Charles Dawes reçut le prix Nobel de la paix en 1925 pour ce plan."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel deuxième plan international, adopté en 1929, a de nouveau réduit et rééchelonné les réparations de guerre allemandes avant la Grande Dépression ?",
+      "choix": [
+        { "texte": "Le plan Young", "correct": true },
+        { "texte": "Le plan Dawes", "correct": false },
+        { "texte": "Le plan Marshall", "correct": false },
+        { "texte": "Le plan Schuman", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel plan économique nazi, lancé en 1936 sous la responsabilité de Hermann Göring, visait à préparer l'Allemagne à la guerre en quatre ans ?",
+      "reponses": ["plan de quatre ans", "le plan de quatre ans"],
+      "explication": "Il visait notamment l'autosuffisance (autarcie) en matières premières stratégiques."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Quel banquier allemand, président de la Reichsbank puis ministre de l'Économie, a orchestré le financement du réarmement nazi dans les années 1930 ?",
+      "choix": [
+        { "texte": "Hjalmar Schacht", "correct": true },
+        { "texte": "Walther Funk", "correct": false },
+        { "texte": "Albert Speer", "correct": false },
+        { "texte": "Wilhelm Keitel", "correct": false }
+      ],
+      "explication": "Il fut plus tard acquitté au procès de Nuremberg, contrairement à d'autres hauts responsables nazis."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel ministre de l'Armement du régime nazi, à partir de 1942, a réorganisé l'économie de guerre allemande pour maximiser la production militaire ?",
+      "reponses": ["Albert Speer", "Speer"],
+      "explication": "Il fut condamné à 20 ans de prison au procès de Nuremberg."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel plan d'aide économique américain, lancé en 1948, a contribué à la reconstruction de l'Allemagne de l'Ouest après la Seconde Guerre mondiale ?",
+      "choix": [
+        { "texte": "Le plan Marshall", "correct": true },
+        { "texte": "Le plan Dawes", "correct": false },
+        { "texte": "Le plan Young", "correct": false },
+        { "texte": "Le plan Morgenthau", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quelle réforme monétaire de juin 1948, remplaçant le Reichsmark par une nouvelle monnaie dans les zones occidentales, est considérée comme le point de départ du redressement économique ouest-allemand ?",
+      "reponses": ["réforme monétaire de 1948", "introduction du Deutsche Mark"],
+      "explication": "Elle s'est accompagnée, le même jour, d'une libéralisation des prix par Ludwig Erhard."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "Quel économiste, ministre de l'Économie ouest-allemand, a libéralisé les prix en 1948 et est considéré comme le père du « miracle économique » allemand ?",
+      "choix": [
+        { "texte": "Ludwig Erhard", "correct": true },
+        { "texte": "Hjalmar Schacht", "correct": false },
+        { "texte": "Konrad Adenauer", "correct": false },
+        { "texte": "Walter Eucken", "correct": false }
+      ],
+      "explication": "Il devint plus tard chancelier de la RFA, de 1963 à 1966."
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 4,
+      "enonce": "En quelle année la République fédérale d'Allemagne (RFA) a-t-elle été fondée dans les zones d'occupation occidentales ?",
+      "reponses": ["1949"],
+      "explication": "La République démocratique allemande (RDA) fut fondée quelques mois plus tard côté soviétique."
+    },
+    {
+      "type": "mcq",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel surnom informel désigne le taux de change extrême atteint par le mark allemand face au dollar en novembre 1923, au plus fort de l'hyperinflation (plusieurs milliers de milliards de marks pour un dollar) ?",
+      "choix": [
+        {
+          "texte": "Il n'existe pas de surnom officiel — le taux exact avoisinait 4200 milliards de marks pour un dollar",
+          "correct": true
+        },
+        { "texte": "Le « Grand Krach »", "correct": false },
+        { "texte": "La « Semaine noire »", "correct": false },
+        { "texte": "Le « Mur des billets »", "correct": false }
+      ]
+    },
+    {
+      "type": "open",
+      "categorie": "Histoire",
+      "difficulte": 5,
+      "enonce": "Quel hiver particulièrement difficile de 1916-1917, marqué par une grave pénurie alimentaire liée au blocus allié, est resté dans les mémoires allemandes sous le nom d'un légume qui remplaçait alors les pommes de terre ?",
+      "reponses": ["hiver du rutabaga", "hiver des navets", "l'hiver du rutabaga"]
+    },
+    {
+      "type": "sort",
+      "categorie": "Histoire",
+      "difficulte": 3,
+      "enonce": "Trie ces grandes étapes de l'histoire économique allemande du plus ancien au plus récent.",
+      "elements": [
+        "Traité de Versailles et réparations",
+        "Occupation de la Ruhr et hyperinflation",
+        "Plan Dawes",
+        "Grande Dépression",
+        "Arrivée d'Hitler au pouvoir",
+        "Réforme monétaire et Deutsche Mark"
+      ],
+      "explication": "1919, 1923, 1924, à partir de 1929, 1933, 1948."
+    }
   ]
 }

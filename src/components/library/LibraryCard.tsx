@@ -7,7 +7,12 @@ import { Eye, Pencil, Copy, Archive, ArchiveRestore, ImageOff } from "lucide-rea
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { CategoryBadge, DifficultyBadge, QuestionTypeBadge, SourceBadge } from "@/components/ui/Badge";
+import {
+  CategoryBadge,
+  DifficultyBadge,
+  QuestionTypeBadge,
+  SourceBadge,
+} from "@/components/ui/Badge";
 import { cn } from "@/lib/utils/cn";
 import { duplicateQuestion, bulkSetQuestionStatus } from "@/server/questions/library-actions";
 import type { LibraryQuestionItem } from "@/server/questions/library";
@@ -130,7 +135,8 @@ export function LibraryCard({
       <p className="line-clamp-3 text-14 text-ink-high">{q.prompt}</p>
 
       <p className="text-12 text-ink-faint">
-        {q.type === "mcq" && `${q.choiceCount} choix${q.multiSelect ? " · plusieurs réponses" : ""}`}
+        {q.type === "mcq" &&
+          `${q.choiceCount} choix${q.multiSelect ? " · plusieurs réponses" : ""}`}
         {q.type === "image" &&
           (q.answerMode === "mcq"
             ? `${q.choiceCount} choix${q.multiSelect ? " · plusieurs réponses" : ""}`
@@ -138,7 +144,8 @@ export function LibraryCard({
         {q.type === "open" &&
           `${q.openAnswerCount} réponse${q.openAnswerCount > 1 ? "s" : ""} acceptée${q.openAnswerCount > 1 ? "s" : ""}`}
         {q.type === "sort" && `${q.sortItemCount} éléments à trier`}
-        {q.type === "estimation" && (q.estimationUnit ? `Estimation · ${q.estimationUnit}` : "Estimation numérique")}
+        {q.type === "estimation" &&
+          (q.estimationUnit ? `Estimation · ${q.estimationUnit}` : "Estimation numérique")}
       </p>
 
       <div className="flex items-center justify-between gap-2">

@@ -52,14 +52,23 @@ function publicBaseUrl(): string {
   return process.env["PUBLIC_BASE_URL"]?.trim() || "";
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown, extraHeaders?: Record<string, string>): void {
+function sendJson(
+  res: ServerResponse,
+  status: number,
+  body: unknown,
+  extraHeaders?: Record<string, string>,
+): void {
   res.writeHead(status, { "Content-Type": "application/json", ...extraHeaders });
   res.end(JSON.stringify(body));
 }
 
 // Byte-for-byte identical regardless of *why* auth failed (no token / malformed / unknown /
 // revoked / expired / deactivated owner) — C.3, tested by C.8.
-const UNAUTHORIZED_BODY = { jsonrpc: "2.0", error: { code: -32001, message: "Non autorisé." }, id: null };
+const UNAUTHORIZED_BODY = {
+  jsonrpc: "2.0",
+  error: { code: -32001, message: "Non autorisé." },
+  id: null,
+};
 
 function sendUnauthorized(res: ServerResponse): void {
   sendJson(res, 401, UNAUTHORIZED_BODY, { "WWW-Authenticate": "Bearer" });
@@ -127,7 +136,11 @@ export async function handleMcpRequest(req: IncomingMessage, res: ServerResponse
       429,
       {
         jsonrpc: "2.0",
-        error: { code: -32000, message: "Trop de requêtes — réessayez plus tard.", data: { retryAfterS: rate.retryAfterS } },
+        error: {
+          code: -32000,
+          message: "Trop de requêtes — réessayez plus tard.",
+          data: { retryAfterS: rate.retryAfterS },
+        },
         id: null,
       },
       { "Retry-After": String(rate.retryAfterS) },

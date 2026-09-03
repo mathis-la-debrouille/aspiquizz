@@ -130,7 +130,10 @@ export async function listLibraryQuestions(
             .select({ one: sql`1` })
             .from(questionChoices)
             .where(
-              and(eq(questionChoices.questionId, questions.id), like(questionChoices.label, pattern)),
+              and(
+                eq(questionChoices.questionId, questions.id),
+                like(questionChoices.label, pattern),
+              ),
             ),
         ),
       )!,
@@ -141,7 +144,9 @@ export async function listLibraryQuestions(
   if (query.type.length > 0) conditions.push(inArray(questions.type, query.type));
   if (query.cat.length > 0) conditions.push(inArray(questions.categoryId, query.cat));
 
-  const successRateExpr = sql<number | null>`CASE WHEN ${questionStats.timesAsked} > 0 THEN CAST(${questionStats.timesCorrect} AS REAL) / ${questionStats.timesAsked} ELSE NULL END`;
+  const successRateExpr = sql<
+    number | null
+  >`CASE WHEN ${questionStats.timesAsked} > 0 THEN CAST(${questionStats.timesCorrect} AS REAL) / ${questionStats.timesAsked} ELSE NULL END`;
   const orderBy = (() => {
     switch (query.sort) {
       case "oldest":

@@ -182,7 +182,8 @@ function decodeEntities(input: string): string {
       .replace(/&([a-z]+);/gi, (whole, name: string) => {
         const lower = NAMED_ENTITIES[name.toLowerCase()];
         if (lower === undefined) return whole;
-        const isCapitalised = name[0] === name[0]!.toUpperCase() && name[0] !== name[0]!.toLowerCase();
+        const isCapitalised =
+          name[0] === name[0]!.toUpperCase() && name[0] !== name[0]!.toLowerCase();
         return isCapitalised ? lower.toUpperCase() : lower;
       })
       // &amp; can wrap another entity (&amp;quot;) — one extra pass clears that.

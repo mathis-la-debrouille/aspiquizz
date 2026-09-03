@@ -118,8 +118,7 @@ export function TokenList({
               }
             >
               <p className="text-14 text-ink-mid">
-                « {t.name} » ne pourra plus se connecter à ASPI Quiz. Cette action est
-                irréversible.
+                « {t.name} » ne pourra plus se connecter à ASPI Quiz. Cette action est irréversible.
               </p>
             </Modal>
           </div>

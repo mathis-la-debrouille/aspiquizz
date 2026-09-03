@@ -24,7 +24,11 @@ export async function updateProfileAction(input: UpdateProfileInput): Promise<Ac
   }
   await db
     .update(users)
-    .set({ displayName: parsed.data.displayName, bio: parsed.data.bio ?? null, updatedAt: new Date() })
+    .set({
+      displayName: parsed.data.displayName,
+      bio: parsed.data.bio ?? null,
+      updatedAt: new Date(),
+    })
     .where(eq(users.id, user.id));
   revalidatePath(`/profil/${user.username}`);
   return { ok: true };
@@ -34,7 +38,10 @@ export async function updateProfileAction(input: UpdateProfileInput): Promise<Ac
 export async function rerollAvatarAction(): Promise<ActionResult> {
   const user = await requireUser();
   const seed = randomBytes(6).toString("hex");
-  await db.update(users).set({ avatarSeed: seed, updatedAt: new Date() }).where(eq(users.id, user.id));
+  await db
+    .update(users)
+    .set({ avatarSeed: seed, updatedAt: new Date() })
+    .where(eq(users.id, user.id));
   revalidatePath(`/profil/${user.username}`);
   return { ok: true };
 }

@@ -59,7 +59,10 @@ export function McpTutorial() {
         </div>
         <div className="flex items-center gap-1.5">
           <Terminal className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
-          <span>Claude Code : collez la commande <code className="font-numeral text-ink-mid">claude mcp add …</code> telle quelle.</span>
+          <span>
+            Claude Code : collez la commande{" "}
+            <code className="font-numeral text-ink-mid">claude mcp add …</code> telle quelle.
+          </span>
         </div>
       </div>
     </div>

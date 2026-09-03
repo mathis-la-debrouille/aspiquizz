@@ -28,7 +28,8 @@ export async function createMcpTokenAction(input: CreateTokenInput): Promise<Cre
   }
   const { name, scopes, expiryDays } = parsed.data;
   const generated = generateToken();
-  const expiresAt = expiryDays === "never" ? null : new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
+  const expiresAt =
+    expiryDays === "never" ? null : new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
 
   await db.insert(apiTokens).values({
     userId: user.id,

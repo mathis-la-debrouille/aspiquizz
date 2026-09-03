@@ -19,7 +19,11 @@ export function NewCategoryButton({
   categories: CategoryOption[];
   onCategoriesChange: (next: CategoryOption[]) => void;
   /** Optional extra hook — e.g. auto-checking the new category in a filter's selection. */
-  onCreated?: (category: { id: string; name: string; colorToken: CategoryOption["colorToken"] }) => void;
+  onCreated?: (category: {
+    id: string;
+    name: string;
+    colorToken: CategoryOption["colorToken"];
+  }) => void;
 }) {
   const [open, setOpen] = useState(false);
 

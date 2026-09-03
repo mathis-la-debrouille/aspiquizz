@@ -4,15 +4,35 @@ import { searchCountries, type SearchableCountry } from "@/lib/geo/country-searc
 // Small hand-picked fixture, not the real 193-country seed — just enough to exercise every
 // ranking tier and the two near-miss bugs found while building this (Addendum B.3.2).
 const COUNTRIES: SearchableCountry[] = [
-  { iso3: "USA", nameFr: "États-Unis", officialNameFr: "États-Unis d'Amérique", capitalFr: "Washington" },
+  {
+    iso3: "USA",
+    nameFr: "États-Unis",
+    officialNameFr: "États-Unis d'Amérique",
+    capitalFr: "Washington",
+  },
   { iso3: "ZMB", nameFr: "Zambie", officialNameFr: "République de Zambie", capitalFr: "Lusaka" },
   { iso3: "ISR", nameFr: "Israël", officialNameFr: "État d'Israël", capitalFr: "Jérusalem" },
   { iso3: "MEX", nameFr: "Mexique", officialNameFr: "États-Unis Mexicains", capitalFr: "Mexico" },
-  { iso3: "PRT", nameFr: "Portugal", officialNameFr: "République portugaise", capitalFr: "Lisbonne" },
-  { iso3: "CIV", nameFr: "Côte d'Ivoire", officialNameFr: "République de Côte d'Ivoire", capitalFr: "Yamoussoukro" },
+  {
+    iso3: "PRT",
+    nameFr: "Portugal",
+    officialNameFr: "République portugaise",
+    capitalFr: "Lisbonne",
+  },
+  {
+    iso3: "CIV",
+    nameFr: "Côte d'Ivoire",
+    officialNameFr: "République de Côte d'Ivoire",
+    capitalFr: "Yamoussoukro",
+  },
   { iso3: "FRA", nameFr: "France", officialNameFr: "République française", capitalFr: "Paris" },
   { iso3: "AUT", nameFr: "Autriche", officialNameFr: "République d'Autriche", capitalFr: "Vienne" },
-  { iso3: "AUS", nameFr: "Australie", officialNameFr: "Commonwealth d'Australie", capitalFr: "Canberra" },
+  {
+    iso3: "AUS",
+    nameFr: "Australie",
+    officialNameFr: "Commonwealth d'Australie",
+    capitalFr: "Canberra",
+  },
 ];
 
 describe("searchCountries — brief §7 normalisation reused for search (Addendum B.3.2)", () => {

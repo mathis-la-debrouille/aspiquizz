@@ -5,13 +5,49 @@ import { resolveCountryName, type ResolvableCountry } from "@/lib/geo/country-re
 // matches those too (Addendum C.1 §3 — MCP's chercher_pays/ingest.ts geo resolution matches
 // name_fr, name_en, official_name_fr, iso3, iso2; the combobox's own ranker does not).
 const COUNTRIES: ResolvableCountry[] = [
-  { iso3: "USA", iso2: "US", nameFr: "États-Unis", nameEn: "United States", officialNameFr: "États-Unis d'Amérique" },
-  { iso3: "ZMB", iso2: "ZM", nameFr: "Zambie", nameEn: "Zambia", officialNameFr: "République de Zambie" },
-  { iso3: "MEX", iso2: "MX", nameFr: "Mexique", nameEn: "Mexico", officialNameFr: "États-Unis Mexicains" },
-  { iso3: "CIV", iso2: "CI", nameFr: "Côte d'Ivoire", nameEn: "Ivory Coast", officialNameFr: "République de Côte d'Ivoire" },
+  {
+    iso3: "USA",
+    iso2: "US",
+    nameFr: "États-Unis",
+    nameEn: "United States",
+    officialNameFr: "États-Unis d'Amérique",
+  },
+  {
+    iso3: "ZMB",
+    iso2: "ZM",
+    nameFr: "Zambie",
+    nameEn: "Zambia",
+    officialNameFr: "République de Zambie",
+  },
+  {
+    iso3: "MEX",
+    iso2: "MX",
+    nameFr: "Mexique",
+    nameEn: "Mexico",
+    officialNameFr: "États-Unis Mexicains",
+  },
+  {
+    iso3: "CIV",
+    iso2: "CI",
+    nameFr: "Côte d'Ivoire",
+    nameEn: "Ivory Coast",
+    officialNameFr: "République de Côte d'Ivoire",
+  },
   { iso3: "JPN", iso2: "JP", nameFr: "Japon", nameEn: "Japan", officialNameFr: "Japon" },
-  { iso3: "GMB", iso2: "GM", nameFr: "Gambie", nameEn: "Gambia", officialNameFr: "République de Gambie" },
-  { iso3: "NAM", iso2: "NA", nameFr: "Namibie", nameEn: "Namibia", officialNameFr: "République de Namibie" },
+  {
+    iso3: "GMB",
+    iso2: "GM",
+    nameFr: "Gambie",
+    nameEn: "Gambia",
+    officialNameFr: "République de Gambie",
+  },
+  {
+    iso3: "NAM",
+    iso2: "NA",
+    nameFr: "Namibie",
+    nameEn: "Namibia",
+    officialNameFr: "République de Namibie",
+  },
 ];
 
 describe("resolveCountryName — Addendum C.1's country-name resolution for ingest.ts/chercher_pays", () => {

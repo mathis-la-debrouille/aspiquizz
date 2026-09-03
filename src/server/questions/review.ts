@@ -96,7 +96,8 @@ async function requireReviewAccess(
     .where(eq(questions.id, questionId))
     .limit(1);
   if (!row) return { ok: false, error: "Question introuvable." };
-  if (row.status !== "draft") return { ok: false, error: "Cette question n'est plus un brouillon." };
+  if (row.status !== "draft")
+    return { ok: false, error: "Cette question n'est plus un brouillon." };
   if (row.source === "manual") return { ok: false, error: "Cette question n'a rien à relire." };
   if (row.authorId !== user.id && user.role !== "admin") {
     return { ok: false, error: "Vous ne pouvez relire que vos propres brouillons." };
@@ -113,14 +114,22 @@ export async function publishDraftAction(questionId: string): Promise<ReviewActi
 
   await db
     .update(questions)
-    .set({ status: "published", reviewedAt: new Date(), reviewedBy: user.id, updatedAt: new Date() })
+    .set({
+      status: "published",
+      reviewedAt: new Date(),
+      reviewedBy: user.id,
+      updatedAt: new Date(),
+    })
     .where(eq(questions.id, questionId));
 
   revalidatePath("/creer");
   return { ok: true };
 }
 
-export async function rejectDraftAction(questionId: string, reason?: string): Promise<ReviewActionResult> {
+export async function rejectDraftAction(
+  questionId: string,
+  reason?: string,
+): Promise<ReviewActionResult> {
   const user = await requireUser();
   const access = await requireReviewAccess(questionId, user);
   if (!access.ok) return access;
@@ -155,7 +164,12 @@ export async function bulkPublishDraftsAction(questionIds: string[]): Promise<Bu
     if (!access.ok) continue;
     await db
       .update(questions)
-      .set({ status: "published", reviewedAt: new Date(), reviewedBy: user.id, updatedAt: new Date() })
+      .set({
+        status: "published",
+        reviewedAt: new Date(),
+        reviewedBy: user.id,
+        updatedAt: new Date(),
+      })
       .where(eq(questions.id, id));
     count += 1;
   }
@@ -174,7 +188,12 @@ export async function bulkRejectDraftsAction(
     if (!access.ok) continue;
     await db
       .update(questions)
-      .set({ status: "archived", reviewedAt: new Date(), reviewedBy: user.id, updatedAt: new Date() })
+      .set({
+        status: "archived",
+        reviewedAt: new Date(),
+        reviewedBy: user.id,
+        updatedAt: new Date(),
+      })
       .where(eq(questions.id, id));
     count += 1;
   }

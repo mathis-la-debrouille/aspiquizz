@@ -241,7 +241,7 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
   "876": "FRA",
   "882": "WSM",
   "887": "YEM",
-  "894": "ZMB"
+  "894": "ZMB",
 };
 
 /**
@@ -253,9 +253,10 @@ export const NUMERIC_TO_ISO3: Readonly<Record<string, string>> = {
 export const EXCLUDED_TOPOLOGY_FEATURES: Readonly<Record<string, string>> = {
   "10": "Antarctica — no sovereign state",
   "732": "Western Sahara — disputed territory, no UN-recognised sovereign",
-  "name:Indian Ocean Ter.": "French administrative district, not a distinct territory with a clear target",
+  "name:Indian Ocean Ter.":
+    "French administrative district, not a distinct territory with a clear target",
   "name:Kosovo": "Not a UN member (DECISIONS.md)",
   "name:N. Cyprus": "Self-declared, recognised only by Turkey",
   "name:Siachen Glacier": "Disputed India/Pakistan glacier region, not a territory of either",
-  "name:Somaliland": "Self-declared, not internationally recognised"
+  "name:Somaliland": "Self-declared, not internationally recognised",
 };

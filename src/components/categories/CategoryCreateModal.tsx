@@ -72,7 +72,11 @@ export function CategoryCreateModal({
     setPending(true);
     setError(null);
     setExistingId(null);
-    const result = await createCategoryAction({ name, colorToken, description: description || undefined });
+    const result = await createCategoryAction({
+      name,
+      colorToken,
+      description: description || undefined,
+    });
     setPending(false);
     if (!result.ok) {
       setError(result.error);
@@ -105,7 +109,12 @@ export function CategoryCreateModal({
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <Input label="Nom" value={name} onChange={(e) => setName(e.target.value)} maxLength={32} />
+          <Input
+            label="Nom"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={32}
+          />
           {name.trim().length >= 2 && (
             <p className="text-12 text-ink-faint">Identifiant : {previewSlug(name)}</p>
           )}

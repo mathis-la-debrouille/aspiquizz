@@ -11,11 +11,7 @@ import type { SharedFieldsValue } from "@/components/authoring/SharedFields";
 
 export const metadata: Metadata = { title: "Modifier la question — ASPI Quiz" };
 
-export default async function EditQuestionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditQuestionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getSession();
   if (!session) redirect("/connexion");
@@ -66,7 +62,14 @@ export default async function EditQuestionPage({
     type: detail.type,
     open:
       detail.type === "open"
-        ? { id: detail.id, prompt: detail.prompt, strict: detail.strict, primaryAnswer, variants, shared }
+        ? {
+            id: detail.id,
+            prompt: detail.prompt,
+            strict: detail.strict,
+            primaryAnswer,
+            variants,
+            shared,
+          }
         : undefined,
     mcq:
       detail.type === "mcq"

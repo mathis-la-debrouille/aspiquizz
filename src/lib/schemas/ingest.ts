@@ -26,7 +26,10 @@ const questionDraftCommonSchema = z.object({
 
 export const openDraftSchema = questionDraftCommonSchema.extend({
   type: z.literal("open"),
-  reponses: z.array(z.string().trim().min(1)).min(1, "Une réponse minimum.").max(8, "8 réponses maximum."),
+  reponses: z
+    .array(z.string().trim().min(1))
+    .min(1, "Une réponse minimum.")
+    .max(8, "8 réponses maximum."),
   strict: z.boolean().optional(),
 });
 

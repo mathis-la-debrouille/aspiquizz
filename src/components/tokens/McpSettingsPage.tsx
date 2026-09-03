@@ -45,11 +45,11 @@ export function McpSettingsPage({
           <div className="flex items-start gap-3 rounded-md border border-border-soft bg-bg-inset px-4 py-3">
             <Plug className="mt-0.5 h-5 w-5 shrink-0 text-moss-glow" strokeWidth={1.5} />
             <p className="text-14 text-ink-mid">
-              MCP permet de connecter votre propre client IA (Claude Desktop, Cowork, Claude
-              Code, ou tout client compatible MCP) à ASPI Quiz pour créer des questions par la
-              conversation — vous utilisez votre propre modèle, aucune clé tierce n&apos;est
-              stockée ici. Les questions créées arrivent toujours à l&apos;état de brouillon et
-              doivent être relues avant publication.
+              MCP permet de connecter votre propre client IA (Claude Desktop, Cowork, Claude Code,
+              ou tout client compatible MCP) à ASPI Quiz pour créer des questions par la
+              conversation — vous utilisez votre propre modèle, aucune clé tierce n&apos;est stockée
+              ici. Les questions créées arrivent toujours à l&apos;état de brouillon et doivent être
+              relues avant publication.
             </p>
           </div>
 

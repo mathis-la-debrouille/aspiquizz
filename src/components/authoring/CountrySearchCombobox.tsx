@@ -123,7 +123,9 @@ export function CountrySearchCombobox({
         aria-expanded={showDropdown}
         aria-controls={listboxId}
         aria-activedescendant={
-          showDropdown && results[activeIndex] ? `${listboxId}-${results[activeIndex].iso3}` : undefined
+          showDropdown && results[activeIndex]
+            ? `${listboxId}-${results[activeIndex].iso3}`
+            : undefined
         }
         aria-autocomplete="list"
         placeholder="Rechercher un pays…"

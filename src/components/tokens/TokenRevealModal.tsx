@@ -44,12 +44,19 @@ export function TokenRevealModal({
   token: string | null;
   publicBaseUrl: string;
 }) {
-  const baseUrl =
-    publicBaseUrl || (typeof window !== "undefined" ? window.location.origin : "");
+  const baseUrl = publicBaseUrl || (typeof window !== "undefined" ? window.location.origin : "");
   const mcpUrl = `${baseUrl}/mcp`;
 
   const jsonSnippet = JSON.stringify(
-    { mcpServers: { aspiquiz: { type: "http", url: mcpUrl, headers: { Authorization: `Bearer ${token ?? ""}` } } } },
+    {
+      mcpServers: {
+        aspiquiz: {
+          type: "http",
+          url: mcpUrl,
+          headers: { Authorization: `Bearer ${token ?? ""}` },
+        },
+      },
+    },
     null,
     2,
   );

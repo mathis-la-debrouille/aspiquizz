@@ -37,7 +37,11 @@ export function ProfileActions({ displayName, bio }: { displayName: string; bio:
         Modifier
       </Button>
       <Link href="/profil/parametres/mcp">
-        <Button variant="ghost" size="sm" leadingIcon={<Plug className="h-4 w-4" strokeWidth={1.5} />}>
+        <Button
+          variant="ghost"
+          size="sm"
+          leadingIcon={<Plug className="h-4 w-4" strokeWidth={1.5} />}
+        >
           Accès MCP
         </Button>
       </Link>

@@ -23,19 +23,59 @@ type Spec = { enonce: string; mode: Mode; pays: string; difficulte: 1 | 2 | 3 | 
 // hit-circles instead (see DECISIONS.md), so they are locate targets, never shapes.
 const SPECS: Spec[] = [
   { enonce: "Où se trouve la France ?", mode: "locate_country", pays: "France", difficulte: 1 },
-  { enonce: "Quelle est la capitale du Japon ?", mode: "find_capital", pays: "Japon", difficulte: 1 },
+  {
+    enonce: "Quelle est la capitale du Japon ?",
+    mode: "find_capital",
+    pays: "Japon",
+    difficulte: 1,
+  },
   { enonce: "Où se trouve le Brésil ?", mode: "locate_country", pays: "Brésil", difficulte: 1 },
   { enonce: "Quel pays a cette forme ?", mode: "name_from_shape", pays: "Italie", difficulte: 1 },
-  { enonce: "Quelle est la capitale de l'Australie ?", mode: "find_capital", pays: "Australie", difficulte: 2 },
+  {
+    enonce: "Quelle est la capitale de l'Australie ?",
+    mode: "find_capital",
+    pays: "Australie",
+    difficulte: 2,
+  },
   { enonce: "Où se trouve la Mongolie ?", mode: "locate_country", pays: "Mongolie", difficulte: 2 },
-  { enonce: "Quelle est la capitale du Kazakhstan ?", mode: "find_capital", pays: "Kazakhstan", difficulte: 3 },
-  { enonce: "Quelle est la capitale de la Bolivie ?", mode: "find_capital", pays: "Bolivie", difficulte: 3 },
+  {
+    enonce: "Quelle est la capitale du Kazakhstan ?",
+    mode: "find_capital",
+    pays: "Kazakhstan",
+    difficulte: 3,
+  },
+  {
+    enonce: "Quelle est la capitale de la Bolivie ?",
+    mode: "find_capital",
+    pays: "Bolivie",
+    difficulte: 3,
+  },
   { enonce: "Où se trouve Taïwan ?", mode: "locate_country", pays: "Taïwan", difficulte: 3 },
-  { enonce: "Quelle est la capitale de l'Afrique du Sud ?", mode: "find_capital", pays: "Afrique du Sud", difficulte: 4 },
-  { enonce: "Quelle est la capitale du Sri Lanka ?", mode: "find_capital", pays: "Sri Lanka", difficulte: 4 },
+  {
+    enonce: "Quelle est la capitale de l'Afrique du Sud ?",
+    mode: "find_capital",
+    pays: "Afrique du Sud",
+    difficulte: 4,
+  },
+  {
+    enonce: "Quelle est la capitale du Sri Lanka ?",
+    mode: "find_capital",
+    pays: "Sri Lanka",
+    difficulte: 4,
+  },
   { enonce: "Où se trouve le Bhoutan ?", mode: "locate_country", pays: "Bhoutan", difficulte: 4 },
-  { enonce: "Quelle est la capitale de la Palestine ?", mode: "find_capital", pays: "État de Palestine", difficulte: 4 },
-  { enonce: "Quelle est la capitale du Myanmar ?", mode: "find_capital", pays: "Myanmar", difficulte: 5 },
+  {
+    enonce: "Quelle est la capitale de la Palestine ?",
+    mode: "find_capital",
+    pays: "État de Palestine",
+    difficulte: 4,
+  },
+  {
+    enonce: "Quelle est la capitale du Myanmar ?",
+    mode: "find_capital",
+    pays: "Myanmar",
+    difficulte: 5,
+  },
   { enonce: "Où se trouve Niue ?", mode: "locate_country", pays: "Niue", difficulte: 5 },
 ];
 
@@ -63,7 +103,9 @@ async function main() {
       created += 1;
       console.log(`  ok   d${spec.difficulte} ${spec.mode.padEnd(16)} ${spec.pays}`);
     } else {
-      console.log(`  FAIL d${spec.difficulte} ${spec.pays}: ${result.errors.map((e) => e.message).join("; ")}`);
+      console.log(
+        `  FAIL d${spec.difficulte} ${spec.pays}: ${result.errors.map((e) => e.message).join("; ")}`,
+      );
     }
   }
   console.log(JSON.stringify({ event: "seed_geo_demo_complete", created, total: SPECS.length }));
