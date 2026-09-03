@@ -35,7 +35,7 @@ let cachedCountries: FullCountryRow[] | null = null;
  *  at boot but never seeds, so a fresh deployment serves an unseeded table, caches
  *  nothing-at-all, and then keeps answering "Pays introuvable : « France »" even after
  *  db:seed has run. This bit exactly once, on production. */
-async function loadCountries(): Promise<FullCountryRow[]> {
+export async function loadCountries(): Promise<FullCountryRow[]> {
   if (cachedCountries && cachedCountries.length > 0) return cachedCountries;
   const rows = await db
     .select({

@@ -51,9 +51,9 @@ describe("iso-lookup completeness (brief §14)", () => {
    * Tuvalu (26 km² spread across several atolls) has no polygon in either
    * topology file — it's the smallest UN member state and too small to
    * survive Natural Earth's simplification even at 50m. It's still a fully
-   * seeded country and a valid geo-question target; the map engine (Phase
-   * 4 component) must target it via its seeded centroid + the invisible
-   * hit-circle mechanism (brief §8.2), not via polygon geometry.
+   * seeded country and a valid geo-question target, but the map has nothing
+   * to draw or hit-test for it — a known gap: brief §8.2's "invisible
+   * hit-circle at the seeded centroid" fallback was never built.
    */
   const KNOWN_MAP_GEOMETRY_GAPS = new Set(["TUV"]);
 

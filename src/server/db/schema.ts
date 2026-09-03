@@ -514,7 +514,6 @@ export interface RoomConfig {
   difficultyMax: number;
   allowLateJoin: boolean;
   maxPlayers: number;
-  revealDurationS: number;
 }
 
 export const rooms = sqliteTable(

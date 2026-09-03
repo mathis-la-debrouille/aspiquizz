@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Upload, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Tabs } from "@/components/ui/Tabs";
 import { DragSortList } from "@/components/ui/DragSortList";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { downscaleImage } from "@/lib/utils/downscale-image";
 import { createSortQuestion, updateSortQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
@@ -59,15 +60,18 @@ export function SortForm({
   const [shared, setShared] = useState(initial?.shared ?? DEFAULT_SHARED);
   const [prompt, setPrompt] = useState(initial?.prompt ?? "");
   const [items, setItems] = useState<DraftItem[]>(
-    initial?.items.map((i) => ({ key: newKey(), label: i.label, mediaId: i.mediaId, uploading: false })) ?? [
+    initial?.items.map((i) => ({
+      key: newKey(),
+      label: i.label,
+      mediaId: i.mediaId,
+      uploading: false,
+    })) ?? [
       { key: newKey(), label: "", mediaId: null, uploading: false },
       { key: newKey(), label: "", mediaId: null, uploading: false },
       { key: newKey(), label: "", mediaId: null, uploading: false },
     ],
   );
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, setError, submit } = useQuestionSubmit(onCreated);
 
   const category = categories.find((c) => c.id === shared.categoryId);
   const canSubmit =
@@ -108,9 +112,7 @@ export function SortForm({
     }
   }
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
+  function handleSubmit() {
     const payload = {
       type: "sort" as const,
       prompt,
@@ -119,12 +121,9 @@ export function SortForm({
       items: items.map((i) => ({ label: i.label.trim(), mediaId: i.mediaId })),
       ...shared,
     };
-    const result = initial
-      ? await updateSortQuestion(initial.id, payload)
-      : await createSortQuestion(payload);
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+    void submit(() =>
+      initial ? updateSortQuestion(initial.id, payload) : createSortQuestion(payload),
+    );
   }
 
   const form = (
@@ -149,7 +148,11 @@ export function SortForm({
                   <span className="text-12">…</span>
                 ) : item.mediaId ? (
                   // eslint-disable-next-line @next/next/no-img-element -- authenticated /media/[id] route, not an optimizable static asset
-                  <img src={`/media/${item.mediaId}`} alt="" className="h-full w-full object-cover" />
+                  <img
+                    src={`/media/${item.mediaId}`}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <Upload className="h-4 w-4" strokeWidth={1.5} />
                 )}
@@ -231,22 +234,5 @@ export function SortForm({
     />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }

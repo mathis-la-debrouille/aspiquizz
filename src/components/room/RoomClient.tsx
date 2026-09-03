@@ -9,22 +9,18 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { WaitingRoom } from "@/components/room/WaitingRoom";
 import { CountdownOverlay } from "@/components/room/CountdownOverlay";
 import { QuestionScreen } from "@/components/room/QuestionScreen";
-import { RevealScreen } from "@/components/room/RevealScreen";
-import { ScoreboardScreen } from "@/components/room/ScoreboardScreen";
 import { Podium } from "@/components/room/Podium";
 import { CorrectionScreen } from "@/components/room/CorrectionScreen";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type {
   ChatMessagePayload,
-  QuestionRevealPayload,
   CorrectionShowPayload,
   QuestionShowPayload,
   RoomFinishedPayload,
   RoomPhase,
   RoomPlayerView,
   RoomStateView,
-  ScoreboardEntry,
 } from "@/server/socket/events";
 
 export function RoomClient({ code, currentUserId }: { code: string; currentUserId: string }) {
@@ -35,16 +31,14 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
 
   const [state, setState] = useState<RoomStateView | null>(null);
   // room:state is a one-shot snapshot sent only to the (re)joining socket — every phase
-  // transition after that arrives as its own event (question:show/lock/reveal,
-  // scoreboard:update, room:finished), never as another full snapshot. So `phase` is tracked
-  // locally here, driven by whichever of those events last arrived, not read off `state`.
+  // transition after that arrives as its own event (question:show/lock, correction:show,
+  // room:finished), never as another full snapshot. So `phase` is tracked locally here, driven
+  // by whichever of those events last arrived, not read off `state`.
   const [phase, setPhase] = useState<RoomPhase>("lobby");
   const [joinError, setJoinError] = useState<string | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<QuestionShowPayload | null>(null);
   const [answeredUserIds, setAnsweredUserIds] = useState<Set<string>>(new Set());
-  const [reveal, setReveal] = useState<QuestionRevealPayload | null>(null);
   const [correction, setCorrection] = useState<CorrectionShowPayload | null>(null);
-  const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([]);
   const [finished, setFinished] = useState<RoomFinishedPayload | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
   const [banner, setBanner] = useState<string | null>(null);
@@ -90,31 +84,10 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
       setPhase("question");
       setActiveQuestion(payload);
       setAnsweredUserIds(new Set());
-      setReveal(null);
     };
     const onAnswered = ({ userId }: { userId: string }) =>
       setAnsweredUserIds((prev) => new Set(prev).add(userId));
     const onQuestionLock = () => setPhase("locked");
-    const onReveal = (payload: QuestionRevealPayload) => {
-      setPhase("reveal");
-      setReveal(payload);
-      // Mirrors the room:player_joined/left/host_changed pattern above: state.players' score/
-      // streak otherwise only ever reflect the initial room:state snapshot, so by question 2
-      // they're stale everywhere except RevealScreen (which reads reveal.perPlayer directly).
-      // QuestionScreen's streak-next-to-the-timer display needs this to carry forward once
-      // onQuestionShow nulls `reveal` back out for the next question.
-      setState((prev) => {
-        if (!prev) return prev;
-        const byUserId = new Map(payload.perPlayer.map((p) => [p.userId, p]));
-        return {
-          ...prev,
-          players: prev.players.map((p) => {
-            const update = byUserId.get(p.userId);
-            return update ? { ...p, score: update.newScore, streak: update.streak } : p;
-          }),
-        };
-      });
-    };
     const onCorrectionShow = (payload: CorrectionShowPayload) => {
       setPhase("correction");
       setCorrection(payload);
@@ -137,10 +110,6 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
             }
           : prev,
       );
-    };
-    const onScoreboard = (entries: ScoreboardEntry[]) => {
-      setPhase("scoreboard");
-      setScoreboard(entries);
     };
     const onFinished = (payload: RoomFinishedPayload) => {
       setPhase("finished");
@@ -200,10 +169,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
     socket.on("question:show", onQuestionShow);
     socket.on("question:answered", onAnswered);
     socket.on("question:lock", onQuestionLock);
-    socket.on("question:reveal", onReveal);
     socket.on("correction:show", onCorrectionShow);
     socket.on("correction:verdict", onCorrectionVerdict);
-    socket.on("scoreboard:update", onScoreboard);
     socket.on("room:finished", onFinished);
     socket.on("chat:message", onChat);
     socket.on("error", onError);
@@ -218,10 +185,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
       socket.off("question:answered", onAnswered);
       socket.off("question:lock", onQuestionLock);
       socket.off("room:countdown", onCountdown);
-      socket.off("question:reveal", onReveal);
       socket.off("correction:show", onCorrectionShow);
       socket.off("correction:verdict", onCorrectionVerdict);
-      socket.off("scoreboard:update", onScoreboard);
       socket.off("room:finished", onFinished);
       socket.off("chat:message", onChat);
       socket.off("error", onError);
@@ -273,11 +238,7 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
             ? "question"
             : phase === "correction" && correction
               ? "correction"
-              : phase === "reveal" && reveal
-                ? "reveal"
-                : phase === "scoreboard"
-                  ? "scoreboard"
-                  : "loading";
+              : "loading";
 
   return (
     <div className="flex flex-col gap-6">
@@ -328,10 +289,6 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               payload={correction}
               isHost={state.hostId === currentUserId}
             />
-          ) : viewKey === "reveal" && reveal ? (
-            <RevealScreen reveal={reveal} state={state} currentUserId={currentUserId} />
-          ) : viewKey === "scoreboard" ? (
-            <ScoreboardScreen entries={scoreboard} state={state} />
           ) : (
             <Skeleton className="h-40 w-full" />
           )}

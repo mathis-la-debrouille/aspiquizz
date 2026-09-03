@@ -10,8 +10,12 @@
  * reads them and mirrors the language into the questions it writes.
  */
 import { z } from "zod";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult, GetPromptResult, ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type {
+  CallToolResult,
+  GetPromptResult,
+  ReadResourceResult,
+} from "@modelcontextprotocol/sdk/types.js";
 import type { ApiTokenScope } from "@/server/db/schema";
 import type { McpAuthContext } from "@/server/mcp/tokens";
 import { hasScope } from "@/server/mcp/tokens";
@@ -95,7 +99,13 @@ async function runTool(
   return result;
 }
 
-const difficultySchema = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]);
+const difficultySchema = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+]);
 
 // ---------------------------------------------------------------------------
 // Registration
@@ -150,7 +160,9 @@ export function registerMcpTools(server: McpServer, ctx: McpAuthContext): void {
   );
 
   // -- chercher_pays ------------------------------------------------------------------------
-  const chercherPaysSchema = z.object({ requete: z.string().trim().min(1, "Une requête est requise.") });
+  const chercherPaysSchema = z.object({
+    requete: z.string().trim().min(1, "Une requête est requise."),
+  });
   server.registerTool(
     "chercher_pays",
     {
@@ -252,7 +264,11 @@ export function registerMcpTools(server: McpServer, ctx: McpAuthContext): void {
               avertissements: r.warnings.map((w) => w.message),
             });
           } else {
-            resultats.push({ index: i, ok: false, erreur: r.errors.map((e) => e.message).join(" ") });
+            resultats.push({
+              index: i,
+              ok: false,
+              erreur: r.errors.map((e) => e.message).join(" "),
+            });
           }
         }
 
@@ -378,7 +394,11 @@ export function registerMcpTools(server: McpServer, ctx: McpAuthContext): void {
           action: "category_create",
           after: result.category,
         });
-        return jsonResult({ id: result.category.id, nom: result.category.name, couleur: result.category.colorToken });
+        return jsonResult({
+          id: result.category.id,
+          nom: result.category.name,
+          couleur: result.category.colorToken,
+        });
       }),
   );
 
@@ -422,7 +442,14 @@ export function registerMcpTools(server: McpServer, ctx: McpAuthContext): void {
           before: result.before,
           after: result.after,
         });
-        return jsonResult({ ok: true, categorie: { id: result.after.id, nom: result.after.name, couleur: result.after.colorToken } });
+        return jsonResult({
+          ok: true,
+          categorie: {
+            id: result.after.id,
+            nom: result.after.name,
+            couleur: result.after.colorToken,
+          },
+        });
       }),
   );
 
@@ -519,7 +546,11 @@ function registerResources(server: McpServer): void {
   server.registerResource(
     "guidelines",
     "aspiquiz://guidelines",
-    { title: "Guide d'écriture", description: "Bonnes pratiques pour écrire une question ASPI Quiz.", mimeType: "text/plain" },
+    {
+      title: "Guide d'écriture",
+      description: "Bonnes pratiques pour écrire une question ASPI Quiz.",
+      mimeType: "text/plain",
+    },
     (uri): ReadResourceResult => ({
       contents: [{ uri: uri.href, mimeType: "text/plain", text: GUIDELINES_TEXT }],
     }),
@@ -528,7 +559,11 @@ function registerResources(server: McpServer): void {
   server.registerResource(
     "categories",
     "aspiquiz://categories",
-    { title: "Catégories", description: "La liste des catégories actuelles.", mimeType: "application/json" },
+    {
+      title: "Catégories",
+      description: "La liste des catégories actuelles.",
+      mimeType: "application/json",
+    },
     async (uri): Promise<ReadResourceResult> => {
       const rows = await listAllCategories();
       return {
@@ -537,7 +572,12 @@ function registerResources(server: McpServer): void {
             uri: uri.href,
             mimeType: "application/json",
             text: JSON.stringify(
-              rows.map((r) => ({ id: r.id, nom: r.name, couleur: r.colorToken, nombreQuestions: r.questionCount })),
+              rows.map((r) => ({
+                id: r.id,
+                nom: r.name,
+                couleur: r.colorToken,
+                nombreQuestions: r.questionCount,
+              })),
               null,
               2,
             ),
@@ -550,7 +590,11 @@ function registerResources(server: McpServer): void {
   server.registerResource(
     "schema-question",
     "aspiquiz://schema/question",
-    { title: "Schéma QuestionDraft", description: "Le schéma JSON attendu par creer_question.", mimeType: "application/json" },
+    {
+      title: "Schéma QuestionDraft",
+      description: "Le schéma JSON attendu par creer_question.",
+      mimeType: "application/json",
+    },
     (uri): ReadResourceResult => ({
       contents: [
         {
@@ -574,7 +618,9 @@ function registerPrompt(server: McpServer): void {
       title: "Générer des questions",
       description: "Modèle pour générer un lot de questions ASPI Quiz sur un sujet donné.",
       argsSchema: {
-        sujet: z.string().describe("Le sujet des questions, ex. « capitales d'Afrique de l'Ouest »."),
+        sujet: z
+          .string()
+          .describe("Le sujet des questions, ex. « capitales d'Afrique de l'Ouest »."),
         nombre: z.string().describe("Combien de questions générer, ex. « 10 »."),
         type: z
           .string()

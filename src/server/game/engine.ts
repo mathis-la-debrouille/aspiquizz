@@ -174,7 +174,7 @@ export function createRoomState(params: {
   return state;
 }
 
-export function deleteRoomState(code: string): void {
+function deleteRoomState(code: string): void {
   const room = rooms.get(code);
   if (room?.emptyTimer) clearTimeout(room.emptyTimer);
   rooms.delete(code);
@@ -344,10 +344,7 @@ export async function abandonStaleRooms(): Promise<void> {
  * correct and is abandoned, same as before.
  */
 export async function recoverInterruptedGames(io: GameIo): Promise<void> {
-  const candidates = await db
-    .select()
-    .from(roomsTable)
-    .where(eq(roomsTable.status, "running"));
+  const candidates = await db.select().from(roomsTable).where(eq(roomsTable.status, "running"));
 
   for (const row of candidates) {
     try {
@@ -821,10 +818,10 @@ async function applyCorrectionForQuestion(
       db
         .update(answers)
         .set({ isCorrect: scored, pointsAwarded: points })
-      .where(
-        and(
-          eq(answers.roomId, room.id),
-          eq(answers.position, frozen.position),
+        .where(
+          and(
+            eq(answers.roomId, room.id),
+            eq(answers.position, frozen.position),
             eq(answers.userId, userId),
           ),
         ),
@@ -904,7 +901,6 @@ export function setCorrectionAward(
   entry.awarded = clamped;
   return clamped;
 }
-
 
 /**
  * Host commits the current question and moves on.
@@ -1092,6 +1088,6 @@ export function recordAnswer(
   return true;
 }
 
-export function cancelLoop(room: RoomState): void {
+function cancelLoop(room: RoomState): void {
   room.loopCancelled = true;
 }

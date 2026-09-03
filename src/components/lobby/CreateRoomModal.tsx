@@ -78,10 +78,8 @@ export function CreateRoomModal({
           difficultyMax: 5,
           allowLateJoin: true,
           maxPlayers,
-          revealDurationS: 6,
           showDifficulty,
           mcqAsOpen,
-          manualAdvance: false,
         },
       },
       (result) => {

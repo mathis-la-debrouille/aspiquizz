@@ -46,8 +46,6 @@ export type RoomPhase =
   /** Post-run correction: the host rules on every answer, question by question,
    *  with the whole room watching. Nothing is scored before this. */
   | "correction"
-  | "reveal"
-  | "scoreboard"
   | "finished";
 
 export interface RoomStateView {
@@ -75,23 +73,6 @@ export interface QuestionShowPayload {
   question: SanitisedQuestion;
   deadlineMs: number;
   serverNowMs: number;
-}
-
-export interface PerPlayerReveal {
-  userId: string;
-  isCorrect: boolean;
-  msTaken: number;
-  pointsAwarded: number;
-  newScore: number;
-  streak: number;
-}
-
-export interface QuestionRevealPayload {
-  position: number;
-  correct: string;
-  explanation: string | null;
-  perPlayer: PerPlayerReveal[];
-  nextInMs: number;
 }
 
 export interface ScoreboardEntry {
@@ -212,11 +193,9 @@ export interface ServerToClientEvents {
   "question:show": (payload: QuestionShowPayload) => void;
   "question:answered": (payload: { userId: string }) => void;
   "question:lock": (payload: { position: number }) => void;
-  "question:reveal": (payload: QuestionRevealPayload) => void;
   "correction:show": (payload: CorrectionShowPayload) => void;
   /** Broadcast so every player sees the host's ruling land live, not just the host. */
   "correction:verdict": (payload: { position: number; userId: string; awarded: number }) => void;
-  "scoreboard:update": (entries: ScoreboardEntry[]) => void;
   "room:finished": (payload: RoomFinishedPayload) => void;
   "chat:message": (payload: ChatMessagePayload) => void;
   "reaction:burst": (payload: ReactionBurstPayload) => void;
@@ -252,7 +231,6 @@ export interface ClientToServerEvents {
     final?: boolean;
   }) => void;
   "host:skip": (payload: { code: string }) => void;
-  "host:next": (payload: { code: string }) => void;
   /** Host awards points to one player during the correction phase — 0..maxPoints,
    *  so a half-right answer can score 1 of 3 rather than all or nothing. */
   "correction:set": (payload: {

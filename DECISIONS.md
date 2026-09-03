@@ -308,7 +308,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   Socket.IO ever saw it — the client sat on "Connexion en cours…" forever. Phase 7's own
   verification scripts didn't catch this because they forced `transports: ["websocket"]`,
   skipping the polling handshake entirely. Fixed with an explicit `if
-  (req.url?.startsWith("/ws")) return;` guard before `handle(req, res)`. Lesson: a
+(req.url?.startsWith("/ws")) return;` guard before `handle(req, res)`. Lesson: a
   transport-restricted test client can pass while the default browser transport is completely
   broken — worth a note for Phase 12's hardening pass.
 - **`useSocket()` had a missed-event race on mount.** `useState(socket.connected)` captured
@@ -323,13 +323,13 @@ failed` the first time a real two-client test tried to join a room — never cau
   the phase-transition signals, and `room:join`'s `room:state` reply is unicast to the joining
   socket only. Fixed by tracking `phase` as local state driven explicitly by each event handler
   (not read off `state.phase`), and adding incremental `room:player_joined/_left/_kicked/
-  host_changed` handlers that patch `state.players`/`hostId` directly. See the comments at the
+host_changed` handlers that patch `state.players`/`hostId` directly. See the comments at the
   top of `RoomClient.tsx`'s effect for the long-form version of this — worth reading before
   touching that file.
 - **`tsx watch` was restarting the server on its own DB writes.** `local.db`'s WAL file churn
   during a game (every answer, every phase transition) was misread as a source-file change,
   killing in-flight games mid-test. Fixed with `--ignore 'local.db*' --ignore '.uploads/**'
-  --ignore '.next/**' --ignore 'tests/e2e/.output/**'` on the `dev` script.
+--ignore '.next/**' --ignore 'tests/e2e/.output/**'` on the `dev` script.
 - **`room:join` handler crash on a fast reconnect race**: `room.players.get(user.id)!` assumed
   the map entry created earlier in the same handler couldn't disappear before the next line ran,
   but a concurrent `room:leave` from the same fast-reconnecting client can remove it during the
@@ -346,7 +346,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   mouse.
 - **Geo answer surface splits on interaction model, not just question type**: click-to-answer
   modes (`locate_country`, `capital_of`) render `GeoMap mode="pick"` with `onSelect` — the click
-  target *is* the answer, so no separate submit step. Visual-prompt modes
+  target _is_ the answer, so no separate submit step. Visual-prompt modes
   (`name_country`/`find_capital`/`name_from_shape`) render the map read-only with
   `revealIso3` driving `highlight`/`focusOn`, paired with a text `OpenAnswerSurface` — the map
   here is illustrating the question, not collecting the answer.
@@ -358,7 +358,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   flow was verified working end-to-end via a scripted `socket.io-client` two-browser Playwright
   run through: login → lobby visibility → room create/join → waiting-room sync → game start →
   first question rendering correctly on both clients (confirmed via raw WS frame tracing). A
-  failure surfaced afterward in the *test script's* answer-detection step during automated
+  failure surfaced afterward in the _test script's_ answer-detection step during automated
   play-through — not confirmed to be an app bug, not pursued further. `pnpm lint`/`typecheck`/
   `test` (97 tests, 6 files) and a full `pnpm build` all pass. Formal `tests/e2e` suites remain
   Phase 12's job per the brief's own phase plan (§16) — this wasn't skipped, just not pulled
@@ -383,7 +383,7 @@ failed` the first time a real two-client test tried to join a room — never cau
 - **Badge aggregates are computed by querying existing tables, not new counter columns.**
   `éclair` (5 correct answers under 3s) and `érudit` (500 questions answered) don't need
   anything the schema doesn't already have: `count(*) from answers where isCorrect and
-  msTaken<3000`, `count(*) from questions where authorId=…`, and `user_category_stats` for the
+msTaken<3000`, `count(*) from questions where authorId=…`, and `user_category_stats` for the
   Géographie category (`globe-trotteur`/`cartographe`) all fall out of tables that already
   existed for other reasons. Cheaper than a migration, and the DB is the single source of truth
   rather than a maintained-in-parallel counter that could drift.
@@ -411,7 +411,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   `fullScoreboard` against `state.players` the same way `ScoreboardScreen`/`RevealScreen`
   already do.
 - **Profile route is `/profil/[username]`, with `/profil` redirecting to the caller's own** —
-  not a single fixed page. Lets the leaderboard and (eventually) room rosters link to *other*
+  not a single fixed page. Lets the leaderboard and (eventually) room rosters link to _other_
   players' profiles for free instead of only supporting "my profile". `CLAUDE.md`'s route list
   said just "profil"; this is a superset of that, not a deviation.
 - **Profile editing (display name, bio, "reroll avatar") was added even though the brief's
@@ -442,12 +442,12 @@ failed` the first time a real two-client test tried to join a room — never cau
   would either throw a raw FK constraint error or (if cascaded) silently erase play history.
   Archiving (status → `archived`) already removes it from `question-selection.ts` and from the
   public `listQuestions()` default, with none of that risk. `setQuestionStatusAction` covers
-  publish/unpublish/archive for *any* author's question, which is the actual moderation lever —
+  publish/unpublish/archive for _any_ author's question, which is the actual moderation lever —
   a full author-side "edit my own question" flow doesn't exist yet either (Phase 6 only ever
   built `create*`, no `update`), and building that wasn't this phase's job.
 - **Category/media deletion are blocked with a friendly count, not left to throw a raw FK
   error.** Both `deleteCategoryAction` and `deleteMediaAction` query `count(*) from questions
-  where …` first and return `{ ok: false, error: "N question(s) utilisent encore…" }` instead of
+where …` first and return `{ ok: false, error: "N question(s) utilisent encore…" }` instead of
   attempting the delete and surfacing whatever SQLite says. Media deletion also removes the file
   from disk (`storage.ts`'s new `deleteUpload`) only after the DB row is gone, and treats a
   missing file (`ENOENT`) as success rather than an error — the DB row is the source of truth
@@ -461,7 +461,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   not "erase this person's history."
 - **An admin can't demote or deactivate their own account** (`setUserRoleAction`/
   `setUserActiveAction` both check `userId === admin.id` first) — a cheap guard against locking
-  everyone out of `/admin` with no CLI handy. Doesn't defend against the *last* admin overall
+  everyone out of `/admin` with no CLI handy. Doesn't defend against the _last_ admin overall
   demoting themself while a second admin exists to demote them right back, but that's an
   acceptable gap for this app's scale.
 - **Admin user creation mirrors `scripts/create-user.ts` exactly** (same username regex, same
@@ -503,7 +503,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   correct/incorrect on `RevealScreen` mount (skipped for spectators, who have no `me` entry),
   and `Podium` mount — rather than trying to cover every UI click, which would get noisy fast.
   One real bug caught while writing it: a "silent gap" step modeled as `{ gain: 0 }` going
-  through the normal tone path made `exponentialRampToValueAtTime` ramp *from* 0, which the Web
+  through the normal tone path made `exponentialRampToValueAtTime` ramp _from_ 0, which the Web
   Audio spec disallows (throws `RangeError`) — fixed by skipping oscillator creation entirely
   for `gain: 0` steps instead of trying to render an inaudible tone.
 - **Mobile nav was a real gap, not just missing polish** — `Header`'s nav (`Accueil`/`Créer`/
@@ -513,7 +513,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   (`sm:hidden`) opening the existing `Modal` with the same links in the same order — reuses
   infrastructure rather than building a bespoke drawer/animation for one breakpoint.
 - **Phase-transition fades in `RoomClient`**: wrapped the phase-conditional render in
-  `AnimatePresence`/`motion.div`, keyed by a `viewKey` derived from `phase` — deliberately *not*
+  `AnimatePresence`/`motion.div`, keyed by a `viewKey` derived from `phase` — deliberately _not_
   `phase` itself, because `"question"` and `"locked"` are the same `QuestionScreen` instance
   with a prop flipped (the lock is already visually communicated by the answer surface going
   `disabled`), and fading the whole screen out/in for that transition would read as a glitch
@@ -552,7 +552,7 @@ failed` the first time a real two-client test tried to join a room — never cau
     `uptimeS`, cheap and useful for "did this just restart" at a glance.
   - Shutdown closed the HTTP server and Socket.IO but never told connected clients why they
     were being dropped, never stopped in-flight game loops before they got cut off mid-`sleep()`,
-    and never marked their rooms `abandoned` in the DB — that only happened on the *next* boot's
+    and never marked their rooms `abandoned` in the DB — that only happened on the _next_ boot's
     stale-room cleanup, leaving a "says running, nothing's driving it" window for however long
     the restart took. `engine.ts`'s new `prepareForShutdown(io)` cancels every loop, broadcasts
     a `server_shutdown` `error` event to every connected socket (reusing the same `error` event
@@ -588,7 +588,7 @@ failed` the first time a real two-client test tried to join a room — never cau
   on" as a future promise rather than a present fact. Both now describe what's actually there.
 - **Verification**: `pnpm typecheck`/`test` (103 tests, unchanged) and `pnpm build` pass. Ran the
   dev server for real (not just typechecked) to confirm: `/healthz` returns a genuine `dbOk:
-  true` after a real query; a `SIGTERM` produces the exact `shutdown_start` → `shutdown_complete`
+true` after a real query; a `SIGTERM` produces the exact `shutdown_start` → `shutdown_complete`
   log sequence with no hang; boot with `runMigrations()` wired in applies cleanly (a no-op
   against an already-migrated DB, as expected) with no `migrate_failed` event. Didn't spin up a
   live two-client game specifically to watch a room flip to `abandoned` mid-shutdown — the query
@@ -608,9 +608,9 @@ failed` the first time a real two-client test tried to join a room — never cau
 - **Also fixed, same deploy**: Railpack's build log showed `pnpm │ 9.15.9 │ railpack default (9)`
   — it found no version hint and silently installed pnpm 9 against a lockfile written by the
   locally-pinned 11.21.0, which is also what produced the `could not detect pnpm lockfile
-  version` warning right before the failure. `package.json` only had the non-standard
+version` warning right before the failure. `package.json` only had the non-standard
   `devEngines.packageManager` field; added the Corepack-standard top-level `"packageManager":
-  "pnpm@11.21.0"` field, which Railpack (and most other build platforms) actually read to pin
+"pnpm@11.21.0"` field, which Railpack (and most other build platforms) actually read to pin
   an exact version. Also changed `devEngines.packageManager.version` from `^11.21.0` to an exact
   `11.21.0` — pnpm itself warned the two fields "specify different versions" (a range vs. an
   exact pin reads as different even when one satisfies the other) and said it would ignore
@@ -636,8 +636,8 @@ failed` the first time a real two-client test tried to join a room — never cau
   changes) will need their own local migration testing — from here on, local verification runs
   with an explicit `DATABASE_URL="file:./local.db"` prefix, never relying on ambient `.env`.
 - **Resolution centralised in one place.** `selectQuestionsForRoom` now returns `{questionId,
-  type}` instead of `{questionId, timeLimitS}` — duration resolution (`timeLimitByType[type] ??
-  timeLimitS`) happens once, in `engine.ts`'s `startGame`, right where `frozenQuestions` gets
+type}` instead of `{questionId, timeLimitS}` — duration resolution (`timeLimitByType[type] ??
+timeLimitS`) happens once, in `engine.ts`'s `startGame`, right where `frozenQuestions` gets
   built and written into `room_questions.time_limit_s`. The old code had the same fallback
   formula half-duplicated (once in `question-selection.ts` for the random-source branch only,
   once again in `engine.ts`) and effectively dead, since `questions.time_limit_s` was never null.
@@ -679,7 +679,7 @@ below is a real, acknowledged gap — not an oversight.
   against `question_open_answers`/`question_choices` (not a join, which would duplicate rows) —
   verified directly: searching "Vinci" finds a question only via a choice label, not the prompt.
 - **Offset pagination, not keyset.** The addendum explicitly says "not offset pagination", but
-  true keyset cursors across *eight different sort orders* — several of them computed
+  true keyset cursors across _eight different sort orders_ — several of them computed
   expressions (`success_rate_asc` sorts on `timesCorrect/timesAsked`, not a stored column) —
   would need a differently-shaped cursor per sort mode. Offset's known failure mode (skipped/
   duplicate rows under concurrent inserts during someone's own paging session) isn't a real risk
@@ -707,7 +707,7 @@ below is a real, acknowledged gap — not an oversight.
 - **Preview panel (A.6) reuses the real per-type answer-surface components** (`OpenAnswerSurface`
   etc. from Phase 8), `disabled`, fed through the exact same `toSanitisedQuestion` mapper the live
   game uses — not a hand-rolled re-implementation (that's what the pre-existing `QuestionPreview`
-  authoring-time component actually is, and it was deliberately *not* reused here for that
+  authoring-time component actually is, and it was deliberately _not_ reused here for that
   reason). The "Réponse" section below it uses the raw, unsanitised detail, since this is the
   author/an admin previewing their own question, not a player mid-game.
 - **`library.ts` (plain reads) vs. `library-actions.ts` ("use server")** is a hard split, not
@@ -744,7 +744,7 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   (`slugify()`, never trusted from the client), position always auto-appends
   (`max(position) + 1`). These aren't duplication so much as two different tools for two
   different trust levels or the same underlying table; admin's create was left untouched.
-  `deleteCategoryAction`, however, *was* consolidated: the old admin-only version only blocked
+  `deleteCategoryAction`, however, _was_ consolidated: the old admin-only version only blocked
   deletion when in use, the new shared one (in the new module) offers reassignment instead —
   `/admin`'s `CategoriesPanel` now uses the richer one too, a straight upgrade with no downside.
 - **Name uniqueness is case/accent-insensitive, checked in JS, not SQL.** SQLite has no built-in
@@ -822,7 +822,7 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   callback-based (`onSelect`), not ref-based.
 - **The floating-button overlap bug (B.3.3) was a sizing bug, not a positioning bug.** The
   button was already `absolute bottom-4 left-1/2 -translate-x-1/2` inside a `relative` container
-  — correct CSS. The container just had no *real* height (`h-full` against an unconstrained
+  — correct CSS. The container just had no _real_ height (`h-full` against an unconstrained
   parent collapses close to zero), so "bottom" sat near the top of the page, over whatever
   followed. Fixed by giving the map frame an explicit `aspect-[16/10] min-h-[420px]` (per
   B.3.1) with `overflow-hidden`, exactly as specified — no positioning logic needed to change.
@@ -831,7 +831,7 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   this pass (full reorder, the confirmation strip, cadrage) to also retrofit initial-value
   hydration in the same commit. A near-term follow-up, not forgotten.
 - **Verification**: `pnpm typecheck`/`test` (110 tests, +7 new) pass, `pnpm build` succeeds.
-  The search-ranking bugs above were caught by *running* the new combobox logic against the
+  The search-ranking bugs above were caught by _running_ the new combobox logic against the
   real seeded 193-country DB (not just reading the code), which is exactly why they were found
   before being shipped rather than after. Didn't verify the map's zoom/fullscreen/hover
   interactions in an actual browser (no visual/pixel check of Luxembourg/Singapore at 390px/
@@ -845,14 +845,14 @@ both revolve around the same new `src/server/categories/actions.ts` module.
 - **`answers.roomId` is now nullable** (migration 0003, a table-recreate — SQLite's standard way
   to relax a column's NOT NULL) — the addendum's own "decide and document": deleting an empty
   `running` room's `rooms` row while it still has recorded `answers` needs those rows to survive
-  *something*, and nulling the FK (rather than cascading the delete) is what actually satisfies
+  _something_, and nulling the FK (rather than cascading the delete) is what actually satisfies
   "never lose recorded answers, since `question_stats` is derived from them" — `question_stats`
   and every per-user aggregate only ever key off `question_id`/`user_id`, never `room_id`, so a
   detached answer is exactly as useful to them as an attached one. Checked first: nothing in
   this codebase reads `answers.roomId` besides the insert itself, so nothing else needed to
   change to tolerate it going null.
 - **Fixed a real pre-existing bug found while implementing this**: the empty-room-check handler
-  ran for *every* room status, including `finished` — a player leaving the podium screen after
+  ran for _every_ room status, including `finished` — a player leaving the podium screen after
   the last game they were in would, 60s (now would-be 2 minutes) later, have their room's DB
   status silently overwritten from `finished` to `abandoned`, corrupting the historical record
   for no reason. Addendum B.4's own "rooms already finished are never deleted" requirement is
@@ -862,9 +862,9 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   but leaving it unbounded once the DB-side deletion had a guard anyway would be a straightforward
   memory leak with no offsetting benefit).
 - **Cancelling the timer on rejoin needed a second, `io`-free function.** The existing per-room
-  `setTimeout` already re-checks emptiness when it *fires* (so it silently no-ops if someone
+  `setTimeout` already re-checks emptiness when it _fires_ (so it silently no-ops if someone
   rejoined in the meantime — the old code already got this right), but that's not the same as
-  the *deadline shown to clients* (`closesAtMs`, new on `RoomStateView`) actually clearing the
+  the _deadline shown to clients_ (`closesAtMs`, new on `RoomStateView`) actually clearing the
   moment someone reconnects. Added `cancelEmptyRoomCheck(room)` (no `io` parameter — nothing
   gets deleted here, so it doesn't need one, unlike `scheduleEmptyRoomCheck`'s re-arm branch)
   and call it from `addOrReconnectPlayer`.
@@ -874,7 +874,7 @@ both revolve around the same new `src/server/categories/actions.ts` module.
   the same synchronous path, before that response is even built. A room with zero connected
   players has, by definition, nobody currently able to receive a fresh snapshot showing it
   counting down. The banner (`WaitingRoom.tsx`'s `EmptyRoomCountdown`) is still implemented
-  correctly and cheaply for whenever `closesAtMs` *is* present in a snapshot, but this isn't a
+  correctly and cheaply for whenever `closesAtMs` _is_ present in a snapshot, but this isn't a
   commonly-visible feature by construction, not because the implementation is incomplete —
   broadcasting it to lobby browsers instead (letting people see a dying room before joining it)
   would be a more reachable version of the same idea, but is a bigger, separate change and
@@ -882,7 +882,7 @@ both revolve around the same new `src/server/categories/actions.ts` module.
 - **The periodic sweeper is a genuine no-op at boot, always.** `sweepEmptyRooms` reads the
   in-memory `rooms` Map, which is created fresh and empty on every process start — there is
   nothing in it to sweep the instant `attachSocketServer` runs. Boot-time orphan cleanup for
-  rooms a *previous* process left behind is `abandonStaleRooms`'s job (already existed, Phase
+  rooms a _previous_ process left behind is `abandonStaleRooms`'s job (already existed, Phase
   12), which runs first and is DB-driven, not memory-driven. The 60s interval is the sweeper
   that actually matters, as a redundant safety net behind each room's own `setTimeout`.
 - **Verification**: `pnpm typecheck`/`test` (110 tests, unchanged from B.3) pass, `pnpm build`
@@ -944,8 +944,8 @@ end — not just typechecking. That live round trip is what caught the one real 
   its prose describes.** "create it if `allowCreateCategory` and the name is new; otherwise
   error" only makes sense with an `allowCreateCategory` flag, which the illustrative type didn't
   list — added it (default `true`, matching B.1's "any logged-in user may create categories").
-  Also added `initialStatus` (manual-only; MCP/import ignore it *by an explicit source check at
-  the insert itself*, not merely by no caller passing it — belt-and-suspenders for the addendum's
+  Also added `initialStatus` (manual-only; MCP/import ignore it _by an explicit source check at
+  the insert itself_, not merely by no caller passing it — belt-and-suspenders for the addendum's
   own "non-negotiable: no parameter lets a model publish directly") and `manualGeo` (see below).
 - **The web geo form's richer capabilities (cadrage/`viewBbox`, editable accepted answers,
   `strict`) don't fit `QuestionDraft`'s narrow MCP shape** (name-only `pays`, no `viewBbox`, no
@@ -970,7 +970,7 @@ end — not just typechecking. That live round trip is what caught the one real 
   just avoids a monochrome batch when a model creates several categories in a row via
   `creer_question`'s inline `categorie` name).
 - **Country resolution (`src/lib/geo/country-resolve.ts`) is a new, separate pure module from
-  B.3's `country-search.ts`.** They answer different questions: the combobox ranks *live, partial*
+  B.3's `country-search.ts`.** They answer different questions: the combobox ranks _live, partial_
   keystrokes for a picklist (capital included, no "nearest on a total miss" concept); ingest needs
   a one-shot "resolve fully or fail with the 3 closest suggestions" that also matches `iso2`/
   `name_en` per C.1 §3's explicit field list, which the combobox never needed to.
@@ -1031,7 +1031,7 @@ insert in the verification scripts above, deleted after use) and the "À relire"
 - **C.4 — `/profil/parametres/mcp`**: create/list/revoke tokens (name, scope checkboxes with
   `questions:read` the only one checked by default — never a single "full access" preset, per
   spec), a one-time reveal modal with both the JSON `mcpServers` config block and the `claude mcp
-  add` CLI form, generated from `PUBLIC_BASE_URL` (falling back to `window.location.origin` when
+add` CLI form, generated from `PUBLIC_BASE_URL` (falling back to `window.location.origin` when
   unset, e.g. local dev). Admin gets a read-only, cross-user token view folded into a new "MCP"
   tab in `/admin` alongside the `audit_log` paper trail (one tab, not two — both answer "what
   happened over MCP" at a glance). `TokenList` is one shared component for both surfaces
@@ -1062,7 +1062,7 @@ insert in the verification scripts above, deleted after use) and the "À relire"
   afficher" escape hatch, exactly as specified — nagging on every single publish would just
   train people to click through it without reading.
 - **A real bug, found only by booting the actual production server** (`pnpm build` + `pnpm
-  start`, not just `next build`) **and hitting a route — not by typechecking, which caught
+start`, not just `next build`) **and hitting a route — not by typechecking, which caught
   nothing wrong here**: the moment `server/mcp/register.ts` (statically imported by `server.ts`
   via `server/mcp/transport.ts`, for the `/mcp` mount) pulled in `createCategoryCore` et al. from
   `server/categories/actions.ts` — a `"use server"` file that imports `next/cache`'s
@@ -1073,17 +1073,17 @@ insert in the verification scripts above, deleted after use) and the "À relire"
   Root cause: `server.ts` isn't compiled by Next's own bundler (it runs directly under `tsx`), so
   a `"use server"` file's `next/cache` import reaching server.ts's top-level module graph this
   way — never through Next's own request-scoped bootstrapping — leaves Next's shared
-  `AsyncLocalStorage` singleton in a state where Next's *own* internal code faults on first real
+  `AsyncLocalStorage` singleton in a state where Next's _own_ internal code faults on first real
   use. Isolated by a binary-search of throwaway repro scripts (raw SDK imports alone: fine; SDK +
   `next` together: fine; the actual `transport.ts` import: crashed) before finding the exact
   culprit import. **Fixed at the root, not the symptom**: extracted the four MCP-only category
   mutation functions (`createCategoryCore`, `updateCategoryCore`, `mergeCategoriesCore`,
   `deleteCategoryStrictCore`) into a new `server/categories/core.ts` — a plain module that
   imports nothing from `next/cache` or `next/navigation`, ever — and made `server/categories/
-  actions.ts` a thin `"use server"` wrapper around it (only `createCategoryAction`'s web path adds
+actions.ts` a thin `"use server"` wrapper around it (only `createCategoryAction`'s web path adds
   `revalidatePath`). `ingest.ts` and `register.ts` now import from `core.ts`. Verified the fix by
   re-running the exact same production boot: `/connexion`, `/creer`, `/admin`, `/profil/
-  parametres/mcp` all render 200 with a real session cookie, `/mcp` still 401s a bad token and
+parametres/mcp` all render 200 with a real session cookie, `/mcp` still 401s a bad token and
   runs a full real-SDK-client tool call end to end. This is the same class of "only a real boot
   proves it" bug as the three unauthenticated-crash fixes at the end of Addendum A/B, and the
   `revalidatePath` bug ingest.ts's own category resolution hit earlier in this same addendum
@@ -1114,6 +1114,7 @@ engagement's established methodology.
 
 **Final C.8 checklist pass**, against the real running production server (booted twice — once
 `MCP_ENABLED` default-true, once explicitly `false`):
+
 - No/malformed/revoked/expired/deactivated-owner-user tokens: 5 real requests, identical `401`
   status and byte-identical body, asserted programmatically (not by inspection).
 - `creer_questions_en_lot` with 5 drafts where #3 names a nonexistent country: exactly 4 created,
@@ -1123,9 +1124,9 @@ engagement's established methodology.
 - `modifier_categorie` (admin token) renamed a real category; the `slug` was asserted unchanged
   and the new name read back from a fresh `select`, not from the tool's own echo.
 - `MCP_ENABLED=false` on a fresh boot: `/mcp` 404s, `/healthz` and the rest of the app unaffected.
-All items from the C.8 list not called out explicitly above were covered by the C.1 commit's own
-verification pass (scope/admin gating, dedup warning, status-immutability, timingSafeEqual) or by
-the new unit tests (rate-limit boundaries, token format).
+  All items from the C.8 list not called out explicitly above were covered by the C.1 commit's own
+  verification pass (scope/admin gating, dedup warning, status-immutability, timingSafeEqual) or by
+  the new unit tests (rate-limit boundaries, token format).
 
 <!-- New decisions appended below as phases progress. -->
 
@@ -1202,7 +1203,7 @@ the new unit tests (rate-limit boundaries, token format).
   every tier, since an empty `inArray` would match nothing and show an empty library on first load.
 
 - **Question reports (`question_flags`) are a different thing from the review queue.**
-  `review.ts` gates drafts *before* publication; this is the feedback loop on questions already in
+  `review.ts` gates drafts _before_ publication; this is the feedback loop on questions already in
   play, raised by any player from the question screen. Deliberate choices: reporting has **no**
   effect on the round (no score change, no skip, nothing the room sees), or it becomes a way to
   signal "this one's hard"; one open report per player per question via a unique index, so a
@@ -1254,6 +1255,7 @@ the new unit tests (rate-limit boundaries, token format).
   were deleted rather than left dark, since nothing references them any more.
 
 ## 2026-08-24 — Taiwan (and Palestine/Vatican/Cook Islands/Niue) unclickable: Addendum D's own
+
 generator was never updated for its own new data file
 
 - **Root cause, reported as "can't click Taiwan":** `scripts/build-iso-lookup.ts` (which
@@ -1307,7 +1309,7 @@ generator was never updated for its own new data file
      toggling classes on the *same* node instead of wrapping it, so the node — and the d3-zoom
      behavior, and the ResizeObserver — persist across the toggle.
   2. Once that stopped remounting, the fullscreen box still didn't visually fill the viewport.
-     Root cause: `cn()` is a thin `clsx` wrapper *by design* (see its own doc comment — no
+     Root cause: `cn()` is a thin `clsx` wrapper _by design_ (see its own doc comment — no
      tailwind-merge, since this design system's closed token set rarely produces conflicting
      utilities) — but this was exactly the rare case: the div carried both `relative` (this
      file's own unconditional base class) and, once fullscreen, `fixed` (added for the overlay).
@@ -1318,7 +1320,7 @@ generator was never updated for its own new data file
      never both), rather than reaching for tailwind-merge for one call site.
   - Verified via direct DOM/ResizeObserver inspection, not just a screenshot: the zoom
     transform is now provably identical before and after toggling fullscreen, and the container
-    genuinely resizes to the viewport once the fix lands (confirmed the *box* was already
+    genuinely resizes to the viewport once the fix lands (confirmed the _box_ was already
     correct via `getBoundingClientRect`, and that the derived `<svg>` width/height eventually
     catches up — the several-second lag seen during testing was this specific browser-automation
     tab being backgrounded, `document.hidden === true`, which defers `ResizeObserver`
@@ -1373,10 +1375,10 @@ generator was never updated for its own new data file
   `detail.sortItems` straight to `SortFormInitial.items`), and `SortForm` already accepted an
   `initial` prop from the start (`updateSortQuestion` was always there — only the page wiring
   was missing). `geo` keeps its own, unrelated gap (its editor is a materially different UI, per
-  Addendum B.3) — this was never the same problem, just the same *symptom*.
+  Addendum B.3) — this was never the same problem, just the same _symptom_.
 - ~~Known gap: no MCP/import path, even text-only~~ — fixed, text-only. `sortDraftSchema`
   joined `questionDraftSchema`'s discriminated union in `lib/schemas/ingest.ts` (French field
-  `elements: string[]`, 3-6, order = correct order, no `mediaId` field *at all* — not optional-
+  `elements: string[]`, 3-6, order = correct order, no `mediaId` field _at all_ — not optional-
   and-rejected, structurally absent, same as `image` never appearing in this union in the first
   place). Because `creer_question`/`creer_questions_en_lot` both take `questionDraftSchema`
   directly as their input schema, this needed zero changes in `register.ts` beyond the
@@ -1385,11 +1387,10 @@ generator was never updated for its own new data file
   mirroring mcq's duplicate-choices one, add the `question_sort_items` insert branch to the
   transaction). Image-carrying sort questions still only come from the web form
   (`createSortQuestion`) — MCP has no upload path, same reason `image` itself is excluded
-  entirely, just narrower here: the *type* is reachable, one *variant* of it isn't.
+  entirely, just narrower here: the _type_ is reachable, one _variant_ of it isn't.
 - **Verification**: `pnpm typecheck`/`lint`/`test` (141 tests) and a real `pnpm build` all pass
   after both fixes. Did not run a live end-to-end drag-drop game session or a real MCP tool
   call — the user asked not to run end-to-end tests earlier in this same day's work.
-
 
 ## 2026-08-26 — New question type: `estimation` (guess a number, closeness scores)
 
@@ -1398,7 +1399,7 @@ generator was never updated for its own new data file
   and being nearer earns more than just scraping inside that margin. Scoped up front with the
   user via two explicit choices, since either could have meant a materially different build:
   **(1) per-player distance curve, not room-relative** — a player's score depends only on how
-  close *their own* guess is to the true value, never on what anyone else in the room guessed.
+  close _their own_ guess is to the true value, never on what anyone else in the room guessed.
   The alternative (closest player in the room wins outright, others scored by how much farther
   off they were) would have made every player's score depend on the whole room's answers landing
   first — a real dependency this app's scoring has never had, for any type. **(2) tolerance unit
@@ -1413,13 +1414,13 @@ generator was never updated for its own new data file
   omitted, so every other type's behaviour is bit-for-bit unchanged). `engine.ts`'s existing
   correction-phase slider (0..`maxPointsFor(difficulty)`, already there for every type's human
   review) reads that fraction to pre-fill its suggestion — `Math.round(maxPoints * fraction)` —
-  so "nearest earns most points" *is* the pre-filled suggestion on the same slider a host already
+  so "nearest earns most points" _is_ the pre-filled suggestion on the same slider a host already
   uses to override anything, not a second scoring path bolted on next to it. No engine.ts
   cross-player logic exists or was needed.
 - **Grading is a clean linear falloff, computed in grading.ts (pure, no I/O, same discipline as
   every other type there).** `distance = |guess - correctValue|`; `toleranceAbs` resolves
   percentage against `|correctValue|` or is used as-is for absolute; `isCorrect = distance <=
-  toleranceAbs`; `suggestedFraction = isCorrect ? max(0, 1 - distance/toleranceAbs) : 0` — exact
+toleranceAbs`; `suggestedFraction = isCorrect ? max(0, 1 - distance/toleranceAbs) : 0` — exact
   guess suggests full credit, a guess right at the boundary suggests none (still "correct" for
   streak/correctCount purposes per `applyCorrectionForQuestion`'s existing `awarded > 0` rule, just
   not worth anything unless the host overrides it). A zero-width tolerance (author set 0, or a
@@ -1449,3 +1450,53 @@ generator was never updated for its own new data file
 - **Verification**: `pnpm typecheck`/`lint`/`test` (160 tests, +11 for estimation) and a real
   `pnpm build` all pass. Did not run a live end-to-end game session or a real MCP tool call — per
   this same day's standing instruction not to run end-to-end tests.
+
+## 2026-09-03 — Repo pass: the reveal that never happened, and other dead weight
+
+A read of the whole tree with one question: what does the running app never reach? The answer
+was mostly the remains of the pre-KCulture game loop, left standing after the correction-round
+redesign (2026-08-2x entries above) rerouted the flow around it.
+
+- **`question:reveal` and `scoreboard:update` were never emitted.** The engine goes question →
+  lock → question … → correction → finished, and has since the redesign; the two events, their
+  payload types (`QuestionRevealPayload`, `PerPlayerReveal`), the `"reveal"`/`"scoreboard"`
+  phases, `RevealScreen`, `ScoreboardScreen`, and the `RoomClient` state and handlers that
+  waited for them were all unreachable. Removed. `StreakMeter` and `ScoreTicker` went with them
+  — their only consumers were those two screens (the podium has its own score reel). The chat
+  gate in `handlers.ts` listed the two dead phases as chat-allowed; the effective rule was
+  already lobby-only, and now says so.
+- **`manualAdvance` / `revealDurationS` / `host:next` were a feature with no implementation.**
+  The `host:next` handler validated its payload, checked the flag, and then did nothing — the
+  comment explained it was "best-effort". The create-room modal sent both config fields as
+  fixed literals nobody could change. All three removed from the config schema, the
+  `RoomConfig` type, the event map and the handler. Rooms already in the DB carry the old keys
+  in their config JSON; the zod schema strips unknown keys and the engine only reads named
+  fields, so nothing reads them. This supersedes the 2026-08-2x "`manualAdvance` added to
+  `RoomConfig`" entry.
+- **`src/lib/geo/country-centroids.ts` (803 generated lines) had no importer.** It was generated
+  for the brief §8.2 "invisible hit-circle at the centroid" fallback for countries with no
+  polygon (Tuvalu; Singapore/Malta/Monaco at 110m). That fallback was never built: `GeoMap` has
+  no circle code at all. Removed the file and the generation step; corrected the two comments
+  (the iso-lookup test, `map/types.ts`) that described the mechanism as if it existed. The gap
+  itself — those countries are not clickable in locate_country mode — is real and still open.
+- **Four copies of one seed script.** `seed-{economy,history,politics,estimation}-questions.ts`
+  were identical except for a file name and a log label. Now `seed-authored-questions.ts <file>`.
+- **Six copies of the authoring shell and the save cycle.** Every per-type form pasted the same
+  Formulaire/Aperçu tab switch + two-column grid, and the same
+  pending/error/setPending/setError/onCreated eight lines around its server action. Extracted
+  to `FormPreviewLayout` and `useQuestionSubmit`; the forms keep their own payload building,
+  which is the part that differs.
+- **`server/geo/actions.ts` ran its own query against the countries table** next to
+  `server/geo/resolve.ts`'s cached loader of the same rows. It now reads through the cache.
+- **Playwright was configured with no tests.** `playwright.config.ts` pointed at a `tests/e2e/`
+  that has never existed in git; `pnpm test:e2e` would have found nothing to run. Removed the
+  config, the script and the dev dependency; CLAUDE.md no longer advertises it. Trivially
+  re-addable the day someone writes an e2e test.
+- **Lint debt to zero:** three unused symbols in `handlers.ts`, a value import used only as a
+  type in `register.ts`, and a misplaced `eslint-disable-next-line` in `GeoMap.tsx` that
+  covered a comment line instead of the deps array (so the rule it meant to silence still fired).
+
+Left alone on purpose: `engine.ts` at ~1 100 lines. It could be split (room lifecycle, empty-room
+deletion, recovery, the run loop, the correction phase are five clear seams), but it is the one
+file where a wrong move costs a game in progress, and nothing in it is duplicated — long is not
+the same as wrong.

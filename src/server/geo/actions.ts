@@ -1,8 +1,6 @@
 "use server";
 
-import { asc } from "drizzle-orm";
-import { db } from "@/server/db";
-import { countries } from "@/server/db/schema";
+import { loadCountries } from "@/server/geo/resolve";
 
 export interface CountryOption {
   iso3: string;
@@ -21,20 +19,22 @@ export interface CountryOption {
  * from countries") — small enough (a few KB) to hand the client in one shot
  * rather than building a search API. The combobox (Addendum B.3.2) searches
  * this same in-memory list rather than round-tripping per keystroke.
+ *
+ * Reads through resolve.ts's process-level cache rather than running its own query: the two
+ * modules were loading the same static table with two near-identical selects.
  */
 export async function listCountries(): Promise<CountryOption[]> {
-  const rows = await db
-    .select({
-      iso3: countries.iso3,
-      nameFr: countries.nameFr,
-      officialNameFr: countries.officialNameFr,
-      capitalFr: countries.capitalFr,
-      regionFr: countries.regionFr,
-      flagEmoji: countries.flagEmoji,
-      population: countries.population,
-      areaKm2: countries.areaKm2,
-    })
-    .from(countries)
-    .orderBy(asc(countries.nameFr));
-  return rows;
+  const rows = await loadCountries();
+  return rows.map(
+    ({ iso3, nameFr, officialNameFr, capitalFr, regionFr, flagEmoji, population, areaKm2 }) => ({
+      iso3,
+      nameFr,
+      officialNameFr,
+      capitalFr,
+      regionFr,
+      flagEmoji,
+      population,
+      areaKm2,
+    }),
+  );
 }

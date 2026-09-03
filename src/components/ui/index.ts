@@ -12,8 +12,6 @@ export * from "@/components/ui/Badge";
 export * from "@/components/ui/Avatar";
 export * from "@/components/ui/Timer";
 export * from "@/components/ui/ProgressBar";
-export * from "@/components/ui/StreakMeter";
-export * from "@/components/ui/ScoreTicker";
 export * from "@/components/ui/PlayerChip";
 export * from "@/components/ui/Toast";
 export * from "@/components/ui/Modal";

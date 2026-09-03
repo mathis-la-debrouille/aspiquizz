@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { RadioCard } from "@/components/ui/RadioCard";
-import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { downscaleImage } from "@/lib/utils/downscale-image";
 import { normalizeAnswer } from "@/server/game/grading";
 import { createImageQuestion, updateImageQuestion } from "@/server/questions/actions";
@@ -68,9 +69,7 @@ export function ImageForm({
     ],
   );
   const [strict, setStrict] = useState(initial?.strict ?? false);
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, setError, submit } = useQuestionSubmit(onCreated);
 
   const category = categories.find((c) => c.id === shared.categoryId);
   const canSubmit =
@@ -102,9 +101,7 @@ export function ImageForm({
     }
   }
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
+  function handleSubmit() {
     const payload = {
       type: "image" as const,
       prompt,
@@ -119,12 +116,9 @@ export function ImageForm({
       choices: answerMode === "mcq" ? choices : [],
       ...shared,
     };
-    const result = initial
-      ? await updateImageQuestion(initial.id, payload)
-      : await createImageQuestion(payload);
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+    void submit(() =>
+      initial ? updateImageQuestion(initial.id, payload) : createImageQuestion(payload),
+    );
   }
 
   const form = (
@@ -287,22 +281,5 @@ export function ImageForm({
     />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }

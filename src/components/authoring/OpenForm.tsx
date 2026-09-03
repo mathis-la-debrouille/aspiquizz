@@ -5,9 +5,10 @@ import { X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { normalizeAnswer } from "@/server/game/grading";
 import { createOpenQuestion, updateOpenQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
@@ -48,22 +49,15 @@ export function OpenForm({
   const [primaryAnswer, setPrimaryAnswer] = useState(initial?.primaryAnswer ?? "");
   const [variants, setVariants] = useState<string[]>(initial?.variants ?? []);
   const [newVariant, setNewVariant] = useState("");
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, submit } = useQuestionSubmit(onCreated);
 
   const category = categories.find((c) => c.id === shared.categoryId);
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
+  function handleSubmit() {
     const payload = { type: "open" as const, prompt, strict, primaryAnswer, variants, ...shared };
-    const result = initial
-      ? await updateOpenQuestion(initial.id, payload)
-      : await createOpenQuestion(payload);
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+    void submit(() =>
+      initial ? updateOpenQuestion(initial.id, payload) : createOpenQuestion(payload),
+    );
   }
 
   const form = (
@@ -150,22 +144,5 @@ export function OpenForm({
     <QuestionPreview data={{ type: "open", prompt, hint: shared.hint }} category={category} />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }

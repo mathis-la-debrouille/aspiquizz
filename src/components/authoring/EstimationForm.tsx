@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { createEstimationQuestion, updateEstimationQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 
@@ -50,9 +51,7 @@ export function EstimationForm({
   );
   const [toleranceValue, setToleranceValue] = useState(initial?.toleranceValue?.toString() ?? "");
   const [unit, setUnit] = useState(initial?.unit ?? "");
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, submit } = useQuestionSubmit(onCreated);
 
   const category = categories.find((c) => c.id === shared.categoryId);
   const parsedValue = Number(correctValue);
@@ -64,9 +63,7 @@ export function EstimationForm({
     Number.isFinite(parsedTolerance) &&
     parsedTolerance > 0;
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
+  function handleSubmit() {
     const payload = {
       type: "estimation" as const,
       prompt,
@@ -76,12 +73,9 @@ export function EstimationForm({
       unit,
       ...shared,
     };
-    const result = initial
-      ? await updateEstimationQuestion(initial.id, payload)
-      : await createEstimationQuestion(payload);
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+    void submit(() =>
+      initial ? updateEstimationQuestion(initial.id, payload) : createEstimationQuestion(payload),
+    );
   }
 
   const form = (
@@ -136,8 +130,8 @@ export function EstimationForm({
           {toleranceType === "percentage"
             ? (parsedValue + (Math.abs(parsedValue) * parsedTolerance) / 100).toFixed(1)
             : parsedValue + parsedTolerance}
-          {unit ? ` ${unit}` : ""} — plus la réponse est proche de {parsedValue}, plus elle
-          rapporte de points.
+          {unit ? ` ${unit}` : ""} — plus la réponse est proche de {parsedValue}, plus elle rapporte
+          de points.
         </p>
       )}
 
@@ -161,25 +155,11 @@ export function EstimationForm({
   );
 
   const preview = (
-    <QuestionPreview data={{ type: "estimation", prompt, unit, hint: shared.hint }} category={category} />
+    <QuestionPreview
+      data={{ type: "estimation", prompt, unit, hint: shared.hint }}
+      category={category}
+    />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }

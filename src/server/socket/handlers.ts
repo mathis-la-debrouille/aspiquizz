@@ -10,7 +10,6 @@ import {
   roomUpdateConfigSchema,
   roomStartSchema,
   hostSkipSchema,
-  hostNextSchema,
   correctionSetSchema,
   correctionNextSchema,
   playerReadySchema,
@@ -23,7 +22,6 @@ import { generateUniqueRoomCode } from "@/server/game/room-code";
 import {
   allRooms,
   createRoomState,
-  deleteRoomState,
   getRoom,
   migrateHostIfNeeded,
   recordAnswer,
@@ -32,7 +30,6 @@ import {
   startGame,
   toLobbySummary,
   toRoomStateView,
-  cancelLoop,
   setCorrectionAward,
   advanceCorrection,
   buildCorrectionPayload,
@@ -398,8 +395,7 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!room) return;
     // Host-only, checked here rather than in the UI: this is the trust boundary, and
     // a player who could flip their own verdict could award themselves the game.
-    if (room.hostId !== user.id)
-      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    if (room.hostId !== user.id) return emitError(socket, "forbidden", "Seul l'hôte corrige.");
     const { position, userId, awarded } = parsed.data;
     // Broadcast the CLAMPED value, not what the client sent — the ceiling is the
     // question's own tier, so this is what actually got stored.
@@ -419,20 +415,8 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!parsed.success) return;
     const room = getRoom(parsed.data.code);
     if (!room) return;
-    if (room.hostId !== user.id)
-      return emitError(socket, "forbidden", "Seul l'hôte corrige.");
+    if (room.hostId !== user.id) return emitError(socket, "forbidden", "Seul l'hôte corrige.");
     advanceCorrection(room, parsed.data.position);
-  });
-
-  socket.on("host:next", (payload) => {
-    const parsed = hostNextSchema.safeParse(payload);
-    if (!parsed.success) return;
-    const room = getRoom(parsed.data.code);
-    if (!room || room.hostId !== user.id || !room.config.manualAdvance) return;
-    // Manual-advance is a config opt-in the host can use to skip the automatic reveal/scoreboard
-    // hold; the loop's sleep() calls are the only synchronisation point, so this is best-effort
-    // (advances on the next natural tick) rather than an instant cut — acceptable for the cosmetic
-    // pacing this controls.
   });
 
   socket.on("chat:send", (payload) => {
@@ -440,7 +424,9 @@ export function registerSocketHandlers(io: GameServer, socket: GameSocket): void
     if (!parsed.success) return;
     const room = getRoom(parsed.data.code);
     if (!room) return;
-    if (room.phase !== "lobby" && room.phase !== "reveal" && room.phase !== "scoreboard") return;
+    // Chat is a lobby thing. During the run it would be a way to pass answers around, and the
+    // correction round has the room talking out loud anyway.
+    if (room.phase !== "lobby") return;
     const last = chatLastSentAt.get(user.id) ?? 0;
     if (Date.now() - last < 1000) return;
     chatLastSentAt.set(user.id, Date.now());
@@ -515,10 +501,6 @@ async function handleLeave(
 
     await broadcastRoomUpdated(io, room);
   }
-}
-
-async function broadcastLobbyRoomsSafe(io: GameServer): Promise<void> {
-  await broadcastLobbyRooms(io);
 }
 
 async function handleDisconnect(io: GameServer, socket: GameSocket): Promise<void> {

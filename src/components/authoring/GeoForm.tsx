@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioCard } from "@/components/ui/RadioCard";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { CountrySearchCombobox } from "@/components/authoring/CountrySearchCombobox";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { createGeoQuestion } from "@/server/questions/actions";
 import { listCountries, type CountryOption } from "@/server/geo/actions";
 import type { GeoMode } from "@/server/game/grading";
@@ -36,12 +37,36 @@ const DEFAULT_SHARED: SharedFieldsValue = {
 
 // Addendum B.3.5, step 1 — one-line description of what the *player* does, not the author.
 const GEO_MODES: { value: GeoMode; label: string; description: string }[] = [
-  { value: "locate_country", label: "Localiser un pays", description: "Le joueur clique le pays sur la carte." },
-  { value: "name_country", label: "Nommer un pays", description: "Un pays est surligné ; le joueur tape son nom." },
-  { value: "find_capital", label: "Trouver une capitale", description: "Le joueur tape la capitale d'un pays surligné." },
-  { value: "capital_of", label: "Capitale de quel pays", description: "Le joueur clique le pays dont on donne la capitale." },
-  { value: "name_from_shape", label: "Deviner depuis la silhouette", description: "Seule la silhouette est visible ; le joueur tape le nom." },
-  { value: "name_from_flag", label: "Deviner depuis le drapeau", description: "Seul le drapeau est affiché ; le joueur tape le nom du pays." },
+  {
+    value: "locate_country",
+    label: "Localiser un pays",
+    description: "Le joueur clique le pays sur la carte.",
+  },
+  {
+    value: "name_country",
+    label: "Nommer un pays",
+    description: "Un pays est surligné ; le joueur tape son nom.",
+  },
+  {
+    value: "find_capital",
+    label: "Trouver une capitale",
+    description: "Le joueur tape la capitale d'un pays surligné.",
+  },
+  {
+    value: "capital_of",
+    label: "Capitale de quel pays",
+    description: "Le joueur clique le pays dont on donne la capitale.",
+  },
+  {
+    value: "name_from_shape",
+    label: "Deviner depuis la silhouette",
+    description: "Seule la silhouette est visible ; le joueur tape le nom.",
+  },
+  {
+    value: "name_from_flag",
+    label: "Deviner depuis le drapeau",
+    description: "Seul le drapeau est affiché ; le joueur tape le nom du pays.",
+  },
 ];
 
 const CLICK_MODES: GeoMode[] = ["locate_country", "capital_of"];
@@ -78,7 +103,9 @@ function suggestAnswers(mode: GeoMode, country: CountryOption | undefined): stri
 }
 
 function formatPopulation(n: number): string {
-  return n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)} M hab.` : `${(n / 1000).toFixed(0)} k hab.`;
+  return n >= 1_000_000
+    ? `${(n / 1_000_000).toFixed(1)} M hab.`
+    : `${(n / 1000).toFixed(0)} k hab.`;
 }
 
 /** The "?" info affordance + permanent helper line for each of the three options — Addendum
@@ -136,9 +163,7 @@ export function GeoForm({
   const [strict, setStrict] = useState(false);
   const [showLabels, setShowLabels] = useState(false);
   const [showNeighbours, setShowNeighbours] = useState(true);
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, submit } = useQuestionSubmit(onCreated);
   const [countriesError, setCountriesError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -180,24 +205,21 @@ export function GeoForm({
   const canSubmit =
     prompt && shared.categoryId && targetIso3 && (!needsTextAnswers || acceptedAnswers.length > 0);
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
-    const result = await createGeoQuestion({
-      type: "geo",
-      prompt,
-      geoMode,
-      strict,
-      targetIso3: targetIso3!,
-      acceptedAnswers,
-      showLabels,
-      showNeighbours,
-      viewBbox: savedViewBbox,
-      ...shared,
-    });
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+  function handleSubmit() {
+    void submit(() =>
+      createGeoQuestion({
+        type: "geo",
+        prompt,
+        geoMode,
+        strict,
+        targetIso3: targetIso3!,
+        acceptedAnswers,
+        showLabels,
+        showNeighbours,
+        viewBbox: savedViewBbox,
+        ...shared,
+      }),
+    );
   }
 
   const form = (
@@ -361,22 +383,5 @@ export function GeoForm({
     />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }

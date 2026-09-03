@@ -213,28 +213,6 @@ export const COUNTRY_NAME_FR: Readonly<Record<string, string>> = ${JSON.stringif
 `;
   writeFileSync(path.join(repoRoot, "src/lib/geo/country-names.ts"), namesOutput);
 
-  // Some sovereign states (mostly small island nations and micro-states — Singapore, Malta,
-  // Monaco, Tuvalu, …) have no polygon at all in the 110m topology, and Tuvalu has none in
-  // either resolution — see the iso-lookup unit test's KNOWN_MAP_GEOMETRY_GAPS. GeoMap falls
-  // back to an invisible hit-circle at this seeded centroid for any iso3 missing from whatever
-  // topology it loaded, so those countries stay clickable in the world view — brief §8.2's
-  // "small-country problem", extended to the zero-geometry case.
-  const centroids = Object.fromEntries(
-    countries.map((c) => [c.iso3, [c.centroid_lon, c.centroid_lat]]).sort(),
-  );
-  const centroidsOutput = `/**
- * GENERATED FILE — do not edit by hand. Regenerate with:
- *   pnpm tsx scripts/build-iso-lookup.ts
- *
- * iso3 → [lon, lat] — every seeded country's centroid, used by GeoMap as a
- * click-target fallback for countries absent from the loaded topology
- * (see build-iso-lookup.ts for why this exists).
- */
-
-export const COUNTRY_CENTROID: Readonly<Record<string, readonly [number, number]>> = ${JSON.stringify(centroids, null, 2)};
-`;
-  writeFileSync(path.join(repoRoot, "src/lib/geo/country-centroids.ts"), centroidsOutput);
-
   console.log(
     JSON.stringify({
       event: "build_iso_lookup_complete",

@@ -282,7 +282,10 @@ export function GeoMap({
           scaleExtent[1],
           Math.max(
             scaleExtent[0],
-            Math.min((size.width - FOCUS_PADDING) / boxWidth, (size.height - FOCUS_PADDING) / boxHeight),
+            Math.min(
+              (size.width - FOCUS_PADDING) / boxWidth,
+              (size.height - FOCUS_PADDING) / boxHeight,
+            ),
           ),
         );
         const cx = (x0 + x1) / 2;
@@ -345,7 +348,10 @@ export function GeoMap({
       ];
       const projected = corners
         .map((c) => projection(c))
-        .filter((p): p is [number, number] => p !== null && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+        .filter(
+          (p): p is [number, number] =>
+            p !== null && Number.isFinite(p[0]) && Number.isFinite(p[1]),
+        );
       if (projected.length === 0) return flyToBounds(null);
       const xs = projected.map((p) => p[0]);
       const ys = projected.map((p) => p[1]);
@@ -365,9 +371,10 @@ export function GeoMap({
     if (isSilhouette) return;
     if (focusOn && targetFeature) return flyTo(targetFeature);
     return flyToBbox(frameOn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- flyTo/flyToBbox intentionally
-    // excluded: they close over size/scaleExtent/projection, which already re-trigger this
-    // effect via their own deps below; re-including them would double-fire on every resize.
+    // flyTo/flyToBbox intentionally excluded: they close over size/scaleExtent/projection, which
+    // already re-trigger this effect via their own deps below; re-including them would
+    // double-fire on every resize.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusOn, targetFeature, frameOn, isSilhouette, size.width, size.height]);
 
   function zoomBy(factor: number) {

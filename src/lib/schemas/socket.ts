@@ -38,14 +38,6 @@ export const roomConfigSchema = z.object({
   difficultyMax: z.number().int().min(1).max(5),
   allowLateJoin: z.boolean().default(true),
   maxPlayers: z.number().int().min(2).max(50),
-  revealDurationS: z.number().int().min(2).max(20),
-  /**
-   * Not in the brief's §5 config literal, but §11.1's host:next event is
-   * explicitly documented as "advance during a reveal, if manualAdvance" —
-   * the config shape needs this flag for that event to mean anything. See
-   * DECISIONS.md.
-   */
-  manualAdvance: z.boolean().default(false),
 });
 
 export const roomCreateSchema = z.object({
@@ -62,7 +54,6 @@ export const roomKickSchema = z.object({ code: roomCodeSchema, userId: z.string(
 export const roomUpdateConfigSchema = z.object({ code: roomCodeSchema, config: roomConfigSchema });
 export const roomStartSchema = z.object({ code: roomCodeSchema });
 export const hostSkipSchema = z.object({ code: roomCodeSchema });
-export const hostNextSchema = z.object({ code: roomCodeSchema });
 
 /** Correction phase — the host ruling on one player's answer. */
 export const correctionSetSchema = z.object({

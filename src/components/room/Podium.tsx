@@ -9,19 +9,13 @@ import { Button } from "@/components/ui/Button";
 import { useSfx } from "@/lib/sound/useSfx";
 import type { RoomFinishedPayload, RoomStateView } from "@/server/socket/events";
 
-export function Podium({
-  payload,
-  state,
-}: {
-  payload: RoomFinishedPayload;
-  state: RoomStateView;
-}) {
+export function Podium({ payload, state }: { payload: RoomFinishedPayload; state: RoomStateView }) {
   const router = useRouter();
   const playSfx = useSfx();
   const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
-  // The between-questions scoreboard only shows every SCOREBOARD_INTERVAL-th question now, so
-  // this is the one place left to see the full per-question record — one lookup per (question,
-  // player) cell rather than re-scanning answerLog per cell render.
+  // Nothing between questions shows scores any more (the run is uninterrupted, the correction
+  // round rules one question at a time), so this is the one place to see the full per-question
+  // record — one lookup per (question, player) cell rather than re-scanning answerLog per cell.
   const answerByCell = useMemo(() => {
     const map = new Map<string, RoomFinishedPayload["answerLog"][number]>();
     for (const a of payload.answerLog) map.set(`${a.position}-${a.userId}`, a);

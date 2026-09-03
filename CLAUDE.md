@@ -26,9 +26,8 @@ identifiers, comments, and commit messages stay in **English**.
 | Maps            | `d3-geo`, `d3-zoom`, `d3-selection`, `d3-interpolate`, `topojson-client`, `world-atlas` — SVG paths, never bitmap map images               |
 | Animation       | `motion`, used sparingly, `prefers-reduced-motion` always respected                                                                        |
 | Sound           | Procedural WebAudio synth (`src/lib/sound/engine.ts`), no audio files/library — see DECISIONS.md (Phase 11)                                |
-| MCP             | `@modelcontextprotocol/sdk`, mounted on the raw HTTP server (`/mcp`), personal access tokens — see Addendum C, `src/server/mcp/`            |
+| MCP             | `@modelcontextprotocol/sdk`, mounted on the raw HTTP server (`/mcp`), personal access tokens — see Addendum C, `src/server/mcp/`           |
 | Unit tests      | Vitest (`tests/unit/`)                                                                                                                     |
-| E2E             | Playwright (`tests/e2e/`)                                                                                                                  |
 | Package manager | pnpm                                                                                                                                       |
 | Lint/format     | ESLint flat config (`eslint.config.mjs`) + Prettier                                                                                        |
 
@@ -57,12 +56,13 @@ pnpm format:check
 pnpm typecheck       # tsc --noEmit
 pnpm test            # vitest run (unit tests, tests/unit/)
 pnpm test:watch
-pnpm test:e2e        # playwright test (tests/e2e/) — boots its own server on :3100 against a temp DB
 pnpm db:generate     # drizzle-kit generate — writes a new migration from schema.ts (from Phase 2)
 pnpm db:migrate      # applies pending migrations by hand — server.ts also runs this at boot (Phase 12)
 pnpm db:seed         # seeds countries (scripts/data/countries.fr.json) + categories + badges
-                     # NOT the questions — those are seed-imported-questions.ts /
-                     # seed-geo-full.ts, run by hand, never at boot
+                     # NOT the questions — those are seed-imported-questions.ts (the export
+                     # round-trip), seed-authored-questions.ts <file> (the hand-written
+                     # batches under scripts/data/), and seed-geo-full.ts — run by hand,
+                     # never at boot
 pnpm db:studio       # drizzle-kit studio
 ```
 
@@ -93,7 +93,7 @@ src/
 scripts/ (seed-countries.ts, seed-categories.ts, seed-badges.ts, create-user.ts, migrate.ts,
           data/countries.fr.json, build-iso-lookup.ts [Phase 4], seed-demo.ts [dev fixtures, later phase])
 public/geo/ (countries-110m.json, countries-50m.json)
-tests/ (unit/, e2e/)
+tests/ (unit/)
 ```
 
 `src/server/db`, `src/server/auth`, `src/components/map`, `src/server/game`, and
@@ -126,7 +126,7 @@ value. Scored per player, independently, never room-relative (see DECISIONS.md f
 distinction mattered enough to confirm with the user up front). `question_estimation` holds one
 row per question (correctValue, toleranceType `"absolute"|"percentage"`, toleranceValue, unit
 nullable); `grading.ts`'s `gradeAnswer` returns an optional `suggestedFraction` (0-1, only
-estimation ever sets it — every other type stays binary) that pre-fills the *existing*
+estimation ever sets it — every other type stays binary) that pre-fills the _existing_
 correction-phase slider via `Math.round(maxPoints * fraction)`, rather than a second scoring path.
 Fully MCP/import-reachable from day one, like `open`/`mcq`/`geo` — a number and a unit carry no
 media, so unlike `sort` or `image` there was never a reason to fork the insert path.
@@ -136,14 +136,14 @@ plain module — no `"use server"`, no `next/cache`/`next/navigation` import, ev
 ("use server") is a thin wrapper that calls into it and adds `revalidatePath`. This split exists
 because `server.ts` statically imports the MCP transport, which imports `register.ts`, which
 needs these category-mutation functions — and `next/cache` reaching that far outside any Next
-request context previously crashed the *entire* production server on its first real page request
+request context previously crashed the _entire_ production server on its first real page request
 (not just an MCP route), a real bug documented in DECISIONS.md. Any new function both ingest.ts/
 MCP and the web need must go in `core.ts`, never in a `"use server"` file.
 
 Geo map editor mode (Addendum B.3): `GeoMap`'s `editorChrome` prop (default false) gates
 authoring-only behaviour — never set it outside `GeoForm`. As of the map-fixes-in-game pass,
 this is a deliberate two-way split, not a single on/off switch: zoom controls, fullscreen, the
-50m high-res swap at high zoom, and the touch/fullscreen tap-to-confirm flow are *not*
+50m high-res swap at high zoom, and the touch/fullscreen tap-to-confirm flow are _not_
 editorChrome-exclusive any more — they also activate in-game (`GeoAnswerSurface`) whenever a
 click-mode question (locate_country/capital_of) is still interactive, gated by `showZoomChrome`
 (`editorChrome || zoomEnabled`) rather than `editorChrome` alone, since none of them can leak an
@@ -156,7 +156,7 @@ MCP authoring server (Addendum C): `POST`/`GET /mcp` is mounted directly on the 
 in `server.ts`, before Next's own handler — never a Next route handler, so the session-cookie
 middleware never runs on it. Auth is a personal access token (`api_tokens` table,
 `aspi_pat_`-prefixed, sha256-hashed, `timingSafeEqual`-compared), never a session cookie.
-`src/server/questions/ingest.ts`'s `createQuestionFromDraft` is the *only* `insert(questions)`
+`src/server/questions/ingest.ts`'s `createQuestionFromDraft` is the _only_ `insert(questions)`
 call site for question creation — the web authoring forms were rewired to go through it too (the
 one exception is `image`, which stays on its own direct-insert path since MCP/import have no
 image variant at all). Every MCP-created question lands `status: 'draft'`, unconditionally,

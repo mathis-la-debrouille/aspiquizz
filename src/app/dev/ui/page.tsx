@@ -21,12 +21,10 @@ import {
   ProgressBar,
   QuestionTypeBadge,
   RadioCard,
-  ScoreTicker,
   Select,
   SegmentedControl,
   Skeleton,
   SparkleFreeStar,
-  StreakMeter,
   Tabs,
   Textarea,
   Timer,
@@ -78,7 +76,6 @@ function ToastButtons() {
 export default function UiGalleryPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [tab, setTab] = useState("moss");
-  const [score, setScore] = useState(1240);
   const [radioValue, setRadioValue] = useState("mcq");
   const [timerKey, setTimerKey] = useState(0);
   const timerStart = Date.now();
@@ -250,23 +247,11 @@ export default function UiGalleryPage() {
           </Button>
         </Section>
 
-        <Section title="ProgressBar & StreakMeter">
+        <Section title="ProgressBar">
           <div className="flex w-64 flex-col gap-4">
             <ProgressBar value={0.35} label="Maîtrise — Géographie" tone="moss" />
             <ProgressBar value={0.8} label="Chargement" tone="gold" />
           </div>
-          <div className="flex flex-col gap-2">
-            <StreakMeter streak={1} />
-            <StreakMeter streak={3} />
-            <StreakMeter streak={5} />
-          </div>
-        </Section>
-
-        <Section title="ScoreTicker">
-          <ScoreTicker value={score} className="text-34 text-gold" />
-          <Button variant="secondary" size="sm" onClick={() => setScore((s) => s + 780)}>
-            +780
-          </Button>
         </Section>
 
         <Section title="PlayerChip">

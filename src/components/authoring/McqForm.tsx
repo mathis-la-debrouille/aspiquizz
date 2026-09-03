@@ -5,9 +5,10 @@ import { ArrowUp, ArrowDown, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
-import { Tabs } from "@/components/ui/Tabs";
 import { SharedFields, type SharedFieldsValue } from "@/components/authoring/SharedFields";
 import { QuestionPreview } from "@/components/game/QuestionPreview";
+import { FormPreviewLayout } from "@/components/authoring/FormPreviewLayout";
+import { useQuestionSubmit } from "@/components/authoring/useQuestionSubmit";
 import { createMcqQuestion, updateMcqQuestion } from "@/server/questions/actions";
 import type { CategoryOption } from "@/components/authoring/types";
 
@@ -58,9 +59,7 @@ export function McqForm({
       { label: "", isCorrect: false },
     ],
   );
-  const [mobileTab, setMobileTab] = useState("form");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, submit } = useQuestionSubmit(onCreated);
 
   const category = categories.find((c) => c.id === shared.categoryId);
   const correctCount = choices.filter((c) => c.isCorrect).length;
@@ -78,16 +77,11 @@ export function McqForm({
     setChoices(choices.map((c, ci) => (ci === i ? { ...c, ...patch } : c)));
   }
 
-  async function handleSubmit() {
-    setPending(true);
-    setError(null);
+  function handleSubmit() {
     const payload = { type: "mcq" as const, prompt, choices, ...shared };
-    const result = initial
-      ? await updateMcqQuestion(initial.id, payload)
-      : await createMcqQuestion(payload);
-    setPending(false);
-    if (!result.ok) setError(result.error);
-    else onCreated(result.id);
+    void submit(() =>
+      initial ? updateMcqQuestion(initial.id, payload) : createMcqQuestion(payload),
+    );
   }
 
   const form = (
@@ -182,22 +176,5 @@ export function McqForm({
     />
   );
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="sm:hidden">
-        <Tabs
-          tabs={[
-            { id: "form", label: "Formulaire" },
-            { id: "preview", label: "Aperçu" },
-          ]}
-          value={mobileTab}
-          onChange={setMobileTab}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className={mobileTab === "form" ? "block" : "hidden sm:block"}>{form}</div>
-        <div className={mobileTab === "preview" ? "block" : "hidden sm:block"}>{preview}</div>
-      </div>
-    </div>
-  );
+  return <FormPreviewLayout form={form} preview={preview} />;
 }
