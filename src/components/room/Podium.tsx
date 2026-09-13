@@ -6,10 +6,21 @@ import { Sparkles, CheckCircle2, XCircle } from "lucide-react";
 import { PodiumStage } from "@/components/room/PodiumStage";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import { useSfx } from "@/lib/sound/useSfx";
 import type { RoomFinishedPayload, RoomStateView } from "@/server/socket/events";
 
-export function Podium({ payload, state }: { payload: RoomFinishedPayload; state: RoomStateView }) {
+export function Podium({
+  payload,
+  state,
+  flaggedQuestionIds,
+  onFlagged,
+}: {
+  payload: RoomFinishedPayload;
+  state: RoomStateView;
+  flaggedQuestionIds: ReadonlySet<string>;
+  onFlagged: (questionId: string) => void;
+}) {
   const router = useRouter();
   const playSfx = useSfx();
   const playersByUserId = new Map(state.players.map((p) => [p.userId, p]));
@@ -98,8 +109,21 @@ export function Podium({ payload, state }: { payload: RoomFinishedPayload; state
               <tbody>
                 {payload.questionHistory.map((q) => (
                   <tr key={q.position} className="border-t border-border-soft">
-                    <td className="sticky left-0 z-10 max-w-[16rem] truncate bg-bg-base px-3 py-2 text-left text-ink-mid">
-                      <span className="text-ink-faint">{q.position + 1}.</span> {q.prompt}
+                    <td className="sticky left-0 z-10 max-w-[18rem] bg-bg-base px-3 py-2 text-left text-ink-mid">
+                      <div className="flex items-center gap-2">
+                        {/* Last chance to report before everyone leaves the room. */}
+                        <FlagQuestionButton
+                          questionId={q.questionId}
+                          roomCode={state.code}
+                          flagged={flaggedQuestionIds.has(q.questionId)}
+                          onFlagged={onFlagged}
+                          mode="detailed"
+                          size="sm"
+                        />
+                        <span className="truncate" title={q.prompt}>
+                          <span className="text-ink-faint">{q.position + 1}.</span> {q.prompt}
+                        </span>
+                      </div>
                     </td>
                     {payload.fullScoreboard.map((entry) => {
                       const a = answerByCell.get(`${q.position}-${entry.userId}`);

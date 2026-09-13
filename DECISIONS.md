@@ -1500,3 +1500,36 @@ Left alone on purpose: `engine.ts` at ~1 100 lines. It could be split (room life
 deletion, recovery, the run loop, the correction phase are five clear seams), but it is the one
 file where a wrong move costs a game in progress, and nothing in it is duplicated — long is not
 the same as wrong.
+
+## 2026-09-13 — Question reports: from the correction screen, with a reason, and actually acted on
+
+Reports existed since `ab28e69`, but only as a one-tap icon on the question screen. The 15 open
+reports in production all had `reason = null`, so the admin queue was a list of prompts with no
+indication of what anyone disputed.
+
+- **Report from the correction screen and the end-of-game recap, not only mid-question.** The
+  correction screen is where a report is informed — the accepted answer is on screen and there is
+  no timer — so the control there opens a dialog with reason tags (réponse fausse, ma réponse
+  aurait dû compter, ambiguë, explication fausse, plus à jour, coquille) and a comment. The
+  question screen keeps the one-tap report: stopping to type mid-question costs the question.
+  `CorrectionShowPayload` and `QuestionHistoryEntry` gained `questionId` for this; both are sent
+  after the answer has already been shown to the room, so nothing leaks that the rest of the
+  payload doesn't already carry.
+- **No migration.** The tags and comment are composed into the existing nullable
+  `question_flags.reason` text column (`composeFlagReason` in `src/lib/flags.ts`, shared with the
+  Zod schema so the 500-character cap lives in one place). Nobody queries by tag; a structured
+  column would have been schema for its own sake.
+- **A second report from the same player updates the first.** The unique index allows one row per
+  player per question, and `flagQuestion` used to return early on any existing row — so the
+  natural sequence (tap during the question, explain at correction) silently dropped the
+  explanation, and a player disputing a question again after an admin closed it as "kept" left no
+  trace. Now a new reason replaces the stored one, and any report on a closed row reopens it.
+- **"Retirée du jeu" archives the question.** It used to only stamp the reports as `removed`,
+  leaving the question published and still drawn into games. It now sets `status = 'archived'`
+  (reversible from the Questions tab — never a hard delete, same rule as `setQuestionStatusAction`).
+- **The admin card shows the accepted answer and explanation** next to each reporter's reason,
+  with a link to the edit form (not for geo, whose editor isn't wired into edit mode).
+  `describeCorrectAnswer` moved from `engine.ts` to `question-detail.ts` so the queue shows exactly
+  what the correction screen showed.
+- **Which questions a player has reported lives in `RoomClient`,** not in the button: the same
+  question is shown three times (question, correction, recap) as three separate mounts.

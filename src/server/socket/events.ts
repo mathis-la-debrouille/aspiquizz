@@ -93,6 +93,9 @@ export interface PodiumEntry {
 
 export interface QuestionHistoryEntry {
   position: number;
+  /** Lets the recap offer the report control per row. Safe: this payload is sent after the
+   *  correction round, when every answer has already been shown to the room. */
+  questionId: string;
   prompt: string;
 }
 
@@ -145,6 +148,9 @@ export interface CorrectionAnswer {
 }
 
 export interface CorrectionShowPayload {
+  /** For the report control. The correction screen shows the answer anyway, so the id
+   *  gives nothing away that the rest of this payload doesn't. */
+  questionId: string;
   position: number;
   total: number;
   prompt: string;

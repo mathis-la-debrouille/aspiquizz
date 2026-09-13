@@ -10,27 +10,19 @@
  * userId would let anyone file a report as anyone else.
  */
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
 import { rooms } from "@/server/db/schema";
 import { getSession } from "@/server/auth/session";
 import { requireAdmin } from "@/server/admin/guard";
 import { flagQuestion, resolveFlagsForQuestion, type FlagResult } from "@/server/questions/flags";
-import type { FlagResolution } from "@/server/db/schema";
-
-const flagInputSchema = z.object({
-  questionId: z.string().min(1),
-  /** The public join code, not the DB id — resolved below. */
-  roomCode: z.string().trim().min(1).nullable().optional(),
-  reason: z.string().trim().max(500).nullable().optional(),
-});
+import { flagQuestionInputSchema, flagResolutionSchema } from "@/lib/schemas/flags";
 
 export async function flagQuestionAction(input: unknown): Promise<FlagResult> {
   const session = await getSession();
   if (!session) return { ok: false, error: "Session expirée." };
 
-  const parsed = flagInputSchema.safeParse(input);
+  const parsed = flagQuestionInputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Requête invalide." };
 
   // code -> DB id. A missing or stale code is not an error: the report is about
@@ -52,10 +44,15 @@ export async function flagQuestionAction(input: unknown): Promise<FlagResult> {
 
 export async function resolveFlagsAction(
   questionId: string,
-  resolution: FlagResolution,
+  resolution: unknown,
 ): Promise<{ ok: true; count: number } | { ok: false; error: string }> {
   const admin = await requireAdmin();
-  const result = await resolveFlagsForQuestion(questionId, resolution, admin.id);
+  const parsed = flagResolutionSchema.safeParse(resolution);
+  if (!parsed.success || !questionId) return { ok: false, error: "Requête invalide." };
+
+  const result = await resolveFlagsForQuestion(questionId, parsed.data, admin.id);
   revalidatePath("/admin");
+  // An archived question drops out of the library too.
+  if (parsed.data === "removed") revalidatePath("/creer");
   return result;
 }

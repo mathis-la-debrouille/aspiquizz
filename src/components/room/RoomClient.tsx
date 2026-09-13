@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useSocket } from "@/lib/socket/client";
@@ -42,6 +42,17 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
   const [finished, setFinished] = useState<RoomFinishedPayload | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
   const [banner, setBanner] = useState<string | null>(null);
+  // Questions this player has reported, for the whole visit. Lives here rather than in the
+  // report button because the same question is shown three times — while answering, during
+  // correction, in the recap — and each is a separate mount that would otherwise forget.
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<ReadonlySet<string>>(new Set());
+  const markFlagged = useCallback(
+    (questionId: string) =>
+      setFlaggedQuestionIds((prev) =>
+        prev.has(questionId) ? prev : new Set(prev).add(questionId),
+      ),
+    [],
+  );
 
   // Warms GeoMap's dynamic chunk (isolated from the main bundle per CLAUDE.md — never a static
   // import here) and its 110m topology fetch during idle lobby/countdown time. Without this,
@@ -257,7 +268,12 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
           transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
         >
           {viewKey === "finished" && finished ? (
-            <Podium payload={finished} state={state} />
+            <Podium
+              payload={finished}
+              state={state}
+              flaggedQuestionIds={flaggedQuestionIds}
+              onFlagged={markFlagged}
+            />
           ) : viewKey === "lobby" ? (
             <WaitingRoom
               state={state}
@@ -281,6 +297,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               isSpectator={
                 state.players.find((p) => p.userId === currentUserId)?.isSpectator ?? false
               }
+              flaggedQuestionIds={flaggedQuestionIds}
+              onFlagged={markFlagged}
             />
           ) : viewKey === "correction" && correction ? (
             <CorrectionScreen
@@ -288,6 +306,8 @@ export function RoomClient({ code, currentUserId }: { code: string; currentUserI
               code={code}
               payload={correction}
               isHost={state.hostId === currentUserId}
+              flaggedQuestionIds={flaggedQuestionIds}
+              onFlagged={markFlagged}
             />
           ) : (
             <Skeleton className="h-40 w-full" />

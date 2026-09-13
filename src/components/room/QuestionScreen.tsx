@@ -34,6 +34,8 @@ export function QuestionScreen({
   clockOffset,
   showDifficulty,
   isSpectator,
+  flaggedQuestionIds,
+  onFlagged,
 }: {
   socket: GameSocket;
   code: string;
@@ -48,6 +50,9 @@ export function QuestionScreen({
    *  here, because it used to be invisible — you could type a whole answer into a field that
    *  would never be read. */
   isSpectator: boolean;
+  /** Owned by RoomClient so a report filed here still shows on the correction screen. */
+  flaggedQuestionIds: ReadonlySet<string>;
+  onFlagged: (questionId: string) => void;
 }) {
   const [submitted, setSubmitted] = useState(false);
 
@@ -109,7 +114,13 @@ export function QuestionScreen({
         </div>
         <div className="flex items-center gap-3">
           <Timer deadlineMs={adjustedDeadlineMs} startedAtMs={adjustedStartedAtMs} />
-          <FlagQuestionButton key={q.id} questionId={q.id} roomCode={code} />
+          <FlagQuestionButton
+            key={q.id}
+            questionId={q.id}
+            roomCode={code}
+            flagged={flaggedQuestionIds.has(q.id)}
+            onFlagged={onFlagged}
+          />
         </div>
       </div>
 

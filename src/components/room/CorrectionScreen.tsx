@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { DifficultyBadge } from "@/components/ui/Badge";
+import { FlagQuestionButton } from "@/components/room/FlagQuestionButton";
 import { cn } from "@/lib/utils/cn";
 import type { GameSocket } from "@/lib/socket/client";
 import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
@@ -31,11 +32,15 @@ export function CorrectionScreen({
   code,
   payload,
   isHost,
+  flaggedQuestionIds,
+  onFlagged,
 }: {
   socket: GameSocket;
   code: string;
   payload: CorrectionShowPayload;
   isHost: boolean;
+  flaggedQuestionIds: ReadonlySet<string>;
+  onFlagged: (questionId: string) => void;
 }) {
   const { maxPoints } = payload;
 
@@ -75,6 +80,17 @@ export function CorrectionScreen({
             <span className="rounded-sm border border-gold-deep bg-gold-deep/20 px-2 py-1 font-numeral text-12 tabular-nums text-gold">
               {maxPoints} {maxPoints > 1 ? "points" : "point"}
             </span>
+            {/* The best moment to report: the accepted answer is on screen and nobody is
+             *  racing a timer. Open to everyone watching, not just the host. */}
+            <FlagQuestionButton
+              key={payload.questionId}
+              questionId={payload.questionId}
+              roomCode={code}
+              flagged={flaggedQuestionIds.has(payload.questionId)}
+              onFlagged={onFlagged}
+              mode="detailed"
+              showLabel
+            />
           </div>
         </div>
 

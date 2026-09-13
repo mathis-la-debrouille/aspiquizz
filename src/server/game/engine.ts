@@ -16,12 +16,12 @@ import type { RoomConfigInput, AnswerPayloadInput } from "@/lib/schemas/socket";
 import { gradeAnswer } from "@/server/game/grading";
 import { assignRanks, maxPointsFor } from "@/server/game/scoring";
 import { resolveTimeLimitS } from "@/lib/game-rules";
-import { COUNTRY_NAME_FR } from "@/lib/geo/country-names";
 import {
   getFullQuestionDetail,
   toSanitised,
   toGradable,
   type FullQuestionDetail,
+  describeCorrectAnswer,
 } from "@/server/game/question-detail";
 import { selectQuestionsForRoom } from "@/server/game/question-selection";
 import { awardProgression } from "@/server/progression/award";
@@ -772,6 +772,7 @@ export function buildCorrectionPayload(
     };
   });
   return {
+    questionId: detail.id,
     position: frozen.position,
     total: room.frozenQuestions.length,
     prompt: detail.prompt,
@@ -919,51 +920,6 @@ export function advanceCorrection(room: RoomState, position: number): boolean {
   return true;
 }
 
-function describeCorrectAnswer(detail: FullQuestionDetail): string {
-  switch (detail.type) {
-    case "open":
-      return detail.openAnswers[0] ?? "";
-    case "mcq":
-      return detail.choices
-        .filter((c) => c.isCorrect)
-        .map((c) => c.label)
-        .join(", ");
-    case "image":
-      return detail.answerMode === "mcq"
-        ? detail.choices
-            .filter((c) => c.isCorrect)
-            .map((c) => c.label)
-            .join(", ")
-        : (detail.openAnswers[0] ?? "");
-    case "geo": {
-      // Never the iso3. The reveal used to print "JPN" for « Quelle est la capitale
-      // du Japon ? » and "LKA" for Sri Lanka — a country code is not an answer to
-      // anything a player was asked.
-      //
-      // find_capital / name_country / name_from_shape carry their accepted text in
-      // openAnswers, and ALL of it is shown: a Bolivia reveal reading "Sucre ou
-      // La Paz" is the whole point of accepting both. The two click-to-answer modes
-      // (locate_country, capital_of) store no text, so the country's French name
-      // stands in — from the generated lookup, no DB round-trip.
-      const shown = detail.primaryAnswers.length > 0 ? detail.primaryAnswers : detail.openAnswers;
-      if (shown.length > 0) return shown.join(" ou ");
-      const iso3 = detail.geo?.targetIso3 ?? "";
-      return COUNTRY_NAME_FR[iso3] ?? iso3;
-    }
-    case "sort":
-      // detail.sortItems is already position-asc, i.e. already the correct order.
-      return detail.sortItems.map((item, i) => `${i + 1}. ${item.label}`).join(" → ");
-    case "estimation": {
-      if (!detail.estimation) return "";
-      const { correctValue, toleranceType, toleranceValue, unit } = detail.estimation;
-      const value = `${correctValue}${unit ? ` ${unit}` : ""}`;
-      const tolerance =
-        toleranceType === "percentage" ? `± ${toleranceValue} %` : `± ${toleranceValue}`;
-      return `${value} (${tolerance})`;
-    }
-  }
-}
-
 function buildScoreboard(room: RoomState): ScoreboardEntry[] {
   const ranked = assignRanks(
     [...room.players.values()]
@@ -1038,7 +994,11 @@ async function finishGame(io: GameIo, room: RoomState): Promise<void> {
   // valid at this point: a `finished` room's DB rows are never touched by the empty-room
   // deletion sweep (Addendum B.4), only a still-`lobby`/`running` room's are.
   const questionHistory: QuestionHistoryEntry[] = await db
-    .select({ position: roomQuestions.position, prompt: questionsTable.prompt })
+    .select({
+      position: roomQuestions.position,
+      questionId: roomQuestions.questionId,
+      prompt: questionsTable.prompt,
+    })
     .from(roomQuestions)
     .innerJoin(questionsTable, eq(roomQuestions.questionId, questionsTable.id))
     .where(eq(roomQuestions.roomId, room.id))
